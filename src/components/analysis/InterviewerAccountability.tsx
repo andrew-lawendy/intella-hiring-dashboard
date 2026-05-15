@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import type { Database } from '@/lib/database.types'
+
+type AuditLogRow = Database['public']['Tables']['audit_log']['Row']
 
 interface AccountabilityRow {
   interviewer: string
@@ -17,8 +20,9 @@ export function InterviewerAccountability() {
       .in('field', ['peter_scores', 'ossama_scores'])
       .then(({ data }) => {
         if (!data) return
+        const entries = data as AuditLogRow[]
         const byUser: Record<string, number[]> = {}
-        for (const entry of data) {
+        for (const entry of entries) {
           const user = entry.changed_by.split('@')[0]
           if (!byUser[user]) byUser[user] = []
           byUser[user].push(new Date(entry.created_at).getTime())
