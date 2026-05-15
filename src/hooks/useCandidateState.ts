@@ -2,9 +2,9 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 import type { Scores } from '@/lib/scoring'
-import { ZERO_SCORES } from '@/lib/scoring'
 
 type InterviewState = Database['public']['Tables']['interview_state']['Row']
+type InterviewStateUpdate = Database['public']['Tables']['interview_state']['Update']
 export type StateMap = Record<string, InterviewState>
 
 export function useCandidateState() {
@@ -16,19 +16,24 @@ export function useCandidateState() {
       .from('interview_state')
       .select('*')
       .then(({ data }) => {
-        if (data) {
-          setStateMap(Object.fromEntries(data.map((s) => [s.candidate_id, s])))
+        const rows = (data ?? []) as InterviewState[]
+        const map: StateMap = {}
+        for (const s of rows) {
+          map[s.candidate_id] = s
         }
+        setStateMap(map)
         setLoading(false)
       })
   }, [])
 
-  const updateState = useCallback(async (candidateId: string, patch: Partial<InterviewState>) => {
+  const updateState = useCallback(async (candidateId: string, patch: InterviewStateUpdate) => {
     setStateMap((prev) => ({
       ...prev,
       [candidateId]: { ...prev[candidateId], ...patch },
     }))
-    await supabase.from('interview_state').update(patch).eq('candidate_id', candidateId)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pg = supabase.from('interview_state') as any
+    await pg.update(patch).eq('candidate_id', candidateId)
   }, [])
 
   const setVerdict = useCallback(
@@ -88,6 +93,3 @@ export function useCandidateState() {
     setChecklist,
   }
 }
-
-// Suppress unused import warning
-void ZERO_SCORES

@@ -1,6 +1,6 @@
 type FilterType = 'all' | 'shortlisted' | 'pending' | 'rejected'
 
-interface Candidate {
+interface CandidateMin {
   id: string
   name: string
   email: string
@@ -12,12 +12,12 @@ interface StateSnapshot {
   interview_status: string
 }
 
-export function filterCandidates(
-  candidates: Candidate[],
+export function filterCandidates<T extends CandidateMin>(
+  candidates: T[],
   stateMap: Record<string, StateSnapshot>,
   filter: FilterType,
   search: string,
-): Candidate[] {
+): T[] {
   let result = candidates
 
   if (filter === 'shortlisted') {

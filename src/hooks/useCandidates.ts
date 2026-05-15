@@ -18,29 +18,45 @@ export function useCandidates() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('candidates').select('*').order('created_at'),
-      supabase.from('candidate_profiles').select('*'),
-      supabase.from('candidate_analysis').select('*'),
-    ])
-      .then(([candidatesRes, profilesRes, analysisRes]) => {
-        if (candidatesRes.error) throw candidatesRes.error
-        const profileMap = Object.fromEntries(
-          (profilesRes.data ?? []).map((p) => [p.candidate_id, p]),
-        )
-        const analysisMap = Object.fromEntries(
-          (analysisRes.data ?? []).map((a) => [a.candidate_id, a]),
-        )
-        setData(
-          (candidatesRes.data ?? []).map((c) => ({
-            candidate: c,
-            profile: profileMap[c.id] ?? null,
-            analysis: analysisMap[c.id] ?? null,
-          })),
-        )
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
+    async function load() {
+      const candidatesRes = await supabase.from('candidates').select('*').order('created_at')
+      const profilesRes = await supabase.from('candidate_profiles').select('*')
+      const analysisRes = await supabase.from('candidate_analysis').select('*')
+
+      if (candidatesRes.error) {
+        setError(candidatesRes.error.message)
+        setLoading(false)
+        return
+      }
+
+      const candidates = (candidatesRes.data ?? []) as Candidate[]
+      const profiles = (profilesRes.data ?? []) as Profile[]
+      const analyses = (analysisRes.data ?? []) as Analysis[]
+
+      const profileMap: Record<string, Profile> = {}
+      for (const p of profiles) {
+        profileMap[p.candidate_id] = p
+      }
+
+      const analysisMap: Record<string, Analysis> = {}
+      for (const a of analyses) {
+        analysisMap[a.candidate_id] = a
+      }
+
+      setData(
+        candidates.map((c) => ({
+          candidate: c,
+          profile: profileMap[c.id] ?? null,
+          analysis: analysisMap[c.id] ?? null,
+        })),
+      )
+      setLoading(false)
+    }
+
+    load().catch((err: Error) => {
+      setError(err.message)
+      setLoading(false)
+    })
   }, [])
 
   return { data, loading, error }
