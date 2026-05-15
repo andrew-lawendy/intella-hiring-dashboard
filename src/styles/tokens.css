@@ -1,0 +1,25 @@
+[data-theme="light"], :root {
+  --bg: #f6f4ef; --surface: #ffffff; --surface2: #f1efe8; --surface3: #e9e7df;
+  --border: #e4e1d8; --border-strong: #cfcbbf;
+  --text: #1a1816; --text2: #5d5b53; --text3: #92907f; --text4: #b9b6a8;
+  --accent: #1a1816; --brand: #2a2479; --brand-soft: #ece9f7;
+  --green: oklch(0.46 0.10 155); --green-bg: oklch(0.95 0.04 155); --green-line: oklch(0.46 0.10 155 / .25);
+  --amber: oklch(0.55 0.13 65); --amber-bg: oklch(0.96 0.06 80); --amber-line: oklch(0.55 0.13 65 / .25);
+  --red: oklch(0.52 0.18 25); --red-bg: oklch(0.96 0.04 25); --red-line: oklch(0.52 0.18 25 / .25);
+  --blue: oklch(0.42 0.14 255); --blue-bg: oklch(0.96 0.03 255); --blue-line: oklch(0.42 0.14 255 / .25);
+  --purple: oklch(0.45 0.16 295); --purple-bg: oklch(0.96 0.03 295); --purple-line: oklch(0.45 0.16 295 / .25);
+  --shadow-sm: 0 1px 0 rgba(20,18,14,.03), 0 1px 2px rgba(20,18,14,.04);
+  --shadow-md: 0 1px 0 rgba(20,18,14,.04), 0 6px 22px -8px rgba(20,18,14,.10);
+  --shadow-lg: 0 1px 0 rgba(20,18,14,.04), 0 18px 60px -16px rgba(20,18,14,.22);
+}
+[data-theme="dark"] {
+  --bg: #0e0e0c; --surface: #16150f; --surface2: #1c1b14; --surface3: #26241c;
+  --border: #2a2820; --border-strong: #3a382f;
+  --text: #f1efe6; --text2: #b8b5a6; --text3: #7e7b6e; --text4: #545245;
+  --accent: #f1efe6; --brand: oklch(0.75 0.13 270); --brand-soft: oklch(0.28 0.06 270);
+  --green-bg: oklch(0.27 0.06 155); --amber-bg: oklch(0.27 0.07 65);
+  --red-bg: oklch(0.26 0.08 25); --blue-bg: oklch(0.26 0.07 255); --purple-bg: oklch(0.26 0.07 295);
+  --shadow-sm: 0 1px 0 rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.5);
+  --shadow-md: 0 1px 0 rgba(0,0,0,.5), 0 8px 28px -10px rgba(0,0,0,.6);
+  --shadow-lg: 0 1px 0 rgba(0,0,0,.5), 0 24px 72px -16px rgba(0,0,0,.7);
+}
