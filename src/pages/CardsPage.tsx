@@ -8,6 +8,8 @@ import { ActionQueue } from '@/components/cards/ActionQueue'
 import { FilterBar } from '@/components/cards/FilterBar'
 import { CandidateCard } from '@/components/cards/CandidateCard'
 import { ShortlistComparison } from '@/components/cards/ShortlistComparison'
+import { ProfileModal } from '@/components/profile/ProfileModal'
+import { EmailDraftModal } from '@/components/profile/EmailDraftModal'
 import { filterCandidates } from '@/lib/filters'
 import type { Scores } from '@/lib/scoring'
 import type { Database } from '@/lib/database.types'
@@ -23,6 +25,7 @@ export function CardsPage() {
   const { data, loading } = useCandidates()
   const {
     stateMap,
+    updateState,
     setVerdict,
     setInterviewStatus,
     setShortlisted,
@@ -37,6 +40,8 @@ export function CardsPage() {
   const [filter, setFilter] = useState<FilterType>('all')
   const [search, setSearch] = useState('')
   const [showShortlist, setShowShortlist] = useState(false)
+  const [profileId, setProfileId] = useState<string | null>(null)
+  const [emailId, setEmailId] = useState<string | null>(null)
 
   if (loading) {
     return (
@@ -47,6 +52,8 @@ export function CardsPage() {
   }
 
   const candidates = data.map((d) => d.candidate)
+  const profileData = profileId ? (data.find((d) => d.candidate.id === profileId) ?? null) : null
+  const emailData = emailId ? (data.find((d) => d.candidate.id === emailId) ?? null) : null
   const stateMin = Object.fromEntries(
     Object.entries(stateMap).map(([id, s]) => [
       id,
@@ -122,8 +129,8 @@ export function CardsPage() {
                 onScoreChange={(scorer, scores: Scores) => setScores(candidate.id, scorer, scores)}
                 onCommentChange={(scorer, comment) => setComment(candidate.id, scorer, comment)}
                 onChecklistChange={(checklist) => setChecklist(candidate.id, checklist)}
-                onOpenProfile={() => {}}
-                onEmailDraft={() => {}}
+                onOpenProfile={() => setProfileId(candidate.id)}
+                onEmailDraft={() => setEmailId(candidate.id)}
               />
             )
           })}
@@ -135,6 +142,24 @@ export function CardsPage() {
           candidates={data}
           stateMap={stateMap}
           onClose={() => setShowShortlist(false)}
+        />
+      )}
+
+      {profileData && stateMap[profileData.candidate.id] && (
+        <ProfileModal
+          data={profileData}
+          state={stateMap[profileData.candidate.id]}
+          onClose={() => setProfileId(null)}
+          onPhotoSave={(url) => updateState(profileData.candidate.id, { photo_url: url })}
+        />
+      )}
+
+      {emailData && stateMap[emailData.candidate.id] && (
+        <EmailDraftModal
+          candidate={emailData.candidate}
+          state={stateMap[emailData.candidate.id]}
+          domains={(emailData.analysis?.domains ?? []) as string[]}
+          onClose={() => setEmailId(null)}
         />
       )}
     </div>

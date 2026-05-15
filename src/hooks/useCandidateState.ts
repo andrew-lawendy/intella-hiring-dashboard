@@ -84,6 +84,7 @@ export function useCandidateState() {
   return {
     stateMap,
     loading,
+    updateState,
     setVerdict,
     setInterviewStatus,
     setShortlisted,
