@@ -133,6 +133,19 @@ bg          text                -- CSS variable reference
 questions   text[]
 ```
 
+**`audit_log`**
+```
+id              bigserial PRIMARY KEY
+candidate_id    text REFERENCES candidates(id)
+changed_by      text NOT NULL       -- email of the user who made the change
+field           text NOT NULL       -- 'verdict' | 'shortlisted' | 'interview_status' | 'confirmed' | 'peter_scores' | 'ossama_scores' | etc.
+old_value       text
+new_value       text
+created_at      timestamptz DEFAULT now()
+```
+
+Every verdict, shortlist, reject, status change, and scorecard submission writes a row here automatically via a Supabase trigger on `interview_state`. The app also writes explicit log entries for user-initiated actions (e.g., dismissing an alert banner does not log; setting a verdict does).
+
 ### 4.2 Row Level Security
 
 All tables have RLS enabled. Policy: authenticated users with an `@intellaworld.com` email can SELECT, INSERT, UPDATE on all rows. No DELETE exposed to the app (soft deletes only if needed).
@@ -204,6 +217,7 @@ Preference is persisted in `localStorage` under `intella_theme`. On app load, th
 ### 8.1 Cards Tab
 - Summary stats bar (5 KPIs: total, confirmed, shortlisted, pending, completed)
 - Interview timeline (5 days, past/today/future states, progress bars)
+- **Action queue panel** — collapsible panel above the card grid listing candidates that need attention: unsubmitted scorecards, missing confirmations, interviews marked Done with no verdict set. One-click jump to the relevant card.
 - Filter pills: All, Shortlisted, Pending, Rejected + search input
 - Candidate card grid (responsive, `auto-fill minmax(340px, 1fr)`)
 - Per card:
@@ -211,11 +225,14 @@ Preference is persisted in `localStorage` under `intella_theme`. On app load, th
   - Header: avatar (initials + pseudo-random gradient), name, email, badges (confirmed/pending/remote), confirmation toggle button
   - Body: slot, type, salary, notice period (info rows)
   - Scorecard: Peter + Ossama star ratings (5 categories), combined score, active scorer toggle
+    - **Feedback blinding:** each interviewer can only see and edit their own scores. The co-interviewer's scores are hidden behind a "Reveal scores" button that only unlocks once the current user has submitted all 5 of their own ratings. Hard-enforced in the UI — no way to peek before submitting.
+    - **Scorecard overdue indicator:** if interview status is "Done" and the active user's scorecard has all-zero scores after 24 hours, the scorecard section shows a visible amber "Overdue" badge.
   - Checklist: 5 items with checkboxes
   - Comments: Peter + Ossama text areas with save button
   - Actions: Shortlist, Reject, View Profile, Email Draft, Print Brief
   - Interview status buttons (Not Started / In Progress / Done)
   - Verdict buttons (Strong Yes / Yes / Maybe / No)
+  - **Audit trail line:** small "last updated" line at the bottom of each card (e.g., "Shortlisted by peter@intellaworld.com · 2h ago"). Links to full history in the profile modal.
 
 ### 8.2 Schedule Tab
 Table view of all candidates with: name, slot, type, confirmation toggle, CV button, status select.
@@ -240,6 +257,7 @@ Day filter (All + 5 days). Brief card per candidate with: time, name, email, key
 - Scatter plot (PM experience vs fit score)
 - Salary distribution
 - Full candidate ranking table (sortable by combined score, verdict, name)
+- **Interviewer accountability panel:** per interviewer — average time from interview marked "Done" to scorecard submitted (pulled from `audit_log`), score distribution histogram (are they systematically high or low?), divergence from co-interviewer per candidate. Useful for post-round calibration.
 
 ### 8.8 AI Assistant Tab
 - API key management banner (enter key, show masked, clear)
@@ -248,10 +266,12 @@ Day filter (All + 5 days). Brief card per candidate with: time, name, email, key
 - Uses `claude-sonnet-4-5` via Netlify Function proxy at `/api/claude/v1/messages`
 - Chat history capped at last 20 messages
 - Works on hosted URL (Netlify Function); falls back to direct browser API on localhost
+- **Async debrief summary:** a dedicated "Generate Debrief" button (separate from the open-ended chat) that produces a structured cross-scorecard summary across all candidates with a completed interview: where Peter and Ossama aligned, where they diverged, top-ranked candidates with supporting evidence from scores and comments, and suggested talking points for the team debrief meeting. Output is formatted for easy copy/paste or printing.
 
 ### 8.9 Header (persistent)
 - Intella logo
 - Progress ring (completed interviews / total, animated SVG)
+- **Pipeline health snapshot:** compact inline stats next to the progress ring — % of scorecards filled, % with a verdict, days since round opened. Single-glance answer to "where does the round stand?" without scanning all 20 cards.
 - Shortlist comparison modal button
 - Decision Report PDF export button
 - Export Excel button
@@ -260,11 +280,12 @@ Day filter (All + 5 days). Brief card per candidate with: time, name, email, key
 - Alert banners (dismissible, per candidate with missing slot or unconfirmed status)
 
 ### 8.10 Profile Modal
-Full-screen modal for any candidate. 4 tabs:
+Full-screen modal for any candidate. 5 tabs:
 - **Overview:** summary, fit score, strengths, weaknesses, watch-for note, fit score bars (AI / Fintech / B2B / Seniority)
 - **Career:** timeline of roles
 - **Questions:** custom interview questions for this candidate
 - **CV:** PDF viewer (via signed URL from Supabase Storage), photo URL input
+- **History:** full chronological audit log for this candidate — every decision (verdict set, shortlisted, status changed, scorecard submitted) with who made it and when, sourced from `audit_log`.
 
 ### 8.11 Email Draft Modal
 Pre-filled email based on verdict (Strong Yes / Yes / Maybe / No). Editable To, Subject, Body fields. "Open in Mail App" button generates `mailto:` link.
@@ -301,13 +322,13 @@ Three hooks:
 Each phase ships with unit tests for the new code it introduces.
 
 - **Phase 1:** No tests (pure config)
-- **Phase 2:** Supabase client helpers, seed script utilities
-- **Phase 3:** Auth guard behavior, theme persistence logic
-- **Phase 4:** Score calculation (`totalScore`, `maxScore`), filter logic, checklist state
-- **Phase 5:** Profile modal tab switching, email draft generation
+- **Phase 2:** Supabase client helpers, seed script utilities, audit log trigger
+- **Phase 3:** Auth guard behavior, theme persistence logic, pipeline health snapshot calculations
+- **Phase 4:** Score calculation (`totalScore`, `maxScore`), filter logic, checklist state, feedback blinding logic, action queue derivation
+- **Phase 5:** Profile modal tab switching, email draft generation, audit history rendering
 - **Phase 6:** Compare selector logic, salary sort/parse
-- **Phase 7:** KPI calculations, ranking sort
-- **Phase 8:** Chat history capping, API key masking
+- **Phase 7:** KPI calculations, ranking sort, interviewer accountability metrics
+- **Phase 8:** Chat history capping, API key masking, debrief summary prompt construction
 
 Tests use Vitest + React Testing Library. Supabase calls are mocked at the client boundary.
 
@@ -331,6 +352,6 @@ Proxies POST requests from `/api/claude/v1/messages` to the Anthropic API. When 
 - Move Anthropic API key to Netlify environment variable (removes user-entered key UI)
 - Migrate Supabase to self-hosted Postgres on Intella's containers (one env var change)
 - Real-time score sync between Peter and Ossama (Supabase Realtime)
-- Add more candidates / hiring rounds (schema is generic)
+- Multi-round support — add a `rounds` table and foreign-key all tables to it; the current schema supports one active hiring round at a time
 - Role-based access (e.g., read-only view for other team members)
 - Email sending integration (replace `mailto:` with direct send via SendGrid or similar)
