@@ -1,3 +1,142 @@
+import { useState } from 'react'
+import { useCandidates } from '@/hooks/useCandidates'
+import { useCandidateState } from '@/hooks/useCandidateState'
+import { useAuth } from '@/hooks/useAuth'
+import { SummaryBar } from '@/components/cards/SummaryBar'
+import { InterviewTimeline } from '@/components/cards/InterviewTimeline'
+import { ActionQueue } from '@/components/cards/ActionQueue'
+import { FilterBar } from '@/components/cards/FilterBar'
+import { CandidateCard } from '@/components/cards/CandidateCard'
+import { ShortlistComparison } from '@/components/cards/ShortlistComparison'
+import { filterCandidates } from '@/lib/filters'
+import type { Scores } from '@/lib/scoring'
+import type { Database } from '@/lib/database.types'
+
+type FilterType = 'all' | 'shortlisted' | 'pending' | 'rejected'
+type State = Database['public']['Tables']['interview_state']['Row']
+
+function resolveUser(email: string | undefined): 'peter' | 'ossama' {
+  return email?.startsWith('peter') ? 'peter' : 'ossama'
+}
+
 export function CardsPage() {
-  return <div className="p-6 text-text font-sans">Cards — coming in Phase 4</div>
+  const { data, loading } = useCandidates()
+  const {
+    stateMap,
+    setVerdict,
+    setInterviewStatus,
+    setShortlisted,
+    setConfirmed,
+    setScores,
+    setComment,
+    setChecklist,
+  } = useCandidateState()
+  const { user } = useAuth()
+  const currentUser = resolveUser(user?.email)
+
+  const [filter, setFilter] = useState<FilterType>('all')
+  const [search, setSearch] = useState('')
+  const [showShortlist, setShowShortlist] = useState(false)
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  const candidates = data.map((d) => d.candidate)
+  const stateMin = Object.fromEntries(
+    Object.entries(stateMap).map(([id, s]) => [
+      id,
+      {
+        shortlisted: s.shortlisted,
+        verdict: s.verdict,
+        interview_status: s.interview_status,
+      },
+    ]),
+  )
+  const filtered = filterCandidates(candidates, stateMin, filter, search)
+
+  return (
+    <div>
+      <h1 className="text-[30px] font-medium tracking-[-0.025em] mb-1 leading-none text-text">
+        Candidate Cards
+      </h1>
+      <p className="text-[13.5px] text-text2 mb-6">Senior PM · May 17–21, 2026</p>
+
+      <SummaryBar total={candidates.length} stateMap={stateMap} />
+      <InterviewTimeline candidates={candidates} stateMap={stateMap} />
+      <ActionQueue candidates={candidates} stateMap={stateMap} />
+      <FilterBar
+        filter={filter}
+        search={search}
+        onFilterChange={setFilter}
+        onSearchChange={setSearch}
+      />
+
+      <div className="flex justify-end mb-3">
+        <button
+          onClick={() => setShowShortlist(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all border"
+          style={{
+            background: 'var(--brand-soft)',
+            color: 'var(--brand)',
+            borderColor: 'color-mix(in srgb, var(--brand) 25%, transparent)',
+          }}
+        >
+          ★ Compare Shortlisted (
+          {Object.values(stateMap).filter((s) => s.shortlisted === true).length})
+        </button>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="text-center py-20 text-text3 text-sm">No candidates match your filter.</div>
+      ) : (
+        <div
+          className="grid gap-3.5"
+          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}
+        >
+          {filtered.map((candidate, i) => {
+            const state = stateMap[candidate.id]
+            if (!state) return null
+            return (
+              <CandidateCard
+                key={candidate.id}
+                candidate={candidate}
+                state={state}
+                index={i}
+                currentUser={currentUser}
+                onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
+                onStatusChange={(s: State['interview_status']) =>
+                  setInterviewStatus(candidate.id, s)
+                }
+                onVerdictChange={(v: NonNullable<State['verdict']>) => setVerdict(candidate.id, v)}
+                onShortlist={() =>
+                  setShortlisted(candidate.id, state.shortlisted === true ? null : true)
+                }
+                onReject={() =>
+                  setShortlisted(candidate.id, state.shortlisted === false ? null : false)
+                }
+                onScoreChange={(scorer, scores: Scores) => setScores(candidate.id, scorer, scores)}
+                onCommentChange={(scorer, comment) => setComment(candidate.id, scorer, comment)}
+                onChecklistChange={(checklist) => setChecklist(candidate.id, checklist)}
+                onOpenProfile={() => {}}
+                onEmailDraft={() => {}}
+              />
+            )
+          })}
+        </div>
+      )}
+
+      {showShortlist && (
+        <ShortlistComparison
+          candidates={data}
+          stateMap={stateMap}
+          onClose={() => setShowShortlist(false)}
+        />
+      )}
+    </div>
+  )
 }
