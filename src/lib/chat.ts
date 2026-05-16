@@ -1,27 +1,45 @@
+export type Provider = 'anthropic' | 'openai' | 'google'
 export type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
-const API_KEY_STORAGE = 'intella_api_key'
 const MAX_HISTORY = 20
 
-export function loadApiKey(): string | null {
+const STORAGE_KEYS: Record<Provider, string> = {
+  anthropic: 'intella_api_key_anthropic',
+  openai: 'intella_api_key_openai',
+  google: 'intella_api_key_google',
+}
+
+export const PROVIDER_LABELS: Record<Provider, string> = {
+  anthropic: 'Anthropic (Claude)',
+  openai: 'OpenAI (GPT-4o mini)',
+  google: 'Google (Gemini 2.0)',
+}
+
+export const PROVIDER_PLACEHOLDERS: Record<Provider, string> = {
+  anthropic: 'sk-ant-...',
+  openai: 'sk-proj-... or sk-...',
+  google: 'AIza...',
+}
+
+export function loadApiKey(provider: Provider): string | null {
   try {
-    return localStorage.getItem(API_KEY_STORAGE)
+    return localStorage.getItem(STORAGE_KEYS[provider])
   } catch {
     return null
   }
 }
 
-export function saveApiKey(key: string): void {
+export function saveApiKey(provider: Provider, key: string): void {
   try {
-    localStorage.setItem(API_KEY_STORAGE, key)
+    localStorage.setItem(STORAGE_KEYS[provider], key)
   } catch {
     /* noop */
   }
 }
 
-export function clearApiKey(): void {
+export function clearApiKey(provider: Provider): void {
   try {
-    localStorage.removeItem(API_KEY_STORAGE)
+    localStorage.removeItem(STORAGE_KEYS[provider])
   } catch {
     /* noop */
   }
@@ -32,8 +50,16 @@ export function maskApiKey(key: string | null): string {
   return key.substring(0, 12) + '••••••'
 }
 
-export function isValidApiKey(key: string): boolean {
-  return key.startsWith('sk-ant')
+export function isValidApiKey(provider: Provider, key: string): boolean {
+  if (!key) return false
+  switch (provider) {
+    case 'anthropic':
+      return key.startsWith('sk-ant-')
+    case 'openai':
+      return key.startsWith('sk-') && !key.startsWith('sk-ant-')
+    case 'google':
+      return key.startsWith('AIza')
+  }
 }
 
 export function trimChatHistory(history: ChatMessage[]): ChatMessage[] {
@@ -54,29 +80,24 @@ export async function sendChatMessage(
   messages: ChatMessage[],
   systemPrompt: string,
   apiKey: string,
+  provider: Provider = 'anthropic',
 ): Promise<string> {
   const url = getApiUrl()
-  const isLocal = url.includes('localhost')
-
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-  if (!isLocal) headers['x-api-key'] = apiKey
 
   const response = await fetch(url, {
     method: 'POST',
-    headers,
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages,
-    }),
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+    },
+    body: JSON.stringify({ provider, system: systemPrompt, messages }),
   })
 
   if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`API error ${response.status}: ${err}`)
+    const err = await response.json().catch(() => ({ error: response.statusText }))
+    throw new Error(`API error ${response.status}: ${err.error ?? response.statusText}`)
   }
 
   const data = await response.json()
-  return data.content?.[0]?.text ?? ''
+  return data.text ?? ''
 }

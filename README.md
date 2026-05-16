@@ -8,7 +8,8 @@ A production-grade interview management dashboard for the Intella team. Migrated
 - **Tailwind CSS v4** with custom design token system
 - **shadcn/ui** (New York style) for base components
 - **Supabase** — Postgres database, Google OAuth, file storage
-- **Netlify** — hosting + serverless functions (Claude AI proxy)
+- **Netlify** — hosting + serverless functions (multi-provider AI proxy: Claude, GPT-4o, Gemini)
+- **xlsx** — client-side Excel export
 
 ## Local Development
 
@@ -75,13 +76,26 @@ See [`docs/superpowers/specs/2026-05-15-react-migration-design.md`](docs/superpo
 
 ## Phases
 
-| Phase | Description             | Status     |
-| ----- | ----------------------- | ---------- |
-| 1     | Project Foundation      | ✅ Done    |
-| 2     | Auth & Data Layer       | ⬜ Pending |
-| 3     | App Shell & Routing     | ⬜ Pending |
-| 4     | Cards Tab               | ⬜ Pending |
-| 5     | Profile Modal           | ⬜ Pending |
-| 6     | Secondary Tabs          | ⬜ Pending |
-| 7     | Day Briefing & Analysis | ⬜ Pending |
-| 8     | AI Assistant & Exports  | ⬜ Pending |
+| Phase | Description             | Status  |
+| ----- | ----------------------- | ------- |
+| 1     | Project Foundation      | ✅ Done |
+| 2     | Auth & Data Layer       | ✅ Done |
+| 3     | App Shell & Routing     | ✅ Done |
+| 4     | Cards Tab               | ✅ Done |
+| 5     | Profile Modal           | ✅ Done |
+| 6     | Secondary Tabs          | ✅ Done |
+| 7     | Day Briefing & Analysis | ✅ Done |
+| 8     | AI Assistant & Exports  | ✅ Done |
+
+## Features
+
+- **Cards Tab** — candidate grid with filters, scorecard, feedback blinding, shortlist comparison
+- **Profile Modal** — 5-tab deep-dive: Overview, Career, Questions, CV, History
+- **Schedule Tab** — sorted interview timeline with confirmation toggles
+- **Compare Tab** — side-by-side candidate comparison across 11 dimensions
+- **Questions Tab** — accordion interview guide by section
+- **Salary Chart** — horizontal bar chart with normalized EGP values
+- **Day Briefing** — per-candidate brief card with interview timer and print export
+- **Analysis Tab** — KPI cards, domain frequency, scatter plot, ranking table, interviewer accountability
+- **AI Assistant** — chat with full candidate context via Claude, GPT-4o mini, or Gemini; AI debrief summary generator
+- **Exports** — Excel download, printable decision report PDF, per-candidate brief print

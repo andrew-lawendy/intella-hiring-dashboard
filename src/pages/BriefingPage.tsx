@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { BriefCard } from '@/components/briefing/BriefCard'
+import { printBriefCard } from '@/lib/exports'
 
 const DAYS = [
   'All',
@@ -62,7 +63,7 @@ export function BriefingPage() {
               key={candidate.id}
               data={{ candidate, ...rest }}
               state={state}
-              onPrintBrief={() => window.print()}
+              onPrintBrief={() => printBriefCard({ candidate, ...rest }, state)}
             />
           )
         })

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS candidate_analysis (
   masters         text,
   total_exp       integer,
   pm_exp          integer,
-  current_role    text,
+  "current_role"  text,
   current_company text,
   domains         text[],
   ai_exp          boolean DEFAULT false,
