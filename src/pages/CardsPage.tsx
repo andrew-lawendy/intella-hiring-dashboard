@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
@@ -10,6 +11,7 @@ import { CandidateCard } from '@/components/cards/CandidateCard'
 import { ShortlistComparison } from '@/components/cards/ShortlistComparison'
 import { ProfileModal } from '@/components/profile/ProfileModal'
 import { EmailDraftModal } from '@/components/profile/EmailDraftModal'
+import { Pagination } from '@/components/ui/Pagination'
 import { filterCandidates } from '@/lib/filters'
 import type { FilterType } from '@/lib/filters'
 import type { Scores } from '@/lib/scoring'
@@ -17,12 +19,14 @@ import type { Database } from '@/lib/database.types'
 
 type State = Database['public']['Tables']['interview_state']['Row']
 
+const PAGE_SIZE = 24
+
 function resolveUser(email: string | undefined): 'peter' | 'ossama' {
   return email?.startsWith('peter') ? 'peter' : 'ossama'
 }
 
 export function CardsPage() {
-  const { data, loading } = useCandidates()
+  const { candidates: allMeta, loading: metaLoading } = useCandidateMeta()
   const {
     stateMap,
     updateState,
@@ -39,33 +43,70 @@ export function CardsPage() {
 
   const [filter, setFilter] = useState<FilterType>('all')
   const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
   const [showShortlist, setShowShortlist] = useState(false)
   const [profileId, setProfileId] = useState<string | null>(null)
   const [emailId, setEmailId] = useState<string | null>(null)
 
-  if (loading) {
+  const handleFilterChange = (f: FilterType) => {
+    setFilter(f)
+    setPage(1)
+  }
+  const handleSearchChange = (s: string) => {
+    setSearch(s)
+    setPage(1)
+  }
+
+  const stateMin = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(stateMap).map(([id, s]) => [
+          id,
+          {
+            shortlisted: s.shortlisted,
+            verdict: s.verdict,
+            interview_status: s.interview_status,
+            confirmed: s.confirmed,
+          },
+        ]),
+      ),
+    [stateMap],
+  )
+
+  const filteredMeta = useMemo(
+    () => filterCandidates(allMeta, stateMin, filter, search),
+    [allMeta, stateMin, filter, search],
+  )
+
+  const pageIds = useMemo(
+    () => filteredMeta.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((m) => m.id),
+    [filteredMeta, page],
+  )
+
+  const shortlistedIds = useMemo(
+    () =>
+      Object.entries(stateMap)
+        .filter(([, s]) => s.shortlisted === true)
+        .map(([id]) => id),
+    [stateMap],
+  )
+
+  // Fetch full data (profile + analysis) for current page only
+  const { data: pageData, loading: cardsLoading } = useCandidates({ ids: pageIds })
+
+  // Profile and email modals only open from cards on the current page
+  const profileData = profileId
+    ? (pageData.find((d) => d.candidate.id === profileId) ?? null)
+    : null
+  const emailData = emailId ? (pageData.find((d) => d.candidate.id === emailId) ?? null) : null
+
+  if (metaLoading) {
     return (
       <div className="flex justify-center py-20">
         <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
       </div>
     )
   }
-
-  const candidates = data.map((d) => d.candidate)
-  const profileData = profileId ? (data.find((d) => d.candidate.id === profileId) ?? null) : null
-  const emailData = emailId ? (data.find((d) => d.candidate.id === emailId) ?? null) : null
-  const stateMin = Object.fromEntries(
-    Object.entries(stateMap).map(([id, s]) => [
-      id,
-      {
-        shortlisted: s.shortlisted,
-        verdict: s.verdict,
-        interview_status: s.interview_status,
-        confirmed: s.confirmed,
-      },
-    ]),
-  )
-  const filtered = filterCandidates(candidates, stateMin, filter, search)
 
   return (
     <div>
@@ -74,74 +115,93 @@ export function CardsPage() {
       </h1>
       <p className="text-[13.5px] text-text2 mb-6">Senior PM · May 17–21, 2026</p>
 
-      <InterviewTimeline candidates={candidates} stateMap={stateMap} />
-      <SummaryBar total={candidates.length} stateMap={stateMap} />
-      <ActionQueue candidates={candidates} stateMap={stateMap} />
+      <InterviewTimeline candidates={allMeta} stateMap={stateMap} />
+      <SummaryBar total={allMeta.length} stateMap={stateMap} />
+      <ActionQueue candidates={allMeta} stateMap={stateMap} />
       <FilterBar
         filter={filter}
         search={search}
-        total={candidates.length}
-        onFilterChange={setFilter}
-        onSearchChange={setSearch}
+        total={allMeta.length}
+        onFilterChange={handleFilterChange}
+        onSearchChange={handleSearchChange}
       />
 
       <div className="flex justify-end mb-3">
         <button
           onClick={() => setShowShortlist(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all border"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 border"
           style={{
             background: 'var(--brand-soft)',
             color: 'var(--brand)',
             borderColor: 'color-mix(in srgb, var(--brand) 25%, transparent)',
           }}
         >
-          ★ Compare Shortlisted (
-          {Object.values(stateMap).filter((s) => s.shortlisted === true).length})
+          ★ Compare Shortlisted ({shortlistedIds.length})
         </button>
       </div>
 
-      {filtered.length === 0 ? (
+      {filteredMeta.length === 0 ? (
         <div className="text-center py-20 text-text3 text-sm">No candidates match your filter.</div>
-      ) : (
-        <div
-          className="grid gap-3.5"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}
-        >
-          {filtered.map((candidate, i) => {
-            const state = stateMap[candidate.id]
-            if (!state) return null
-            return (
-              <CandidateCard
-                key={candidate.id}
-                candidate={candidate}
-                state={state}
-                index={i}
-                currentUser={currentUser}
-                onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
-                onStatusChange={(s: State['interview_status']) =>
-                  setInterviewStatus(candidate.id, s)
-                }
-                onVerdictChange={(v: NonNullable<State['verdict']>) => setVerdict(candidate.id, v)}
-                onShortlist={() =>
-                  setShortlisted(candidate.id, state.shortlisted === true ? null : true)
-                }
-                onReject={() =>
-                  setShortlisted(candidate.id, state.shortlisted === false ? null : false)
-                }
-                onScoreChange={(scorer, scores: Scores) => setScores(candidate.id, scorer, scores)}
-                onCommentChange={(scorer, comment) => setComment(candidate.id, scorer, comment)}
-                onChecklistChange={(checklist) => setChecklist(candidate.id, checklist)}
-                onOpenProfile={() => setProfileId(candidate.id)}
-                onEmailDraft={() => setEmailId(candidate.id)}
-              />
-            )
-          })}
+      ) : cardsLoading ? (
+        <div className="flex justify-center py-20">
+          <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
         </div>
+      ) : (
+        <>
+          <div
+            className="grid gap-3.5"
+            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}
+          >
+            {pageIds.map((id, i) => {
+              const cardData = pageData.find((d) => d.candidate.id === id)
+              if (!cardData) return null
+              const { candidate } = cardData
+              const state = stateMap[candidate.id]
+              if (!state) return null
+              return (
+                <CandidateCard
+                  key={candidate.id}
+                  candidate={candidate}
+                  state={state}
+                  index={(page - 1) * PAGE_SIZE + i}
+                  currentUser={currentUser}
+                  onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
+                  onStatusChange={(s: State['interview_status']) =>
+                    setInterviewStatus(candidate.id, s)
+                  }
+                  onVerdictChange={(v: NonNullable<State['verdict']>) =>
+                    setVerdict(candidate.id, v)
+                  }
+                  onShortlist={() =>
+                    setShortlisted(candidate.id, state.shortlisted === true ? null : true)
+                  }
+                  onReject={() =>
+                    setShortlisted(candidate.id, state.shortlisted === false ? null : false)
+                  }
+                  onScoreChange={(scorer, scores: Scores) =>
+                    setScores(candidate.id, scorer, scores)
+                  }
+                  onCommentChange={(scorer, comment) => setComment(candidate.id, scorer, comment)}
+                  onChecklistChange={(checklist) => setChecklist(candidate.id, checklist)}
+                  onOpenProfile={() => setProfileId(candidate.id)}
+                  onEmailDraft={() => setEmailId(candidate.id)}
+                />
+              )
+            })}
+          </div>
+
+          <Pagination
+            page={page}
+            pageSize={PAGE_SIZE}
+            total={filteredMeta.length}
+            onChange={setPage}
+          />
+        </>
       )}
 
       {showShortlist && (
         <ShortlistComparison
-          candidates={data}
+          candidateIds={shortlistedIds}
           stateMap={stateMap}
           onClose={() => setShowShortlist(false)}
         />

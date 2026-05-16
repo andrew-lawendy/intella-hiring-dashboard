@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { deriveActionItems, type ActionItem } from '@/lib/actionQueue'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { Database } from '@/lib/database.types'
 import type { Scores } from '@/lib/scoring'
 
-type Candidate = Database['public']['Tables']['candidates']['Row']
+interface CandidateSlot {
+  id: string
+  name: string
+  slot: string | null
+}
 
 interface ActionQueueProps {
-  candidates: Candidate[]
+  candidates: CandidateSlot[]
   stateMap: StateMap
 }
 

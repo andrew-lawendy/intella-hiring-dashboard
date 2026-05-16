@@ -5,9 +5,9 @@ interface ProfileHistoryProps {
 }
 
 export function ProfileHistory({ candidateId }: ProfileHistoryProps) {
-  const { entries, loading } = useAuditLog(candidateId)
+  const { entries, loading, hasMore, loadMore } = useAuditLog(candidateId)
 
-  if (loading) {
+  if (loading && entries.length === 0) {
     return <div className="p-6 text-text3 text-sm">Loading history...</div>
   }
 
@@ -36,6 +36,16 @@ export function ProfileHistory({ candidateId }: ProfileHistoryProps) {
           </div>
         ))}
       </div>
+
+      {hasMore && (
+        <button
+          onClick={loadMore}
+          disabled={loading}
+          className="mt-4 w-full py-2 text-[11.5px] font-medium text-text2 border border-border rounded-[var(--radius-xs)] bg-surface hover:bg-surface2 hover:text-text transition-colors cursor-pointer disabled:opacity-50"
+        >
+          {loading ? 'Loading…' : 'Load more'}
+        </button>
+      )}
     </div>
   )
 }

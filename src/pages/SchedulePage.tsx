@@ -1,9 +1,29 @@
+import { useState, useMemo } from 'react'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
+import { Pagination } from '@/components/ui/Pagination'
+
+const PAGE_SIZE = 20
 
 export function SchedulePage() {
   const { data, loading } = useCandidates()
   const { stateMap, setConfirmed, setInterviewStatus } = useCandidateState()
+  const [page, setPage] = useState(1)
+
+  const sorted = useMemo(
+    () =>
+      [...data].sort((a, b) => {
+        if (!a.candidate.slot || a.candidate.slot === 'TBD') return 1
+        if (!b.candidate.slot || b.candidate.slot === 'TBD') return -1
+        return a.candidate.slot.localeCompare(b.candidate.slot)
+      }),
+    [data],
+  )
+
+  const pageRows = useMemo(
+    () => sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [sorted, page],
+  )
 
   if (loading) {
     return (
@@ -12,12 +32,6 @@ export function SchedulePage() {
       </div>
     )
   }
-
-  const sorted = [...data].sort((a, b) => {
-    if (!a.candidate.slot || a.candidate.slot === 'TBD') return 1
-    if (!b.candidate.slot || b.candidate.slot === 'TBD') return -1
-    return a.candidate.slot.localeCompare(b.candidate.slot)
-  })
 
   return (
     <div>
@@ -41,15 +55,16 @@ export function SchedulePage() {
             </tr>
           </thead>
           <tbody>
-            {sorted.map(({ candidate }, i) => {
+            {pageRows.map(({ candidate }, i) => {
               const state = stateMap[candidate.id]
               if (!state) return null
+              const globalIndex = (page - 1) * PAGE_SIZE + i + 1
               return (
                 <tr
                   key={candidate.id}
                   className="border-b border-border last:border-b-0 hover:bg-surface2 transition-colors"
                 >
-                  <td className="px-4 py-3 text-text3 font-mono text-[11px]">{i + 1}</td>
+                  <td className="px-4 py-3 text-text3 font-mono text-[11px]">{globalIndex}</td>
                   <td className="px-4 py-3">
                     <div className="font-semibold text-text text-[13px]">{candidate.name}</div>
                     <div className="text-text3 text-[11px] font-mono">{candidate.email}</div>
@@ -104,6 +119,8 @@ export function SchedulePage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} pageSize={PAGE_SIZE} total={sorted.length} onChange={setPage} />
     </div>
   )
 }

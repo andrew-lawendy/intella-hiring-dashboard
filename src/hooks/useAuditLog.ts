@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 
 type AuditEntry = Database['public']['Tables']['audit_log']['Row']
+
+const PAGE_SIZE = 20
 
 const FIELD_LABELS: Record<string, string> = {
   verdict: 'Verdict',
@@ -25,23 +27,51 @@ export function formatAuditEntry(
 export function useAuditLog(candidateId: string | null) {
   const [entries, setEntries] = useState<AuditEntry[]>([])
   const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
 
   useEffect(() => {
     if (!candidateId) {
       setEntries([])
+      setHasMore(false)
       return
     }
+
     setLoading(true)
+
     supabase
       .from('audit_log')
       .select('*')
       .eq('candidate_id', candidateId)
       .order('created_at', { ascending: false })
+      .limit(PAGE_SIZE)
       .then(({ data }) => {
-        setEntries(data ?? [])
+        const rows = data ?? []
+        setEntries(rows)
+        setHasMore(rows.length === PAGE_SIZE)
         setLoading(false)
       })
   }, [candidateId])
 
-  return { entries, loading }
+  const loadMore = useCallback(() => {
+    const cursor = entries[entries.length - 1]?.created_at
+    if (!cursor || !candidateId) return
+
+    setLoading(true)
+
+    supabase
+      .from('audit_log')
+      .select('*')
+      .eq('candidate_id', candidateId)
+      .order('created_at', { ascending: false })
+      .lt('created_at', cursor)
+      .limit(PAGE_SIZE)
+      .then(({ data }) => {
+        const rows = data ?? []
+        setEntries((prev) => [...prev, ...rows])
+        setHasMore(rows.length === PAGE_SIZE)
+        setLoading(false)
+      })
+  }, [candidateId, entries])
+
+  return { entries, loading, hasMore, loadMore }
 }

@@ -1,7 +1,9 @@
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { Database } from '@/lib/database.types'
 
-type Candidate = Database['public']['Tables']['candidates']['Row']
+interface CandidateDay {
+  id: string
+  day: string | null
+}
 
 const DAYS = [
   'Sunday 17 May',
@@ -28,7 +30,7 @@ function getTodayLabel(): string {
 }
 
 interface InterviewTimelineProps {
-  candidates: Candidate[]
+  candidates: CandidateDay[]
   stateMap: StateMap
 }
 

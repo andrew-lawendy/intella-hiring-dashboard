@@ -1,10 +1,10 @@
-import type { CandidateWithDetails } from '@/hooks/useCandidates'
+import { useCandidates } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
 import { totalScore, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
 
 interface ShortlistComparisonProps {
-  candidates: CandidateWithDetails[]
+  candidateIds: string[]
   stateMap: StateMap
   onClose: () => void
 }
@@ -22,13 +22,11 @@ const VERDICT_COLORS: Record<string, string> = {
   no: 'var(--red)',
 }
 
-export function ShortlistComparison({ candidates, stateMap, onClose }: ShortlistComparisonProps) {
-  const shortlisted = candidates.filter(
-    ({ candidate }) => stateMap[candidate.id]?.shortlisted === true,
-  )
+export function ShortlistComparison({ candidateIds, stateMap, onClose }: ShortlistComparisonProps) {
+  const { data, loading } = useCandidates({ ids: candidateIds })
   const max = maxScore()
 
-  if (!shortlisted.length) {
+  if (!candidateIds.length) {
     return (
       <div
         className="fixed inset-0 bg-black/60 z-[600] flex items-center justify-center p-5"
@@ -57,7 +55,7 @@ export function ShortlistComparison({ candidates, stateMap, onClose }: Shortlist
         <div className="bg-accent px-5 py-4 flex justify-between items-center">
           <div>
             <p className="font-bold text-[16px] text-bg">Shortlist Comparison</p>
-            <p className="text-bg/70 text-xs mt-0.5">{shortlisted.length} candidates</p>
+            <p className="text-bg/70 text-xs mt-0.5">{candidateIds.length} candidates</p>
           </div>
           <button
             onClick={onClose}
@@ -67,71 +65,79 @@ export function ShortlistComparison({ candidates, stateMap, onClose }: Shortlist
           </button>
         </div>
 
-        <div className="overflow-x-auto p-4">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-surface2">
-                {['Candidate', 'Peter', 'Ossama', 'Combined', 'Verdict', 'Notes'].map((h) => (
-                  <th
-                    key={h}
-                    className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-text3"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {shortlisted.map(({ candidate, analysis }) => {
-                const state = stateMap[candidate.id]
-                if (!state) return null
-                const ps = state.peter_scores as Scores
-                const os = state.ossama_scores as Scores
-                const pTotal = Object.values(ps).reduce((a, b) => a + b, 0)
-                const oTotal = Object.values(os).reduce((a, b) => a + b, 0)
-                const combined = totalScore(ps, os)
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <div className="w-6 h-6 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="overflow-x-auto p-4">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-surface2">
+                  {['Candidate', 'Peter', 'Ossama', 'Combined', 'Verdict', 'Notes'].map((h) => (
+                    <th
+                      key={h}
+                      className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-text3"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data.map(({ candidate, analysis }) => {
+                  const state = stateMap[candidate.id]
+                  if (!state) return null
+                  const ps = state.peter_scores as Scores
+                  const os = state.ossama_scores as Scores
+                  const pTotal = Object.values(ps).reduce((a, b) => a + b, 0)
+                  const oTotal = Object.values(os).reduce((a, b) => a + b, 0)
+                  const combined = totalScore(ps, os)
 
-                return (
-                  <tr
-                    key={candidate.id}
-                    className="border-t border-border hover:bg-surface2 transition-colors"
-                  >
-                    <td className="px-3 py-2.5">
-                      <p className="font-semibold text-[13px] text-text">{candidate.name}</p>
-                      <p className="text-[10px] text-text2 mt-0.5">
-                        {analysis?.current_role ?? ''}
-                      </p>
-                    </td>
-                    <td className="px-3 py-2.5 font-mono font-semibold text-[13px] text-[var(--purple)] text-center">
-                      {pTotal || '—'}/{max}
-                    </td>
-                    <td className="px-3 py-2.5 font-mono font-semibold text-[13px] text-[var(--blue)] text-center">
-                      {oTotal || '—'}/{max}
-                    </td>
-                    <td className="px-3 py-2.5 font-mono font-bold text-[14px] text-[var(--green)] text-center">
-                      {combined || '—'}/{max}
-                    </td>
-                    <td className="px-3 py-2.5 text-center">
-                      {state.verdict && (
-                        <span
-                          className="text-[11px] font-semibold"
-                          style={{ color: VERDICT_COLORS[state.verdict] }}
-                        >
-                          {VERDICT_LABELS[state.verdict]}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-3 py-2.5 text-[10px] text-text2 max-w-[180px]">
-                      {state.peter_comment && <span>P: {state.peter_comment.slice(0, 50)}</span>}
-                      {state.peter_comment && state.ossama_comment && <br />}
-                      {state.ossama_comment && <span>O: {state.ossama_comment.slice(0, 50)}</span>}
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
+                  return (
+                    <tr
+                      key={candidate.id}
+                      className="border-t border-border hover:bg-surface2 transition-colors"
+                    >
+                      <td className="px-3 py-2.5">
+                        <p className="font-semibold text-[13px] text-text">{candidate.name}</p>
+                        <p className="text-[10px] text-text2 mt-0.5">
+                          {analysis?.current_role ?? ''}
+                        </p>
+                      </td>
+                      <td className="px-3 py-2.5 font-mono font-semibold text-[13px] text-[var(--purple)] text-center">
+                        {pTotal || '—'}/{max}
+                      </td>
+                      <td className="px-3 py-2.5 font-mono font-semibold text-[13px] text-[var(--blue)] text-center">
+                        {oTotal || '—'}/{max}
+                      </td>
+                      <td className="px-3 py-2.5 font-mono font-bold text-[14px] text-[var(--green)] text-center">
+                        {combined || '—'}/{max}
+                      </td>
+                      <td className="px-3 py-2.5 text-center">
+                        {state.verdict && (
+                          <span
+                            className="text-[11px] font-semibold"
+                            style={{ color: VERDICT_COLORS[state.verdict] }}
+                          >
+                            {VERDICT_LABELS[state.verdict]}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2.5 text-[10px] text-text2 max-w-[180px]">
+                        {state.peter_comment && <span>P: {state.peter_comment.slice(0, 50)}</span>}
+                        {state.peter_comment && state.ossama_comment && <br />}
+                        {state.ossama_comment && (
+                          <span>O: {state.ossama_comment.slice(0, 50)}</span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )
