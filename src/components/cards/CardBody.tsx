@@ -8,10 +8,9 @@ interface CardBodyProps {
 
 export function CardBody({ candidate }: CardBodyProps) {
   const rows = [
-    { label: 'Slot', value: candidate.slot },
-    { label: 'Type', value: candidate.type },
-    { label: 'Salary', value: candidate.salary },
-    { label: 'Notice', value: candidate.notice },
+    { label: 'Interview Slot', value: candidate.slot },
+    { label: 'Salary Expectation', value: candidate.salary },
+    { label: 'Notice Period', value: candidate.notice },
   ]
 
   return (

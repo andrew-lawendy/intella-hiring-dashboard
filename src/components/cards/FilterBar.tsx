@@ -1,22 +1,45 @@
-type FilterType = 'all' | 'shortlisted' | 'pending' | 'rejected'
+import type { FilterType } from '@/lib/filters'
 
 interface FilterBarProps {
   filter: FilterType
   search: string
+  total: number
   onFilterChange: (f: FilterType) => void
   onSearchChange: (s: string) => void
 }
 
 const FILTERS: { value: FilterType; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'shortlisted', label: 'Shortlisted' },
+  { value: 'confirmed', label: 'Confirmed' },
   { value: 'pending', label: 'Pending' },
+  { value: 'shortlisted', label: 'Shortlisted' },
   { value: 'rejected', label: 'Rejected' },
+  { value: 'sun', label: 'Sunday' },
+  { value: 'mon', label: 'Monday' },
+  { value: 'tue', label: 'Tuesday' },
+  { value: 'wed', label: 'Wednesday' },
+  { value: 'thu', label: 'Thursday' },
 ]
 
-export function FilterBar({ filter, search, onFilterChange, onSearchChange }: FilterBarProps) {
+export function FilterBar({
+  filter,
+  search,
+  total,
+  onFilterChange,
+  onSearchChange,
+}: FilterBarProps) {
   return (
-    <div className="flex gap-1.5 mb-4 flex-wrap items-center">
+    <div className="flex gap-1.5 mb-[18px] flex-wrap items-center">
+      <button
+        onClick={() => onFilterChange('all')}
+        className={[
+          'px-3 py-1.5 rounded-full text-xs font-medium font-sans border transition-all duration-150 cursor-pointer',
+          filter === 'all'
+            ? 'bg-text text-bg border-text'
+            : 'bg-surface border-border text-text2 hover:border-border-strong hover:text-text',
+        ].join(' ')}
+      >
+        All ({total})
+      </button>
       {FILTERS.map((f) => (
         <button
           key={f.value}
@@ -34,7 +57,7 @@ export function FilterBar({ filter, search, onFilterChange, onSearchChange }: Fi
       <div className="ml-auto relative">
         <input
           type="search"
-          placeholder="Search candidates..."
+          placeholder="Search name, email, notes..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           className="bg-surface border border-border rounded-full pl-8 pr-4 py-1.5 text-[12.5px] font-sans text-text w-64 outline-none focus:border-text transition-colors placeholder:text-text3"

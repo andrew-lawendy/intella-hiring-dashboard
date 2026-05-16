@@ -45,6 +45,13 @@ export function Header({ onShortlist, onExportReport, onExportExcel, onPrint }: 
       </div>
 
       <div className="flex items-center gap-1.5 flex-wrap">
+        <div
+          className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-[11.5px] font-medium text-text2 mr-1"
+          style={{ background: 'var(--surface)' }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
+          Senior PM · May 17–21
+        </div>
         <button
           onClick={onShortlist}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 border"

@@ -32,8 +32,11 @@ interface InterviewTimelineProps {
   stateMap: StateMap
 }
 
-export function InterviewTimeline({ candidates, stateMap: _stateMap }: InterviewTimelineProps) {
+export function InterviewTimeline({ candidates, stateMap }: InterviewTimelineProps) {
   const counts = DAYS.map((day) => candidates.filter((c) => c.day === day).length)
+  const confirmedCounts = DAYS.map(
+    (day) => candidates.filter((c) => c.day === day && stateMap[c.id]?.confirmed === true).length,
+  )
   const maxCount = Math.max(...counts, 1)
   const today = getTodayLabel()
   const todayIdx = DAYS.indexOf(today)
@@ -67,6 +70,9 @@ export function InterviewTimeline({ candidates, stateMap: _stateMap }: Interview
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
               {count}
+            </span>
+            <span className="text-[10.5px] text-text3">
+              {confirmedCounts[i]}/{count} confirmed
             </span>
             <div className="h-[3px] rounded-full bg-surface3 overflow-hidden mt-1">
               <div

@@ -38,6 +38,10 @@ const STATUS_BANNER: Record<string, { label: string; cls: string }> = {
     label: '✕ Rejected',
     cls: 'bg-[var(--red-bg)] text-[var(--red)] border-b border-[var(--red-line)]',
   },
+  pending: {
+    label: '— Decision Pending',
+    cls: 'bg-surface2 text-text3 border-b border-border',
+  },
 }
 
 export function CandidateCard({
@@ -63,8 +67,12 @@ export function CandidateCard({
     Object.values(state.ossama_scores as Scores).every((v) => v === 0)
 
   const bannerKey =
-    state.shortlisted === true ? 'shortlisted' : state.shortlisted === false ? 'rejected' : null
-  const banner = bannerKey ? STATUS_BANNER[bannerKey] : null
+    state.shortlisted === true
+      ? 'shortlisted'
+      : state.shortlisted === false
+        ? 'rejected'
+        : 'pending'
+  const banner = STATUS_BANNER[bannerKey]
 
   return (
     <div

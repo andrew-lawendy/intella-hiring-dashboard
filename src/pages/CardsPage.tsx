@@ -11,10 +11,10 @@ import { ShortlistComparison } from '@/components/cards/ShortlistComparison'
 import { ProfileModal } from '@/components/profile/ProfileModal'
 import { EmailDraftModal } from '@/components/profile/EmailDraftModal'
 import { filterCandidates } from '@/lib/filters'
+import type { FilterType } from '@/lib/filters'
 import type { Scores } from '@/lib/scoring'
 import type { Database } from '@/lib/database.types'
 
-type FilterType = 'all' | 'shortlisted' | 'pending' | 'rejected'
 type State = Database['public']['Tables']['interview_state']['Row']
 
 function resolveUser(email: string | undefined): 'peter' | 'ossama' {
@@ -61,6 +61,7 @@ export function CardsPage() {
         shortlisted: s.shortlisted,
         verdict: s.verdict,
         interview_status: s.interview_status,
+        confirmed: s.confirmed,
       },
     ]),
   )
@@ -73,12 +74,13 @@ export function CardsPage() {
       </h1>
       <p className="text-[13.5px] text-text2 mb-6">Senior PM · May 17–21, 2026</p>
 
-      <SummaryBar total={candidates.length} stateMap={stateMap} />
       <InterviewTimeline candidates={candidates} stateMap={stateMap} />
+      <SummaryBar total={candidates.length} stateMap={stateMap} />
       <ActionQueue candidates={candidates} stateMap={stateMap} />
       <FilterBar
         filter={filter}
         search={search}
+        total={candidates.length}
         onFilterChange={setFilter}
         onSearchChange={setSearch}
       />

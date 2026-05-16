@@ -58,7 +58,7 @@ export function ApiKeyBanner({ onKeyChange }: ApiKeyBannerProps) {
       className="rounded-[var(--radius)] border p-4 mb-5"
       style={{
         background: active ? 'var(--green-bg)' : 'var(--amber-bg)',
-        borderColor: active ? 'var(--green)' : 'var(--amber)',
+        borderColor: active ? 'var(--green-line)' : 'var(--amber-line)',
       }}
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-text3 mb-3">
