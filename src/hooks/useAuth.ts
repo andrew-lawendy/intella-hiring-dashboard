@@ -25,15 +25,15 @@ export function useAuth() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signInWithGoogle = () =>
-    supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+  const signInWithEmail = (email: string) =>
+    supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
 
   const signOut = () => supabase.auth.signOut()
 
   const isIntellaUser = user?.email?.endsWith('@intellaworld.com') ?? false
 
-  return { session, user, loading, isIntellaUser, signInWithGoogle, signOut }
+  return { session, user, loading, isIntellaUser, signInWithEmail, signOut }
 }

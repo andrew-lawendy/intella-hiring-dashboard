@@ -1,55 +1,162 @@
+import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { Button } from '@/components/ui/button'
 
 interface LoginPageProps {
   error?: string
 }
 
 export function LoginPage({ error }: LoginPageProps) {
-  const { signInWithGoogle } = useAuth()
+  const { signInWithEmail } = useAuth()
+  const [email, setEmail] = useState('')
+  const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+
+  const handleMagicLink = async () => {
+    if (!email.endsWith('@intellaworld.com')) {
+      setEmailError('Must be an @intellaworld.com email address')
+      return
+    }
+    setSending(true)
+    setEmailError(null)
+    const { error: err } = await signInWithEmail(email)
+    setSending(false)
+    if (err) {
+      setEmailError(err.message)
+    } else {
+      setSent(true)
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-6">
-      <div className="w-full max-w-sm bg-surface border border-border rounded-[var(--radius)] p-8 shadow-[var(--shadow-md)]">
-        <div className="flex items-center gap-3 mb-8">
+    <div className="min-h-screen bg-bg flex">
+      {/* Left — brand panel */}
+      <div
+        className="hidden lg:flex flex-col justify-between w-[480px] flex-shrink-0 p-12"
+        style={{
+          background: 'radial-gradient(140% 120% at 0% 0%, #4c44c4, #1a1679 60%, #0f0e3d)',
+        }}
+      >
+        <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-[7px] flex-shrink-0"
+            className="w-9 h-9 rounded-[10px] flex-shrink-0"
             style={{
-              background: 'radial-gradient(120% 100% at 0% 0%, #4c44c4, #2a2479 70%)',
-              boxShadow: '0 1px 0 rgba(255,255,255,.35) inset, 0 4px 12px -4px rgba(42,36,121,.5)',
+              background: 'rgba(255,255,255,0.15)',
+              boxShadow: '0 1px 0 rgba(255,255,255,.25) inset',
             }}
           />
-          <div>
-            <p className="text-text font-sans font-semibold text-[17px] leading-none tracking-tight">
-              Intella
-            </p>
-            <p className="text-text3 font-sans text-[13px] mt-0.5">Interview Dashboard</p>
+          <span className="text-white font-semibold text-[18px] tracking-tight">Intella</span>
+        </div>
+
+        <div>
+          <p className="text-white/40 text-[11px] font-semibold uppercase tracking-[0.1em] mb-4">
+            May 17–21, 2026
+          </p>
+          <h1 className="text-white text-[36px] font-medium tracking-[-0.03em] leading-[1.15] mb-4">
+            Senior PM
+            <br />
+            Hiring Round
+          </h1>
+          <p className="text-white/55 text-[15px] leading-relaxed mb-10">
+            20 candidates · 5 days · 2 interviewers.
+            <br />
+            Everything you need to evaluate, compare, and decide — in one place.
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              'Candidate scorecards with feedback blinding',
+              'AI-powered debrief summaries',
+              'Excel & PDF exports',
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-white/40 flex-shrink-0" />
+                <p className="text-white/60 text-[13px]">{item}</p>
+              </div>
+            ))}
           </div>
         </div>
 
-        <h1 className="text-text font-sans font-semibold text-xl tracking-tight mb-1">Sign in</h1>
-        <p className="text-text2 font-sans text-sm mb-6">
-          Use your @intellaworld.com Google account.
-        </p>
+        <p className="text-white/25 text-[12px]">Restricted to @intellaworld.com accounts</p>
+      </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-bg border border-red-line rounded-[var(--radius-xs)] text-red text-sm">
-            {error}
+      {/* Right — sign-in form */}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-[360px]">
+          {/* Mobile logo */}
+          <div className="flex items-center gap-2.5 mb-10 lg:hidden">
+            <div
+              className="w-8 h-8 rounded-[8px]"
+              style={{
+                background: 'radial-gradient(120% 100% at 0% 0%, #4c44c4, #2a2479 70%)',
+                boxShadow: '0 1px 0 rgba(255,255,255,.35) inset',
+              }}
+            />
+            <span className="text-text font-semibold text-[17px] tracking-tight">Intella</span>
           </div>
-        )}
 
-        <Button
-          onClick={signInWithGoogle}
-          className="w-full bg-text text-bg hover:bg-text2 border-0 font-medium"
-        >
-          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-          </svg>
-          Sign in with Google
-        </Button>
+          <h2 className="text-text text-[28px] font-medium tracking-[-0.025em] mb-1">
+            Welcome back
+          </h2>
+          <p className="text-text2 text-[14px] mb-8">
+            Enter your Intella email and we'll send you a sign-in link.
+          </p>
+
+          {error && (
+            <div
+              className="mb-6 px-4 py-3 rounded-[var(--radius-sm)] text-[13px] border"
+              style={{
+                background: 'var(--red-bg)',
+                borderColor: 'var(--red-line)',
+                color: 'var(--red)',
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          {sent ? (
+            <div
+              className="px-4 py-4 rounded-[var(--radius-sm)] border text-[13px] leading-relaxed"
+              style={{
+                background: 'var(--green-bg)',
+                borderColor: 'var(--green-line)',
+                color: 'var(--green)',
+              }}
+            >
+              <p className="font-semibold mb-1">Check your email</p>
+              <p className="text-[12px] opacity-80">
+                We sent a magic link to <strong>{email}</strong>. Click it to sign in.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleMagicLink()}
+                placeholder="you@intellaworld.com"
+                className="w-full px-4 py-3 rounded-[var(--radius-sm)] border border-border bg-surface text-text text-[14px] font-sans outline-none focus:border-text transition-colors placeholder:text-text3"
+              />
+              {emailError && (
+                <p className="text-[12px]" style={{ color: 'var(--red)' }}>
+                  {emailError}
+                </p>
+              )}
+              <button
+                onClick={handleMagicLink}
+                disabled={sending || !email}
+                className="w-full px-5 py-3 rounded-[var(--radius-sm)] bg-text text-bg text-[14px] font-medium font-sans cursor-pointer hover:opacity-85 disabled:opacity-40 transition-opacity border-none"
+              >
+                {sending ? 'Sending…' : 'Send magic link'}
+              </button>
+            </div>
+          )}
+
+          <p className="text-text3 text-[12px] text-center mt-6">
+            Access restricted to @intellaworld.com accounts
+          </p>
+        </div>
       </div>
     </div>
   )
