@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { buildCompareRows } from '@/lib/compare'
+import { Spinner } from '@/components/ui/spinner'
 
 export function ComparePage() {
   const { data, loading } = useCandidates()
@@ -12,7 +13,7 @@ export function ComparePage() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
 

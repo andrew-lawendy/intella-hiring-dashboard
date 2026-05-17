@@ -2,6 +2,7 @@ import { useCandidates } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
 import { totalScore, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
+import { Spinner } from '@/components/ui/spinner'
 
 interface ShortlistComparisonProps {
   candidateIds: string[]
@@ -67,7 +68,7 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
 
         {loading ? (
           <div className="flex justify-center py-10">
-            <div className="w-6 h-6 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+            <Spinner className="size-6" />
           </div>
         ) : (
           <div className="overflow-x-auto p-4">

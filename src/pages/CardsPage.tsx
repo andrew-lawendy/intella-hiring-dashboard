@@ -12,6 +12,7 @@ import { ShortlistComparison } from '@/components/cards/ShortlistComparison'
 import { ProfileModal } from '@/components/profile/ProfileModal'
 import { EmailDraftModal } from '@/components/profile/EmailDraftModal'
 import { Pagination } from '@/components/ui/Pagination'
+import { Spinner } from '@/components/ui/spinner'
 import { filterCandidates } from '@/lib/filters'
 import type { FilterType } from '@/lib/filters'
 import type { Scores } from '@/lib/scoring'
@@ -103,7 +104,7 @@ export function CardsPage() {
   if (metaLoading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
   }
@@ -144,7 +145,7 @@ export function CardsPage() {
         <div className="text-center py-20 text-text3 text-sm">No candidates match your filter.</div>
       ) : cardsLoading ? (
         <div className="flex justify-center py-20">
-          <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+          <Spinner className="size-7" />
         </div>
       ) : (
         <>

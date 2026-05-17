@@ -1,21 +1,26 @@
 import { useState } from 'react'
+import { TriangleAlertIcon, ClockIcon, XIcon } from 'lucide-react'
+import { Alert } from '@/components/ui/alert'
 
-interface Alert {
+interface AlertItem {
   id: string
   message: string
-  variant: 'amber' | 'blue'
+  variant: 'warning' | 'info'
+  icon: React.ReactNode
 }
 
-const INITIAL_ALERTS: Alert[] = [
+const INITIAL_ALERTS: AlertItem[] = [
   {
     id: 'george',
-    message: '⚠ George Fekry has no interview slot assigned yet.',
-    variant: 'amber',
+    message: 'George Fekry has no interview slot assigned yet.',
+    variant: 'warning',
+    icon: <TriangleAlertIcon className="size-4" />,
   },
   {
     id: 'aliaa',
-    message: '🕒 Aliaa Elfeky confirmation still pending (Tue 19 May 16:00)',
-    variant: 'blue',
+    message: 'Aliaa Elfeky confirmation still pending (Tue 19 May 16:00)',
+    variant: 'info',
+    icon: <ClockIcon className="size-4" />,
   },
 ]
 
@@ -27,25 +32,20 @@ export function AlertBanners() {
 
   return (
     <div className="px-6 pt-3 flex flex-col gap-1.5">
-      {visible.map((alert) => (
-        <div
-          key={alert.id}
-          className="flex items-center justify-between px-3.5 py-2 rounded-[var(--radius-sm)] border text-[12.5px] font-sans"
-          style={{
-            background: alert.variant === 'amber' ? 'var(--amber-bg)' : 'var(--blue-bg)',
-            borderColor: alert.variant === 'amber' ? 'var(--amber-line)' : 'var(--blue-line)',
-            color: alert.variant === 'amber' ? 'var(--amber)' : 'var(--blue)',
-          }}
-        >
-          <span>{alert.message}</span>
-          <button
-            onClick={() => setDismissed((prev) => new Set([...prev, alert.id]))}
-            className="ml-3 opacity-60 hover:opacity-100 cursor-pointer bg-transparent border-none text-inherit text-sm"
-            aria-label="Dismiss"
-          >
-            ✕
-          </button>
-        </div>
+      {visible.map((item) => (
+        <Alert key={item.id} variant={item.variant} className="py-2 text-[12.5px]">
+          {item.icon}
+          <div className="flex items-center justify-between col-start-2">
+            <span>{item.message}</span>
+            <button
+              onClick={() => setDismissed((prev) => new Set([...prev, item.id]))}
+              className="ml-3 opacity-60 hover:opacity-100 cursor-pointer transition-opacity"
+              aria-label="Dismiss"
+            >
+              <XIcon className="size-3.5" />
+            </button>
+          </div>
+        </Alert>
       ))}
     </div>
   )

@@ -1,5 +1,6 @@
 import { useCandidates } from '@/hooks/useCandidates'
 import { parseSalaryToEGP, sortBySalary } from '@/lib/salary'
+import { Spinner } from '@/components/ui/spinner'
 
 export function SalaryPage() {
   const { data, loading } = useCandidates()
@@ -7,7 +8,7 @@ export function SalaryPage() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
 

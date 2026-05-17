@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useInterviewQuestions } from '@/hooks/useInterviewQuestions'
+import { Spinner } from '@/components/ui/spinner'
 
 export function QuestionsPage() {
   const { questions, loading } = useInterviewQuestions()
@@ -8,7 +9,7 @@ export function QuestionsPage() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
 

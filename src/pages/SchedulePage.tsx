@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { Pagination } from '@/components/ui/Pagination'
+import { Spinner } from '@/components/ui/spinner'
 
 const PAGE_SIZE = 20
 
@@ -28,7 +29,7 @@ export function SchedulePage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
   }

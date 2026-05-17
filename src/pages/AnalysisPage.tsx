@@ -6,6 +6,7 @@ import { HorizontalBar } from '@/components/analysis/HorizontalBar'
 import { ScatterPlot } from '@/components/analysis/ScatterPlot'
 import { RankingTable } from '@/components/analysis/RankingTable'
 import { InterviewerAccountability } from '@/components/analysis/InterviewerAccountability'
+import { Spinner } from '@/components/ui/spinner'
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
@@ -25,7 +26,7 @@ export function AnalysisPage() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
 

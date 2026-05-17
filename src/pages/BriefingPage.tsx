@@ -3,6 +3,7 @@ import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { BriefCard } from '@/components/briefing/BriefCard'
 import { printBriefCard } from '@/lib/exports'
+import { Spinner } from '@/components/ui/spinner'
 
 const DAYS = [
   'All',
@@ -21,7 +22,7 @@ export function BriefingPage() {
   if (loading)
     return (
       <div className="flex justify-center py-20">
-        <div className="w-7 h-7 border-2 border-surface3 border-t-text rounded-full animate-spin" />
+        <Spinner className="size-7" />
       </div>
     )
 
