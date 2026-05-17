@@ -44,23 +44,25 @@ export function useCreateCandidate() {
 
   return useMutation({
     mutationFn: async (data: CreateCandidateInput) => {
-      const id = crypto.randomUUID()
       const slot = data.slotDate && data.slotTime ? `${data.slotDate}T${data.slotTime}` : null
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pg = supabase as any
-      const { error: e1 } = await pg.from('candidates').insert({
-        id,
-        name: data.name.trim(),
-        email: data.email.trim().toLowerCase(),
-        type: data.interviewType,
-        salary: data.salary.trim() || null,
-        notice: data.notice.trim() || null,
-        slot,
-        day: data.slotDate ? getDayName(data.slotDate) : null,
-        time: data.slotTime || null,
-      })
-      if (e1) throw new Error(e1.message)
+      const { data: inserted, error: e1 } = await pg
+        .from('candidates')
+        .insert({
+          name: data.name.trim(),
+          email: data.email.trim().toLowerCase(),
+          type: data.interviewType,
+          salary: data.salary.trim() || null,
+          notice: data.notice.trim() || null,
+          slot,
+          day: data.slotDate ? getDayName(data.slotDate) : null,
+          time: data.slotTime || null,
+        })
+        .select('id')
+      if (e1 || !inserted?.[0]?.id) throw new Error(e1?.message ?? 'Failed to create candidate')
+      const id: string = inserted[0].id
 
       const { error: e2 } = await pg.from('candidate_profiles').insert({
         candidate_id: id,
@@ -113,7 +115,6 @@ export function useCreateCandidate() {
           'Salary discussed': false,
           'Notice period confirmed': false,
         },
-        photo_url: null,
       })
       if (e4) throw new Error(e4.message)
 
