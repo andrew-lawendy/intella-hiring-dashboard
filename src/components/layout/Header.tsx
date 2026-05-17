@@ -6,13 +6,20 @@ import { usePipelineStats } from '@/hooks/usePipelineStats'
 import { Button } from '@/components/ui/button'
 
 interface HeaderProps {
+  onAddCandidate?: () => void
   onShortlist?: () => void
   onExportReport?: () => void
   onExportExcel?: () => void
   onPrint?: () => void
 }
 
-export function Header({ onShortlist, onExportReport, onExportExcel, onPrint }: HeaderProps) {
+export function Header({
+  onAddCandidate,
+  onShortlist,
+  onExportReport,
+  onExportExcel,
+  onPrint,
+}: HeaderProps) {
   const { signOut } = useAuth()
   const stats = usePipelineStats()
 
@@ -51,6 +58,9 @@ export function Header({ onShortlist, onExportReport, onExportExcel, onPrint }: 
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
           Senior PM · May 17–21
         </div>
+        <Button size="sm" variant="default" onClick={onAddCandidate}>
+          + Add candidate
+        </Button>
         <Button
           size="sm"
           variant="outline"
