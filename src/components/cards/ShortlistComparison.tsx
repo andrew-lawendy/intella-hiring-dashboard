@@ -31,7 +31,7 @@ interface ShortlistComparisonProps {
 
 export function ShortlistComparison({ candidateIds, stateMap, onClose }: ShortlistComparisonProps) {
   const { data, loading } = useCandidates({ ids: candidateIds })
-  const interviewers = useInterviewerNames()
+  const getInterviewerName = useInterviewerNames()
   const max = maxScore()
 
   if (!candidateIds.length) {
@@ -75,8 +75,8 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                 <TableRow className="bg-muted">
                   {[
                     'Candidate',
-                    interviewers.peter,
-                    interviewers.ossama,
+                    getInterviewerName('peter'),
+                    getInterviewerName('ossama'),
                     'Combined',
                     'Verdict',
                     'Notes',
@@ -141,13 +141,13 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                       <TableCell className="px-3 py-2.5 text-[10px] text-muted-foreground max-w-[180px]">
                         {state.peter_comment && (
                           <span>
-                            {interviewers.peter}: {state.peter_comment.slice(0, 50)}
+                            {getInterviewerName('peter')}: {state.peter_comment.slice(0, 50)}
                           </span>
                         )}
                         {state.peter_comment && state.ossama_comment && <br />}
                         {state.ossama_comment && (
                           <span>
-                            {interviewers.ossama}: {state.ossama_comment.slice(0, 50)}
+                            {getInterviewerName('ossama')}: {state.ossama_comment.slice(0, 50)}
                           </span>
                         )}
                       </TableCell>

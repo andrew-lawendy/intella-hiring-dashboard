@@ -48,12 +48,13 @@ export function CardsPage() {
   } = useCandidateState()
   const { user } = useAuth()
   const { data: myProfile } = useProfile(user?.id)
-  const interviewers = useInterviewerNames()
+  const getInterviewerName = useInterviewerNames()
 
   // Slot is the DB column selector — only known here, never passed to children
   const mySlot = myProfile?.scorer_slot ?? 'ossama'
-  const myName = interviewers[mySlot as keyof typeof interviewers] ?? 'You'
-  const coName = interviewers[mySlot === 'peter' ? 'ossama' : 'peter'] ?? 'Co-scorer'
+  const coSlot = mySlot === 'peter' ? 'ossama' : 'peter'
+  const myName = getInterviewerName(mySlot)
+  const coName = getInterviewerName(coSlot)
   const { data: round } = useHiringRound()
   const dayMap = useMemo(
     () => (round ? generateDayMap(round.start_date, round.end_date) : {}),

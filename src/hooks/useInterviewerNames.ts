@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 
-export interface InterviewerNames {
-  peter: string
-  ossama: string
+const FALLBACKS: Record<string, string> = {
+  peter: 'Interviewer A',
+  ossama: 'Interviewer B',
 }
 
 function fullName(first: string | null, last: string | null, fallback: string): string {
@@ -11,7 +11,7 @@ function fullName(first: string | null, last: string | null, fallback: string): 
   return name || fallback
 }
 
-export function useInterviewerNames(): InterviewerNames {
+export function useInterviewerNames() {
   const { data } = useQuery({
     queryKey: ['interviewer-names'],
     queryFn: async () => {
@@ -30,11 +30,16 @@ export function useInterviewerNames(): InterviewerNames {
     staleTime: 5 * 60 * 1000,
   })
 
-  const peter = data?.find((r) => r.scorer_slot === 'peter')
-  const ossama = data?.find((r) => r.scorer_slot === 'ossama')
-
-  return {
-    peter: fullName(peter?.first_name ?? null, peter?.last_name ?? null, 'Peter'),
-    ossama: fullName(ossama?.first_name ?? null, ossama?.last_name ?? null, 'Ossama'),
+  const nameBySlot: Record<string, string> = { ...FALLBACKS }
+  for (const row of data ?? []) {
+    if (row.scorer_slot) {
+      nameBySlot[row.scorer_slot] = fullName(
+        row.first_name,
+        row.last_name,
+        FALLBACKS[row.scorer_slot] ?? 'Interviewer',
+      )
+    }
   }
+
+  return (slot: string): string => nameBySlot[slot] ?? 'Interviewer'
 }

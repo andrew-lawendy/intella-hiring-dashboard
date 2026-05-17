@@ -15,7 +15,7 @@ type RankingRow = RankingEntry & { rank: number; name: string }
 
 export function RankingTable({ entries, nameMap }: RankingTableProps) {
   const max = maxScore()
-  const interviewers = useInterviewerNames()
+  const getInterviewerName = useInterviewerNames()
 
   const rows = useMemo<RankingRow[]>(
     () =>
@@ -55,7 +55,7 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
       },
       {
         id: 'scorer-a',
-        header: interviewers.peter,
+        header: getInterviewerName('peter'),
         size: 100,
         cell: ({ row }) => (
           <span className="font-mono text-[var(--purple)]">
@@ -65,7 +65,7 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
       },
       {
         id: 'scorer-b',
-        header: interviewers.ossama,
+        header: getInterviewerName('ossama'),
         size: 100,
         cell: ({ row }) => (
           <span className="font-mono text-[var(--blue)]">
@@ -93,7 +93,7 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
           ) : null,
       },
     ],
-    [max, interviewers],
+    [max, getInterviewerName],
   )
 
   return <DataTable columns={columns} data={rows} sortable pageSize={rows.length || 1} />
