@@ -3,16 +3,9 @@ import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useHiringRound, generateDayMap } from '@/hooks/useHiringRound'
 import { useCandidates } from '@/hooks/useCandidates'
-import {
-  useCandidateState,
-  getSlotScores,
-  getCoSlotScores,
-  getSlotComment,
-  getCoSlotComment,
-} from '@/hooks/useCandidateState'
+import { useCandidateState, getSlotScores, getCoSlotScores } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
-import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { SummaryBar } from '@/components/cards/SummaryBar'
 import { InterviewTimeline } from '@/components/cards/InterviewTimeline'
 import { ActionQueue } from '@/components/cards/ActionQueue'
@@ -26,35 +19,16 @@ import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
 import { filterCandidates } from '@/lib/filters'
 import type { FilterType } from '@/lib/filters'
-import type { Scores } from '@/lib/scoring'
-import type { Database } from '@/lib/database.types'
-
-type State = Database['public']['Tables']['interview_state']['Row']
-
 const PAGE_SIZE = 24
 
 export function CardsPage() {
   const { candidates: allMeta, loading: metaLoading } = useCandidateMeta()
-  const {
-    stateMap,
-    updateState,
-    setVerdict,
-    setInterviewStatus,
-    setShortlisted,
-    setConfirmed,
-    setScoresBySlot,
-    setCommentBySlot,
-    setChecklist,
-  } = useCandidateState()
+  const { stateMap, updateState, setShortlisted, setConfirmed } = useCandidateState()
   const { user } = useAuth()
   const { data: myProfile } = useProfile(user?.id)
-  const getInterviewerName = useInterviewerNames()
 
   // Slot is the DB column selector — only known here, never passed to children
   const mySlot = myProfile?.scorer_slot ?? 'ossama'
-  const coSlot = mySlot === 'peter' ? 'ossama' : 'peter'
-  const myName = getInterviewerName(mySlot)
-  const coName = getInterviewerName(coSlot)
   const { data: round } = useHiringRound()
   const dayMap = useMemo(
     () => (round ? generateDayMap(round.start_date, round.end_date) : {}),
@@ -116,11 +90,19 @@ export function CardsPage() {
   // Fetch full data (profile + analysis) for current page only
   const { data: pageData, loading: cardsLoading } = useCandidates({ ids: pageIds })
 
-  // Profile and email modals only open from cards on the current page
+  // Profile modal — navigate across all filtered candidates
+  const profileIndex = profileId ? filteredMeta.findIndex((m) => m.id === profileId) : -1
   const profileData = profileId
     ? (pageData.find((d) => d.candidate.id === profileId) ?? null)
     : null
   const emailData = emailId ? (pageData.find((d) => d.candidate.id === emailId) ?? null) : null
+
+  function navigateProfile(dir: 1 | -1) {
+    if (profileIndex === -1) return
+    const nextIndex = profileIndex + dir
+    if (nextIndex < 0 || nextIndex >= filteredMeta.length) return
+    setProfileId(filteredMeta[nextIndex].id)
+  }
 
   if (metaLoading) {
     return (
@@ -182,34 +164,18 @@ export function CardsPage() {
                   key={candidate.id}
                   candidate={candidate}
                   state={state}
-                  myName={myName}
-                  coName={coName}
                   myScores={getSlotScores(state, mySlot)}
                   coScores={getCoSlotScores(state, mySlot)}
-                  myComment={getSlotComment(state, mySlot)}
-                  coComment={getCoSlotComment(state, mySlot)}
-                  scoreCategories={round?.score_categories}
                   checklistItems={round?.checklist_items}
                   onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
-                  onStatusChange={(s: State['interview_status']) =>
-                    setInterviewStatus(candidate.id, s)
-                  }
-                  onVerdictChange={(v: NonNullable<State['verdict']>) =>
-                    setVerdict(candidate.id, v)
-                  }
                   onShortlist={() =>
                     setShortlisted(candidate.id, state.shortlisted === true ? null : true)
                   }
                   onReject={() =>
                     setShortlisted(candidate.id, state.shortlisted === false ? null : false)
                   }
-                  onMyScoreChange={(scores: Scores) =>
-                    setScoresBySlot(candidate.id, mySlot, scores)
-                  }
-                  onMyCommentSave={(comment) => setCommentBySlot(candidate.id, mySlot, comment)}
-                  onChecklistChange={(checklist) => setChecklist(candidate.id, checklist)}
+                  onCVDownload={() => setEmailId(candidate.id)}
                   onOpenProfile={() => setProfileId(candidate.id)}
-                  onEmailDraft={() => setEmailId(candidate.id)}
                 />
               )
             })}
@@ -238,6 +204,10 @@ export function CardsPage() {
           state={stateMap[profileData.candidate.id]}
           onClose={() => setProfileId(null)}
           onPhotoSave={(url) => updateState(profileData.candidate.id, { photo_url: url })}
+          currentIndex={profileIndex}
+          total={filteredMeta.length}
+          onPrev={() => navigateProfile(-1)}
+          onNext={() => navigateProfile(1)}
         />
       )}
 

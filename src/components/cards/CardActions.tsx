@@ -2,27 +2,26 @@ import { Button } from '@/components/ui/button'
 
 interface CardActionsProps {
   isShortlisted: boolean | null
+  isConfirmed: boolean
   onShortlist: () => void
   onReject: () => void
-  onViewProfile: () => void
-  onEmailDraft: () => void
+  onCVDownload: () => void
+  onConfirmToggle: () => void
   auditLine?: string
 }
 
 export function CardActions({
   isShortlisted,
+  isConfirmed,
   onShortlist,
   onReject,
-  onViewProfile,
-  onEmailDraft,
+  onCVDownload,
+  onConfirmToggle,
   auditLine,
 }: CardActionsProps) {
   return (
     <div className="px-4 py-2.5 border-t border-border bg-surface2 flex gap-1.5 flex-wrap items-center">
-      <Button size="sm" variant="default" onClick={onViewProfile}>
-        📄 View Profile
-      </Button>
-      <Button size="sm" variant="outline" onClick={onEmailDraft}>
+      <Button size="sm" variant="outline" onClick={onCVDownload}>
         ⬇ CV
       </Button>
       <Button
@@ -38,6 +37,9 @@ export function CardActions({
         onClick={onReject}
       >
         ✕ Reject
+      </Button>
+      <Button size="sm" variant={isConfirmed ? 'success' : 'outline'} onClick={onConfirmToggle}>
+        {isConfirmed ? '✓ Confirmed' : 'Confirm'}
       </Button>
       {auditLine && <span className="ml-auto text-[10px] text-text3 truncate">{auditLine}</span>}
     </div>
