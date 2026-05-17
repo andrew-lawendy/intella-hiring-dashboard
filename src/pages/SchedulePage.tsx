@@ -11,6 +11,13 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const PAGE_SIZE = 20
 
@@ -109,20 +116,24 @@ export function SchedulePage() {
                     </button>
                   </TableCell>
                   <TableCell className="px-4 py-3">
-                    <select
+                    <Select
                       value={state.interview_status}
-                      onChange={(e) =>
+                      onValueChange={(val) =>
                         setInterviewStatus(
                           candidate.id,
-                          e.target.value as 'pending' | 'in-progress' | 'completed',
+                          val as 'pending' | 'in-progress' | 'completed',
                         )
                       }
-                      className="text-[11.5px] font-sans px-2.5 py-1 rounded-[var(--radius-xs)] border border-border bg-surface text-text cursor-pointer min-w-[120px] outline-none focus:border-text"
                     >
-                      <option value="pending">Not Started</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="completed">Done</option>
-                    </select>
+                      <SelectTrigger size="sm" className="min-w-[120px] text-[11.5px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Not Started</SelectItem>
+                        <SelectItem value="in-progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Done</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                 </TableRow>
               )

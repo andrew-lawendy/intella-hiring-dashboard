@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 interface CommentsProps {
   candidateId: string
@@ -60,11 +61,11 @@ export function Comments({
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: scorer.color }} />
             {scorer.label}
           </p>
-          <textarea
+          <Textarea
             value={scorer.value}
             onChange={(e) => scorer.onChange(e.target.value)}
             placeholder={`${scorer.label}'s notes...`}
-            className="w-full font-sans text-xs text-text bg-surface2 border border-border rounded-[var(--radius-xs)] px-2.5 py-1.5 resize-y min-h-[54px] outline-none focus:border-text focus:bg-surface transition-colors"
+            className="min-h-[54px] text-xs resize-y"
           />
           <Button size="xs" onClick={() => handleSave(scorer.key)} className="mt-1.5">
             Save
