@@ -3,9 +3,16 @@ import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useHiringRound, generateDayMap } from '@/hooks/useHiringRound'
 import { useCandidates } from '@/hooks/useCandidates'
-import { useCandidateState, getSlotScores, getCoSlotScores } from '@/hooks/useCandidateState'
+import {
+  useCandidateState,
+  getSlotScores,
+  getCoSlotScores,
+  getSlotComment,
+  getCoSlotComment,
+} from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { SummaryBar } from '@/components/cards/SummaryBar'
 import { InterviewTimeline } from '@/components/cards/InterviewTimeline'
 import { ActionQueue } from '@/components/cards/ActionQueue'
@@ -23,12 +30,25 @@ const PAGE_SIZE = 24
 
 export function CardsPage() {
   const { candidates: allMeta, loading: metaLoading } = useCandidateMeta()
-  const { stateMap, updateState, setShortlisted, setConfirmed } = useCandidateState()
+  const {
+    stateMap,
+    updateState,
+    setShortlisted,
+    setConfirmed,
+    setScoresBySlot,
+    setCommentBySlot,
+    setChecklist,
+    setVerdict,
+    setInterviewStatus,
+  } = useCandidateState()
   const { user } = useAuth()
   const { data: myProfile } = useProfile(user?.id)
 
-  // Slot is the DB column selector — only known here, never passed to children
+  const getInterviewerName = useInterviewerNames()
   const mySlot = myProfile?.scorer_slot ?? 'ossama'
+  const coSlot = mySlot === 'peter' ? 'ossama' : 'peter'
+  const myName = getInterviewerName(mySlot)
+  const coName = getInterviewerName(coSlot)
   const { data: round } = useHiringRound()
   const dayMap = useMemo(
     () => (round ? generateDayMap(round.start_date, round.end_date) : {}),
@@ -208,6 +228,19 @@ export function CardsPage() {
           total={filteredMeta.length}
           onPrev={() => navigateProfile(-1)}
           onNext={() => navigateProfile(1)}
+          myName={myName}
+          coName={coName}
+          myScores={getSlotScores(stateMap[profileData.candidate.id], mySlot)}
+          coScores={getCoSlotScores(stateMap[profileData.candidate.id], mySlot)}
+          myComment={getSlotComment(stateMap[profileData.candidate.id], mySlot)}
+          coComment={getCoSlotComment(stateMap[profileData.candidate.id], mySlot)}
+          scoreCategories={round?.score_categories}
+          checklistItems={round?.checklist_items}
+          onMyScoreChange={(scores) => setScoresBySlot(profileData.candidate.id, mySlot, scores)}
+          onMyCommentSave={(comment) => setCommentBySlot(profileData.candidate.id, mySlot, comment)}
+          onChecklistChange={(checklist) => setChecklist(profileData.candidate.id, checklist)}
+          onVerdictChange={(v) => setVerdict(profileData.candidate.id, v)}
+          onStatusChange={(s) => setInterviewStatus(profileData.candidate.id, s)}
         />
       )}
 

@@ -4,8 +4,10 @@ import { ProfileCareer } from './ProfileCareer'
 import { ProfileQuestions } from './ProfileQuestions'
 import { ProfileCV } from './ProfileCV'
 import { ProfileHistory } from './ProfileHistory'
+import { ProfileScore } from './ProfileScore'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
+import type { Scores } from '@/lib/scoring'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 import { NavTabs, NavTab } from '@/components/ui/nav-tabs'
 import { XIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
@@ -23,9 +25,23 @@ interface ProfileModalProps {
   total?: number
   onPrev?: () => void
   onNext?: () => void
+  // Evaluation (optional — read-only when omitted)
+  myName?: string
+  coName?: string
+  myScores?: Scores
+  coScores?: Scores
+  myComment?: string
+  coComment?: string
+  scoreCategories?: readonly string[]
+  checklistItems?: string[]
+  onMyScoreChange?: (scores: Scores) => void
+  onMyCommentSave?: (comment: string) => void
+  onChecklistChange?: (checklist: Record<string, boolean>) => void
+  onVerdictChange?: (v: NonNullable<State['verdict']>) => void
+  onStatusChange?: (s: State['interview_status']) => void
 }
 
-const TABS = ['Overview', 'Career', 'Questions', 'CV', 'History'] as const
+const TABS = ['Overview', 'Score', 'Career', 'Questions', 'CV', 'History'] as const
 type Tab = (typeof TABS)[number]
 
 export function ProfileModal({
@@ -37,6 +53,19 @@ export function ProfileModal({
   total,
   onPrev,
   onNext,
+  myName = 'You',
+  coName = 'Co-scorer',
+  myScores = {},
+  coScores = {},
+  myComment = '',
+  coComment = '',
+  scoreCategories,
+  checklistItems,
+  onMyScoreChange,
+  onMyCommentSave,
+  onChecklistChange,
+  onVerdictChange,
+  onStatusChange,
 }: ProfileModalProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Overview')
   const { candidate, profile, analysis } = data
@@ -154,6 +183,25 @@ export function ProfileModal({
           {/* Content */}
           <div className="flex-1 overflow-y-auto">
             {activeTab === 'Overview' && <ProfileOverview profile={profile} analysis={analysis} />}
+            {activeTab === 'Score' && (
+              <ProfileScore
+                state={state}
+                candidateId={candidate.id}
+                myName={myName}
+                coName={coName}
+                myScores={myScores}
+                coScores={coScores}
+                myComment={myComment}
+                coComment={coComment}
+                scoreCategories={scoreCategories}
+                checklistItems={checklistItems}
+                onMyScoreChange={onMyScoreChange}
+                onMyCommentSave={onMyCommentSave}
+                onChecklistChange={onChecklistChange}
+                onVerdictChange={onVerdictChange}
+                onStatusChange={onStatusChange}
+              />
+            )}
             {activeTab === 'Career' && <ProfileCareer career={career} />}
             {activeTab === 'Questions' && (
               <ProfileQuestions questions={(profile.custom_questions ?? []) as string[]} />
