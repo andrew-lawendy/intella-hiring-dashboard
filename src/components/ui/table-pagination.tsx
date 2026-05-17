@@ -52,7 +52,7 @@ function PaginationBtn({
       aria-label={ariaLabel}
       aria-current={isActive ? 'page' : undefined}
       className={cn(
-        buttonVariants({ variant: isActive ? 'default' : 'outline', size: 'xs' }),
+        buttonVariants({ variant: isActive ? 'default' : 'outline', size: 'sm' }),
         'rounded-sm',
         disabled && 'pointer-events-none opacity-40',
       )}
