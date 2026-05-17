@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 
 interface CommentsProps {
   candidateId: string
@@ -20,6 +21,7 @@ export function Comments({
   const [ossama, setOssama] = useState(ossamaComment)
   const [peterSaved, setPeterSaved] = useState(false)
   const [ossamaSaved, setOssamaSaved] = useState(false)
+  const interviewers = useInterviewerNames()
 
   const handleSave = (scorer: 'peter' | 'ossama') => {
     if (scorer === 'peter') {
@@ -41,7 +43,7 @@ export function Comments({
       {[
         {
           key: 'peter' as const,
-          label: 'Peter',
+          label: interviewers.peter,
           value: peter,
           saved: peterSaved,
           color: 'var(--purple)',
@@ -49,7 +51,7 @@ export function Comments({
         },
         {
           key: 'ossama' as const,
-          label: 'Ossama',
+          label: interviewers.ossama,
           value: ossama,
           saved: ossamaSaved,
           color: 'var(--blue)',

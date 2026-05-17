@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DEFAULT_SCORE_CATEGORIES, isScoreSubmitted, sumScores, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { Button } from '@/components/ui/button'
 
 interface ScorecardProps {
@@ -58,10 +59,11 @@ export function Scorecard({
   onOssamaChange,
 }: ScorecardProps) {
   const [revealed, setRevealed] = useState(false)
+  const interviewers = useInterviewerNames()
 
   const myScores = currentUser === 'peter' ? peterScores : ossamaScores
   const coScores = currentUser === 'peter' ? ossamaScores : peterScores
-  const coName = currentUser === 'peter' ? 'Ossama' : 'Peter'
+  const coName = currentUser === 'peter' ? interviewers.ossama : interviewers.peter
   const onMyChange = currentUser === 'peter' ? onPeterChange : onOssamaChange
 
   const mySubmitted = isScoreSubmitted(myScores)
