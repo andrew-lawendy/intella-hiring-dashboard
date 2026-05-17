@@ -41,6 +41,6 @@ describe('useTheme', () => {
     const { result } = renderHook(() => useTheme())
     act(() => result.current.setTheme('light'))
     expect(store['intella_theme']).toBe('light')
-    expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 })
