@@ -6,12 +6,10 @@ const STORAGE_KEY = 'intella_theme'
 
 function applyTheme(preference: ThemePreference) {
   const root = document.documentElement
-  if (preference === 'system') {
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    root.setAttribute('data-theme', isDark ? 'dark' : 'light')
-  } else {
-    root.setAttribute('data-theme', preference)
-  }
+  const isDark =
+    preference === 'dark' ||
+    (preference === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  root.classList.toggle('dark', isDark)
 }
 
 const saved = localStorage.getItem(STORAGE_KEY) as ThemePreference | null

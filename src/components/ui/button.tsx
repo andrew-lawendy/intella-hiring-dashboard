@@ -1,20 +1,34 @@
 import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
 import { Slot } from 'radix-ui'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
+import { Spinner } from './spinner'
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-brand focus-visible:ring-[3px] focus-visible:ring-brand/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-red aria-invalid:ring-red/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  [
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer',
+    'transition-colors duration-200',
+    'disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50',
+    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0",
+    'outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+    'select-none',
+  ].join(' '),
   {
     variants: {
       variant: {
-        default: 'bg-brand text-bg hover:bg-brand/90',
-        destructive: 'bg-red text-bg hover:bg-red/90 focus-visible:ring-red/20',
-        outline: 'border border-border bg-bg shadow-xs hover:bg-surface2 hover:text-text',
-        secondary: 'bg-surface2 text-text2 hover:bg-surface2/80',
-        ghost: 'hover:bg-surface2 hover:text-text',
-        link: 'text-brand underline-offset-4 hover:underline',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80',
+        secondary: 'bg-muted text-foreground hover:bg-muted/80 active:bg-muted/60',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+        link: 'text-primary underline-offset-4 hover:underline focus-visible:underline',
+        destructive:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80 focus-visible:ring-destructive',
+        success:
+          'bg-success text-success-foreground hover:bg-success/90 active:bg-success/80 focus-visible:ring-success',
+        warning:
+          'bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80 focus-visible:ring-warning',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
@@ -34,27 +48,55 @@ const buttonVariants = cva(
   },
 )
 
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & {
+    ref?: React.Ref<HTMLButtonElement>
+    asChild?: boolean
+    loading?: boolean
+    leftIcon?: React.ReactNode
+    rightIcon?: React.ReactNode
+  }
+
 function Button({
   className,
-  variant = 'default',
-  size = 'default',
+  variant,
+  size,
   asChild = false,
+  loading = false,
+  leftIcon,
+  rightIcon,
+  disabled,
+  children,
   ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot.Root : 'button'
+  const isDisabled = disabled || loading
 
   return (
     <Comp
       data-slot="button"
-      data-variant={variant}
-      data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
+      aria-busy={loading}
       {...props}
-    />
+    >
+      {loading ? (
+        <>
+          <Spinner className="my-0" color={variant === 'default' ? 'white' : undefined} />
+          {children && <span>{children}</span>}
+        </>
+      ) : (
+        <>
+          {leftIcon && <span aria-hidden="true">{leftIcon}</span>}
+          {children}
+          {rightIcon && <span aria-hidden="true">{rightIcon}</span>}
+        </>
+      )}
+    </Comp>
   )
 }
+
+Button.displayName = 'Button'
 
 export { Button, buttonVariants }

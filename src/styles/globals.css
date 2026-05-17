@@ -1,21 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import 'tailwindcss';
+@import 'tw-animate-css';
 @import './tokens.css';
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
+  /* ─── Semantic token mapping ───────────────── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* ─── Backward-compat Tailwind utilities ───── */
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface2: var(--surface2);
   --color-surface3: var(--surface3);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
   --color-text: var(--text);
   --color-text2: var(--text2);
   --color-text3: var(--text3);
   --color-text4: var(--text4);
-  --color-accent: var(--accent);
-  --color-brand: var(--brand);
-  --color-brand-soft: var(--brand-soft);
   --color-green: var(--green);
   --color-green-bg: var(--green-bg);
   --color-green-line: var(--green-line);
@@ -31,35 +62,97 @@
   --color-purple: var(--purple);
   --color-purple-bg: var(--purple-bg);
   --color-purple-line: var(--purple-line);
-  --font-sans: 'DM Sans', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-xs: 6px;
+
+  /* ─── Figma Color Palette ──────────────────── */
+  --color-teal-50: #edfefd;
+  --color-teal-100: #a0cbad;
+  --color-teal-200: #adeefc;
+  --color-teal-300: #7ad3ff;
+  --color-teal-400: #42d1e8;
+  --color-teal-450: #57a0c1;
+  --color-teal-500: #3bbed3;
+  --color-teal-600: #309fb0;
+  --color-teal-700: #237a88;
+  --color-teal-750: #1a5f7a;
+  --color-teal-800: #195f6b;
+  --color-teal-950: #072c33;
+
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #ebebeb;
+  --color-neutral-300: #dadada;
+  --color-neutral-400: #bababa;
+  --color-neutral-500: #808080;
+  --color-neutral-600: #5c5c5c;
+  --color-neutral-700: #454545;
+  --color-neutral-800: #292929;
+  --color-neutral-900: #191919;
+  --color-neutral-950: #090909;
+
+  --color-text-subtle: #717182;
+  --color-text-secondary: #474747;
+  --color-text-primary: #0d0d0d;
+  --color-text-default: #000000;
+
+  --color-green-50: #e5fef0;
+  --color-green-100: #c4fedf;
+  --color-green-200: #81fdc3;
+  --color-green-500: #30ce92;
+  --color-green-600: #1ba676;
+  --color-green-800: #136549;
+  --color-green-950: #052f20;
+
+  --color-orange-50: #fef6ee;
+  --color-orange-200: #fddab6;
+  --color-orange-400: #faa12f;
+  --color-orange-500: #e49028;
+  --color-orange-800: #7d430f;
+  --color-orange-950: #3d1e04;
+
+  --color-error: #cc0000;
+  --color-secondary-raw: #88d3e1;
+
+  /* ─── Typography ───────────────────────────── */
+  --text-display: 2.375rem;
+  --text-h1: 2rem;
+  --text-body-sm: 0.8125rem;
+  --text-caption: 0.625rem;
+
+  /* ─── Radius ───────────────────────────────── */
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --radius-xs: calc(var(--radius) - 4px);
+
+  /* ─── Fonts ────────────────────────────────── */
+  --font-sans: 'Geist', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-html,
-body {
-  height: 100%;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'cv11';
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
 }
-body {
-  font-family: var(--font-sans);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 13.5px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: 'ss01', 'cv11';
-  transition:
-    background 0.25s ease,
-    color 0.25s ease;
-}
+
 ::selection {
-  background: var(--brand);
+  background: var(--primary);
   color: #fff;
 }
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -70,11 +163,12 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 99px;
-  border: 2px solid var(--bg);
+  border: 2px solid var(--background);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
+  background: var(--color-neutral-400);
 }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -83,6 +177,7 @@ body {
     animation-duration: 0.01ms !important;
   }
 }
+
 @media print {
   header,
   nav,

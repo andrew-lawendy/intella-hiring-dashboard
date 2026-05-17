@@ -1,25 +1,153 @@
-[data-theme="light"], :root {
-  --bg: #f6f4ef; --surface: #ffffff; --surface2: #f1efe8; --surface3: #e9e7df;
-  --border: #e4e1d8; --border-strong: #cfcbbf;
-  --text: #1a1816; --text2: #5d5b53; --text3: #92907f; --text4: #b9b6a8;
-  --accent: #1a1816; --brand: #2a2479; --brand-soft: #ece9f7;
-  --green: oklch(0.46 0.10 155); --green-bg: oklch(0.95 0.04 155); --green-line: oklch(0.46 0.10 155 / .25);
-  --amber: oklch(0.55 0.13 65); --amber-bg: oklch(0.96 0.06 80); --amber-line: oklch(0.55 0.13 65 / .25);
-  --red: oklch(0.52 0.18 25); --red-bg: oklch(0.96 0.04 25); --red-line: oklch(0.52 0.18 25 / .25);
-  --blue: oklch(0.42 0.14 255); --blue-bg: oklch(0.96 0.03 255); --blue-line: oklch(0.42 0.14 255 / .25);
-  --purple: oklch(0.45 0.16 295); --purple-bg: oklch(0.96 0.03 295); --purple-line: oklch(0.45 0.16 295 / .25);
-  --shadow-sm: 0 1px 0 rgba(20,18,14,.03), 0 1px 2px rgba(20,18,14,.04);
-  --shadow-md: 0 1px 0 rgba(20,18,14,.04), 0 6px 22px -8px rgba(20,18,14,.10);
-  --shadow-lg: 0 1px 0 rgba(20,18,14,.04), 0 18px 60px -16px rgba(20,18,14,.22);
+:root {
+  /* ─── Surfaces ─────────────────────────────── */
+  --background: var(--color-neutral-0);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-neutral-0);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-neutral-0);
+  --popover-foreground: var(--color-text-primary);
+
+  /* ─── Brand ────────────────────────────────── */
+  --primary: var(--color-teal-800);
+  --primary-foreground: var(--color-neutral-0);
+  --secondary: var(--color-secondary-raw);
+  --secondary-foreground: var(--color-teal-800);
+
+  /* ─── Neutral UI ───────────────────────────── */
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-text-subtle);
+  --accent: var(--color-neutral-100);
+  --accent-foreground: var(--color-text-primary);
+
+  /* ─── Feedback ─────────────────────────────── */
+  --destructive: var(--color-error);
+  --destructive-foreground: var(--color-neutral-0);
+  --success: var(--color-green-600);
+  --success-foreground: var(--color-neutral-0);
+  --warning: var(--color-orange-500);
+  --warning-foreground: var(--color-neutral-0);
+
+  /* ─── Borders & Controls ───────────────────── */
+  --border: var(--color-neutral-300);
+  --input: var(--color-neutral-300);
+  --ring: var(--color-teal-800);
+
+  --radius: 0.5rem;
+
+  /* ─── Shadows ──────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  /* ─── Charts ───────────────────────────────── */
+  --chart-1: var(--color-teal-800);
+  --chart-2: var(--color-green-600);
+  --chart-3: var(--color-orange-500);
+  --chart-4: var(--color-error);
+  --chart-5: var(--color-teal-600);
+
+  /* ─── Backward-compat shims ────────────────── */
+  --bg: var(--background);
+  --surface: var(--card);
+  --surface2: var(--muted);
+  --surface3: var(--color-neutral-200);
+  --brand: var(--primary);
+  --brand-soft: var(--color-teal-50);
+  --brand-2: var(--color-teal-600);
+  --text: var(--foreground);
+  --text2: var(--color-text-secondary);
+  --text3: var(--muted-foreground);
+  --text4: var(--color-neutral-400);
+  --accent-color: var(--foreground);
+  --border-strong: var(--color-neutral-400);
+  --green: var(--success);
+  --green-bg: var(--color-green-50);
+  --green-line: var(--color-green-200);
+  --red: var(--destructive);
+  --red-bg: #fef5f5;
+  --red-line: color-mix(in srgb, var(--color-error) 25%, transparent);
+  --amber: var(--warning);
+  --amber-bg: var(--color-orange-50);
+  --amber-line: var(--color-orange-200);
+  --blue: var(--color-teal-700);
+  --blue-bg: var(--color-teal-50);
+  --blue-line: var(--color-teal-200);
+  --purple: oklch(0.45 0.16 295);
+  --purple-bg: oklch(0.96 0.03 295);
+  --purple-line: oklch(0.45 0.16 295 / 0.25);
 }
-[data-theme="dark"] {
-  --bg: #0e0e0c; --surface: #16150f; --surface2: #1c1b14; --surface3: #26241c;
-  --border: #2a2820; --border-strong: #3a382f;
-  --text: #f1efe6; --text2: #b8b5a6; --text3: #7e7b6e; --text4: #545245;
-  --accent: #f1efe6; --brand: oklch(0.75 0.13 270); --brand-soft: oklch(0.28 0.06 270);
-  --green-bg: oklch(0.27 0.06 155); --amber-bg: oklch(0.27 0.07 65);
-  --red-bg: oklch(0.26 0.08 25); --blue-bg: oklch(0.26 0.07 255); --purple-bg: oklch(0.26 0.07 295);
-  --shadow-sm: 0 1px 0 rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.5);
-  --shadow-md: 0 1px 0 rgba(0,0,0,.5), 0 8px 28px -10px rgba(0,0,0,.6);
-  --shadow-lg: 0 1px 0 rgba(0,0,0,.5), 0 24px 72px -16px rgba(0,0,0,.7);
+
+.dark {
+  /* ─── Surfaces ─────────────────────────────── */
+  --background: var(--color-neutral-950);
+  --foreground: var(--color-neutral-100);
+  --card: var(--color-neutral-900);
+  --card-foreground: var(--color-neutral-100);
+  --popover: var(--color-neutral-900);
+  --popover-foreground: var(--color-neutral-100);
+
+  /* ─── Brand ────────────────────────────────── */
+  --primary: var(--color-teal-600);
+  --primary-foreground: var(--color-teal-950);
+  --secondary: var(--color-teal-800);
+  --secondary-foreground: var(--color-secondary-raw);
+
+  /* ─── Neutral UI ───────────────────────────── */
+  --muted: var(--color-neutral-800);
+  --muted-foreground: var(--color-neutral-400);
+  --accent: var(--color-neutral-800);
+  --accent-foreground: var(--color-neutral-100);
+
+  /* ─── Feedback ─────────────────────────────── */
+  --destructive: var(--color-error);
+  --destructive-foreground: var(--color-neutral-0);
+  --success: var(--color-green-500);
+  --success-foreground: var(--color-green-950);
+  --warning: var(--color-orange-400);
+  --warning-foreground: var(--color-orange-950);
+
+  /* ─── Borders & Controls ───────────────────── */
+  --border: var(--color-neutral-700);
+  --input: var(--color-neutral-700);
+  --ring: var(--color-teal-600);
+
+  /* ─── Shadows ──────────────────────────────── */
+  --shadow-sm: 0 1px 0 rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 1px 0 rgba(0, 0, 0, 0.5), 0 8px 28px -10px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 1px 0 rgba(0, 0, 0, 0.5), 0 24px 72px -16px rgba(0, 0, 0, 0.7);
+
+  /* ─── Charts ───────────────────────────────── */
+  --chart-1: var(--color-teal-600);
+  --chart-2: var(--color-green-500);
+  --chart-3: var(--color-orange-400);
+  --chart-4: var(--color-error);
+  --chart-5: var(--color-teal-400);
+
+  /* ─── Backward-compat shims (dark) ─────────── */
+  --bg: var(--background);
+  --surface: var(--card);
+  --surface2: var(--muted);
+  --surface3: var(--color-neutral-700);
+  --brand: var(--primary);
+  --brand-soft: color-mix(in srgb, var(--color-teal-600) 15%, transparent);
+  --text: var(--foreground);
+  --text2: var(--color-neutral-400);
+  --text3: var(--muted-foreground);
+  --text4: var(--color-neutral-600);
+  --border-strong: var(--color-neutral-600);
+  --green: var(--success);
+  --green-bg: var(--color-green-950);
+  --green-line: var(--color-green-800);
+  --red: var(--destructive);
+  --red-bg: #2a0000;
+  --red-line: color-mix(in srgb, var(--color-error) 35%, transparent);
+  --amber: var(--warning);
+  --amber-bg: var(--color-orange-950);
+  --amber-line: var(--color-orange-800);
+  --blue: var(--color-teal-400);
+  --blue-bg: color-mix(in srgb, var(--color-teal-600) 15%, transparent);
+  --blue-line: var(--color-teal-700);
+  --purple: oklch(0.75 0.13 295);
+  --purple-bg: oklch(0.26 0.07 295);
+  --purple-line: oklch(0.45 0.16 295 / 0.25);
 }
