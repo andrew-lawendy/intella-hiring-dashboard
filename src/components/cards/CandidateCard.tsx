@@ -15,6 +15,7 @@ interface CandidateCardProps {
   candidate: Candidate
   state: State
   currentUser: 'peter' | 'ossama'
+  currentUserName: string
   onConfirmToggle: () => void
   onStatusChange: (s: State['interview_status']) => void
   onVerdictChange: (v: NonNullable<State['verdict']>) => void
@@ -47,6 +48,7 @@ export function CandidateCard({
   candidate,
   state,
   currentUser,
+  currentUserName,
   onConfirmToggle,
   onStatusChange,
   onVerdictChange,
@@ -112,6 +114,7 @@ export function CandidateCard({
       />
       <Scorecard
         currentUser={currentUser}
+        currentUserName={currentUserName}
         peterScores={state.peter_scores as Scores}
         ossamaScores={state.ossama_scores as Scores}
         onPeterChange={(scores) => onScoreChange('peter', scores)}

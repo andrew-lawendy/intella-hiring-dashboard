@@ -24,8 +24,15 @@ type State = Database['public']['Tables']['interview_state']['Row']
 
 const PAGE_SIZE = 24
 
-function resolveUser(email: string | undefined): 'peter' | 'ossama' {
+function resolveScoreSlot(email: string | undefined): 'peter' | 'ossama' {
   return email?.startsWith('peter') ? 'peter' : 'ossama'
+}
+
+function displayNameFromEmail(email: string | undefined): string {
+  if (!email) return 'You'
+  const local = email.split('@')[0]
+  const first = local.split('.')[0]
+  return first.charAt(0).toUpperCase() + first.slice(1)
 }
 
 export function CardsPage() {
@@ -42,7 +49,8 @@ export function CardsPage() {
     setChecklist,
   } = useCandidateState()
   const { user } = useAuth()
-  const currentUser = resolveUser(user?.email)
+  const currentUser = resolveScoreSlot(user?.email)
+  const currentUserName = displayNameFromEmail(user?.email)
 
   const [filter, setFilter] = useState<FilterType>('all')
   const [search, setSearch] = useState('')
@@ -166,6 +174,7 @@ export function CardsPage() {
                   candidate={candidate}
                   state={state}
                   currentUser={currentUser}
+                  currentUserName={currentUserName}
                   onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
                   onStatusChange={(s: State['interview_status']) =>
                     setInterviewStatus(candidate.id, s)

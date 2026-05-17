@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 
 interface ScorecardProps {
   currentUser: 'peter' | 'ossama'
+  currentUserName: string
   peterScores: Scores
   ossamaScores: Scores
   onPeterChange: (scores: Scores) => void
@@ -48,6 +49,7 @@ function StarRating({
 
 export function Scorecard({
   currentUser,
+  currentUserName,
   peterScores,
   ossamaScores,
   onPeterChange,
@@ -80,7 +82,7 @@ export function Scorecard({
       </div>
 
       <p className="text-[10px] font-medium text-text3 mb-1.5 uppercase tracking-[0.06em]">
-        {currentUser === 'peter' ? 'Peter' : 'Ossama'} (you)
+        {currentUserName} (you)
       </p>
       {SCORE_CATEGORIES.map((cat) => (
         <StarRating
