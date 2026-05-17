@@ -1,4 +1,4 @@
-export const SCORE_CATEGORIES = [
+export const DEFAULT_SCORE_CATEGORIES = [
   'Communication',
   'Technical',
   'Culture Fit',
@@ -6,19 +6,20 @@ export const SCORE_CATEGORIES = [
   'Overall',
 ] as const
 
-export type ScoreCategory = (typeof SCORE_CATEGORIES)[number]
-export type Scores = Record<ScoreCategory, number>
+// Legacy alias — used where no round is available
+export const SCORE_CATEGORIES = DEFAULT_SCORE_CATEGORIES
 
-export const ZERO_SCORES: Scores = {
-  Communication: 0,
-  Technical: 0,
-  'Culture Fit': 0,
-  Leadership: 0,
-  Overall: 0,
+export type ScoreCategory = (typeof DEFAULT_SCORE_CATEGORIES)[number]
+export type Scores = Record<string, number>
+
+export function zeroScores(categories: readonly string[] = DEFAULT_SCORE_CATEGORIES): Scores {
+  return Object.fromEntries(categories.map((c) => [c, 0]))
 }
 
-export function maxScore(): number {
-  return SCORE_CATEGORIES.length * 5
+export const ZERO_SCORES: Scores = zeroScores()
+
+export function maxScore(categories: readonly string[] = DEFAULT_SCORE_CATEGORIES): number {
+  return categories.length * 5
 }
 
 export function sumScores(scores: Scores): number {

@@ -1,6 +1,9 @@
-const USD_TO_EGP = 50
+export const DEFAULT_USD_TO_EGP = 50
 
-export function parseSalaryToEGP(raw: string | null | undefined): number | null {
+export function parseSalaryToEGP(
+  raw: string | null | undefined,
+  usdToEgp: number = DEFAULT_USD_TO_EGP,
+): number | null {
   if (!raw || raw === 'TBD' || raw === '—') return null
 
   // USD per month: $3,200/month or $3,000-$3,200/month
@@ -8,7 +11,7 @@ export function parseSalaryToEGP(raw: string | null | undefined): number | null 
   if (usdMatch) {
     const lo = parseFloat(usdMatch[1].replace(/,/g, ''))
     const hi = usdMatch[2] ? parseFloat(usdMatch[2].replace(/,/g, '')) : lo
-    return ((lo + hi) / 2) * USD_TO_EGP
+    return ((lo + hi) / 2) * usdToEgp
   }
 
   // K range: 85K-100K EGP or 85,000-100,000 EGP

@@ -10,12 +10,14 @@ export type FilterType =
   | 'wed'
   | 'thu'
 
-const DAY_MAP: Record<string, string> = {
-  sun: 'Sunday 17 May',
-  mon: 'Monday 18 May',
-  tue: 'Tuesday 19 May',
-  wed: 'Wednesday 20 May',
-  thu: 'Thursday 21 May',
+const FALLBACK_DAY_MAP: Record<string, string> = {
+  sun: 'Sunday',
+  mon: 'Monday',
+  tue: 'Tuesday',
+  wed: 'Wednesday',
+  thu: 'Thursday',
+  fri: 'Friday',
+  sat: 'Saturday',
 }
 
 interface CandidateMin {
@@ -37,6 +39,7 @@ export function filterCandidates<T extends CandidateMin>(
   stateMap: Record<string, StateSnapshot>,
   filter: FilterType,
   search: string,
+  dayMap: Record<string, string> = FALLBACK_DAY_MAP,
 ): T[] {
   let result = candidates
 
@@ -50,8 +53,8 @@ export function filterCandidates<T extends CandidateMin>(
     )
   } else if (filter === 'rejected') {
     result = result.filter((c) => stateMap[c.id]?.shortlisted === false)
-  } else if (DAY_MAP[filter]) {
-    result = result.filter((c) => c.day === DAY_MAP[filter])
+  } else if (dayMap[filter]) {
+    result = result.filter((c) => c.day === dayMap[filter])
   }
 
   if (search.trim()) {

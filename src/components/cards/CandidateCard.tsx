@@ -16,6 +16,8 @@ interface CandidateCardProps {
   state: State
   currentUser: 'peter' | 'ossama'
   currentUserName: string
+  scoreCategories?: readonly string[]
+  checklistItems?: string[]
   onConfirmToggle: () => void
   onStatusChange: (s: State['interview_status']) => void
   onVerdictChange: (v: NonNullable<State['verdict']>) => void
@@ -49,6 +51,8 @@ export function CandidateCard({
   state,
   currentUser,
   currentUserName,
+  scoreCategories,
+  checklistItems,
   onConfirmToggle,
   onStatusChange,
   onVerdictChange,
@@ -115,6 +119,7 @@ export function CandidateCard({
       <Scorecard
         currentUser={currentUser}
         currentUserName={currentUserName}
+        scoreCategories={scoreCategories}
         peterScores={state.peter_scores as Scores}
         ossamaScores={state.ossama_scores as Scores}
         onPeterChange={(scores) => onScoreChange('peter', scores)}
@@ -123,6 +128,7 @@ export function CandidateCard({
       <Checklist
         candidateId={candidate.id}
         checklist={state.checklist as Record<string, boolean>}
+        items={checklistItems}
         onChange={onChecklistChange}
       />
       <Comments

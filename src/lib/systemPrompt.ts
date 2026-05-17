@@ -1,9 +1,19 @@
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
+import type { HiringRound } from '@/hooks/useHiringRound'
+import { formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
 import { totalScore, maxScore } from './scoring'
 import type { Scores } from './scoring'
 
-export function buildSystemPrompt(candidates: CandidateWithDetails[], stateMap: StateMap): string {
+export function buildSystemPrompt(
+  candidates: CandidateWithDetails[],
+  stateMap: StateMap,
+  round: HiringRound | null = null,
+): string {
+  const role = round?.role ?? 'Senior Product Manager'
+  const dateRange = round
+    ? `${formatRoundDateRange(round.start_date, round.end_date)} ${formatRoundYear(round.start_date)}`
+    : 'this period'
   const max = maxScore()
   const candidateSummaries = candidates
     .map(({ candidate, profile, analysis }) => {
@@ -34,9 +44,9 @@ export function buildSystemPrompt(candidates: CandidateWithDetails[], stateMap: 
     })
     .join('\n\n')
 
-  return `You are an AI assistant helping the Intella team evaluate candidates for a Senior Product Manager role.
+  return `You are an AI assistant helping the Intella team evaluate candidates for the ${role} role.
 The company is Intella, building Ziila — an AI agent platform for bank call centers.
-Today is May 2026. The hiring round covers 20 candidates interviewing May 17–21.
+The hiring round covers ${candidates.length} candidates interviewing ${dateRange}.
 
 Key requirements for the role:
 - B2B enterprise experience (banking clients preferred)
@@ -51,12 +61,16 @@ ${candidateSummaries}
 Answer questions about the candidates, help compare them, suggest talking points for the debrief, or generate insights about the hiring round. Be direct and specific.`
 }
 
-export function buildDebriefPrompt(candidates: CandidateWithDetails[], stateMap: StateMap): string {
+export function buildDebriefPrompt(
+  candidates: CandidateWithDetails[],
+  stateMap: StateMap,
+  round: HiringRound | null = null,
+): string {
   const completedCandidates = candidates.filter(
     ({ candidate }) => stateMap[candidate.id]?.interview_status === 'completed',
   )
 
-  const summaries = buildSystemPrompt(completedCandidates, stateMap)
+  const summaries = buildSystemPrompt(completedCandidates, stateMap, round)
 
   return `Based on the interview data below, generate a structured debrief summary for the Intella hiring team.
 

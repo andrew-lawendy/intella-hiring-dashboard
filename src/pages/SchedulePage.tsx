@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
+import { useHiringRound, formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { DataTable } from '@/components/ui/data-table'
@@ -26,6 +27,7 @@ const PAGE_SIZE = 20
 
 export function SchedulePage() {
   const { candidates: allMeta } = useCandidateMeta()
+  const { data: round } = useHiringRound()
   const { stateMap, setConfirmed, setInterviewStatus } = useCandidateState()
   const [page, setPage] = useState(1)
 
@@ -173,7 +175,12 @@ export function SchedulePage() {
   return (
     <div>
       <h1 className="text-[30px] font-medium tracking-[-0.025em] mb-1 text-text">Schedule</h1>
-      <p className="text-text2 text-[13.5px] mb-6">May 17–21, 2026 · {allMeta.length} interviews</p>
+      <p className="text-text2 text-[13.5px] mb-6">
+        {round
+          ? `${formatRoundDateRange(round.start_date, round.end_date)}, ${formatRoundYear(round.start_date)}`
+          : '—'}{' '}
+        · {allMeta.length} interviews
+      </p>
 
       <DataTable
         columns={columns}

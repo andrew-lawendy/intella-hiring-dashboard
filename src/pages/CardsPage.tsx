@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useHiringRound, generateDayMap } from '@/hooks/useHiringRound'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
@@ -51,6 +52,11 @@ export function CardsPage() {
   const { user } = useAuth()
   const currentUser = resolveScoreSlot(user?.email)
   const currentUserName = displayNameFromEmail(user?.email)
+  const { data: round } = useHiringRound()
+  const dayMap = useMemo(
+    () => (round ? generateDayMap(round.start_date, round.end_date) : {}),
+    [round],
+  )
 
   const [filter, setFilter] = useState<FilterType>('all')
   const [search, setSearch] = useState('')
@@ -87,8 +93,8 @@ export function CardsPage() {
   const debouncedSearch = useDebounce(search, 300)
 
   const filteredMeta = useMemo(
-    () => filterCandidates(allMeta, stateMin, filter, debouncedSearch),
-    [allMeta, stateMin, filter, debouncedSearch],
+    () => filterCandidates(allMeta, stateMin, filter, debouncedSearch, dayMap),
+    [allMeta, stateMin, filter, debouncedSearch, dayMap],
   )
 
   const pageIds = useMemo(
@@ -175,6 +181,8 @@ export function CardsPage() {
                   state={state}
                   currentUser={currentUser}
                   currentUserName={currentUserName}
+                  scoreCategories={round?.score_categories}
+                  checklistItems={round?.checklist_items}
                   onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
                   onStatusChange={(s: State['interview_status']) =>
                     setInterviewStatus(candidate.id, s)

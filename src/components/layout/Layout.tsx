@@ -7,11 +7,13 @@ import { AddCandidateDrawer } from '@/components/candidates/AddCandidateDrawer'
 import { ProfileDrawer } from '@/components/profile/ProfileDrawer'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
+import { useHiringRound } from '@/hooks/useHiringRound'
 import { exportToExcel, exportDecisionReport } from '@/lib/exports'
 
 export function Layout() {
   const { data } = useCandidates()
   const { stateMap } = useCandidateState()
+  const { data: round } = useHiringRound()
   const [addOpen, setAddOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
 
@@ -28,8 +30,8 @@ export function Layout() {
       <Header
         onAddCandidate={() => setAddOpen(true)}
         onOpenProfile={() => setProfileOpen(true)}
-        onExportReport={() => exportDecisionReport(data, stateMap)}
-        onExportExcel={() => exportToExcel(data, stateMap)}
+        onExportReport={() => exportDecisionReport(data, stateMap, round ?? null)}
+        onExportExcel={() => exportToExcel(data, stateMap, round ?? null)}
         onPrint={() => window.print()}
       />
       <AddCandidateDrawer open={addOpen} onClose={() => setAddOpen(false)} />

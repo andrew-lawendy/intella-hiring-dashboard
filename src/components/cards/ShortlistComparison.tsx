@@ -2,6 +2,7 @@ import { useCandidates } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
 import { totalScore, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
+import { VERDICT_MAP } from '@/lib/verdicts'
 import { Spinner } from '@/components/ui/spinner'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -25,23 +26,6 @@ interface ShortlistComparisonProps {
   candidateIds: string[]
   stateMap: StateMap
   onClose: () => void
-}
-
-const VERDICT_LABELS: Record<string, string> = {
-  'strong-yes': '⭐ Strong Yes',
-  yes: '✓ Yes',
-  maybe: '? Maybe',
-  no: '✗ No',
-}
-
-const VERDICT_VARIANTS: Record<
-  string,
-  'outline-success' | 'outline-warning' | 'outline-destructive' | 'secondary'
-> = {
-  'strong-yes': 'outline-success',
-  yes: 'outline-success',
-  maybe: 'outline-warning',
-  no: 'outline-destructive',
 }
 
 export function ShortlistComparison({ candidateIds, stateMap, onClose }: ShortlistComparisonProps) {
@@ -131,8 +115,17 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                       </TableCell>
                       <TableCell className="px-3 py-2.5 text-center">
                         {state.verdict && (
-                          <Badge variant={VERDICT_VARIANTS[state.verdict] ?? 'secondary'}>
-                            {VERDICT_LABELS[state.verdict]}
+                          <Badge
+                            variant={
+                              (state.verdict &&
+                                (VERDICT_MAP[state.verdict]?.variant as
+                                  | 'outline-success'
+                                  | 'outline-warning'
+                                  | 'outline-destructive')) ??
+                              'secondary'
+                            }
+                          >
+                            {state.verdict && VERDICT_MAP[state.verdict]?.short}
                           </Badge>
                         )}
                       </TableCell>

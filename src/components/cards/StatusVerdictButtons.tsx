@@ -1,5 +1,6 @@
 import type { Database } from '@/lib/database.types'
 import { Button } from '@/components/ui/button'
+import { VERDICTS } from '@/lib/verdicts'
 
 type Status = Database['public']['Tables']['interview_state']['Row']['interview_status']
 type Verdict = Database['public']['Tables']['interview_state']['Row']['verdict']
@@ -10,12 +11,10 @@ const STATUS_OPTIONS: { value: Status; label: string }[] = [
   { value: 'completed', label: 'Done' },
 ]
 
-const VERDICT_OPTIONS: { value: NonNullable<Verdict>; label: string }[] = [
-  { value: 'strong-yes', label: '⭐ Strong Yes' },
-  { value: 'yes', label: '✓ Yes' },
-  { value: 'maybe', label: '? Maybe' },
-  { value: 'no', label: '✗ No' },
-]
+const VERDICT_OPTIONS: { value: NonNullable<Verdict>; label: string }[] = VERDICTS.map((v) => ({
+  value: v.value,
+  label: v.short,
+}))
 
 interface Props {
   status: Status

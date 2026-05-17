@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SCORE_CATEGORIES, isScoreSubmitted, sumScores, maxScore } from '@/lib/scoring'
+import { DEFAULT_SCORE_CATEGORIES, isScoreSubmitted, sumScores, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
 import { Button } from '@/components/ui/button'
 
@@ -8,6 +8,7 @@ interface ScorecardProps {
   currentUserName: string
   peterScores: Scores
   ossamaScores: Scores
+  scoreCategories?: readonly string[]
   onPeterChange: (scores: Scores) => void
   onOssamaChange: (scores: Scores) => void
 }
@@ -52,6 +53,7 @@ export function Scorecard({
   currentUserName,
   peterScores,
   ossamaScores,
+  scoreCategories = DEFAULT_SCORE_CATEGORIES,
   onPeterChange,
   onOssamaChange,
 }: ScorecardProps) {
@@ -77,18 +79,18 @@ export function Scorecard({
           Scorecard
         </p>
         <span className="font-mono text-[13px] font-semibold text-brand bg-[var(--brand-soft)] px-2 py-0.5 rounded-[6px]">
-          {combined}/{maxScore()}
+          {combined}/{maxScore(scoreCategories)}
         </span>
       </div>
 
       <p className="text-[10px] font-medium text-text3 mb-1.5 uppercase tracking-[0.06em]">
         {currentUserName} (you)
       </p>
-      {SCORE_CATEGORIES.map((cat) => (
+      {scoreCategories.map((cat) => (
         <StarRating
           key={cat}
           category={cat}
-          value={myScores[cat]}
+          value={myScores[cat] ?? 0}
           onChange={(v) => onMyChange({ ...myScores, [cat]: v })}
         />
       ))}
@@ -108,8 +110,8 @@ export function Scorecard({
             Reveal {coName}&apos;s scores
           </Button>
         ) : (
-          SCORE_CATEGORIES.map((cat) => (
-            <StarRating key={cat} category={cat} value={coScores[cat]} readonly />
+          scoreCategories.map((cat) => (
+            <StarRating key={cat} category={cat} value={coScores[cat] ?? 0} readonly />
           ))
         )}
       </div>

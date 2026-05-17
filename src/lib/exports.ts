@@ -1,10 +1,31 @@
 import * as XLSX from 'xlsx'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
+import type { HiringRound } from '@/hooks/useHiringRound'
+import { VERDICT_MAP } from './verdicts'
+import { formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
 import { totalScore, maxScore } from './scoring'
 import type { Scores } from './scoring'
 
-export function exportToExcel(candidates: CandidateWithDetails[], stateMap: StateMap): void {
+function roundLabel(round: HiringRound | null): string {
+  if (!round) return 'Hiring Round'
+  return `${round.role_short} · ${formatRoundDateRange(round.start_date, round.end_date)}, ${formatRoundYear(round.start_date)}`
+}
+
+function roundFilename(round: HiringRound | null): string {
+  if (!round) return 'intella-hiring.xlsx'
+  const year = formatRoundYear(round.start_date)
+  const month = new Date(round.start_date)
+    .toLocaleDateString('en-US', { month: 'long' })
+    .toLowerCase()
+  return `intella-hiring-${month}-${year}.xlsx`
+}
+
+export function exportToExcel(
+  candidates: CandidateWithDetails[],
+  stateMap: StateMap,
+  round: HiringRound | null = null,
+): void {
   const max = maxScore()
   const rows = candidates.map(({ candidate, profile, analysis }) => {
     const state = stateMap[candidate.id]
@@ -44,10 +65,14 @@ export function exportToExcel(candidates: CandidateWithDetails[], stateMap: Stat
   const ws = XLSX.utils.json_to_sheet(rows)
   const wb = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(wb, ws, 'Candidates')
-  XLSX.writeFile(wb, 'intella-hiring-may-2026.xlsx')
+  XLSX.writeFile(wb, roundFilename(round))
 }
 
-export function exportDecisionReport(candidates: CandidateWithDetails[], stateMap: StateMap): void {
+export function exportDecisionReport(
+  candidates: CandidateWithDetails[],
+  stateMap: StateMap,
+  round: HiringRound | null = null,
+): void {
   const max = maxScore()
   const sorted = [...candidates].sort((a, b) => {
     const sa = stateMap[a.candidate.id]
@@ -57,12 +82,9 @@ export function exportDecisionReport(candidates: CandidateWithDetails[], stateMa
     return tb - ta
   })
 
-  const verdictLabels: Record<string, string> = {
-    'strong-yes': '⭐ Strong Yes',
-    yes: '✓ Yes',
-    maybe: '? Maybe',
-    no: '✗ No',
-  }
+  const verdictLabels = Object.fromEntries(
+    Object.entries(VERDICT_MAP).map(([k, v]) => [k, v.short]),
+  )
 
   const rows = sorted
     .map((d, i) => {
@@ -95,7 +117,7 @@ export function exportDecisionReport(candidates: CandidateWithDetails[], stateMa
     @media print{body{margin:10px}}
   </style></head><body>
   <h1>Intella Hiring Round — Decision Report</h1>
-  <p>Senior PM · May 17–21, 2026 · Generated ${new Date().toLocaleDateString()}</p>
+  <p>${roundLabel(round)} · Generated ${new Date().toLocaleDateString()}</p>
   <table><thead><tr><th>#</th><th>Candidate</th><th>Salary</th><th>Notice</th><th>Fit</th><th>Score</th><th>Verdict</th><th>Notes</th></tr></thead>
   <tbody>${rows}</tbody></table></body></html>`
 

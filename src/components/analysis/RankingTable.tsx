@@ -2,25 +2,12 @@ import { useMemo } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import type { RankingEntry } from '@/lib/analytics'
 import { maxScore } from '@/lib/scoring'
+import { VERDICT_MAP } from '@/lib/verdicts'
 import { DataTable } from '@/components/ui/data-table'
 
 interface RankingTableProps {
   entries: RankingEntry[]
   nameMap: Record<string, string>
-}
-
-const VERDICT_COLORS: Record<string, string> = {
-  'strong-yes': 'var(--green)',
-  yes: 'var(--blue)',
-  maybe: 'var(--amber)',
-  no: 'var(--red)',
-}
-
-const VERDICT_LABELS: Record<string, string> = {
-  'strong-yes': '⭐ Strong Yes',
-  yes: '✓ Yes',
-  maybe: '? Maybe',
-  no: '✗ No',
 }
 
 type RankingRow = RankingEntry & { rank: number; name: string }
@@ -92,9 +79,17 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
           row.original.verdict ? (
             <span
               className="text-[11px] font-semibold"
-              style={{ color: VERDICT_COLORS[row.original.verdict] ?? 'var(--text3)' }}
+              style={{
+                color:
+                  (row.original.verdict
+                    ? VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.color
+                    : undefined) ?? 'var(--text3)',
+              }}
             >
-              {VERDICT_LABELS[row.original.verdict] ?? row.original.verdict}
+              {row.original.verdict
+                ? (VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.short ??
+                  row.original.verdict)
+                : '—'}
             </span>
           ) : null,
       },

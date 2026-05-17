@@ -94,6 +94,58 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['interview_questions']['Row'], 'id'>
         Update: Partial<Database['public']['Tables']['interview_questions']['Insert']>
       }
+      app_config: {
+        Row: { key: string; value: string; description: string | null; updated_at: string }
+        Insert: Omit<Database['public']['Tables']['app_config']['Row'], 'updated_at'>
+        Update: Partial<Pick<Database['public']['Tables']['app_config']['Row'], 'value'>>
+      }
+      scores: {
+        Row: {
+          id: number
+          candidate_id: string
+          user_id: string
+          category: string
+          value: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<
+          Database['public']['Tables']['scores']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >
+        Update: Partial<Pick<Database['public']['Tables']['scores']['Row'], 'value'>>
+      }
+      candidate_comments: {
+        Row: {
+          id: number
+          candidate_id: string
+          user_id: string
+          body: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<
+          Database['public']['Tables']['candidate_comments']['Row'],
+          'id' | 'created_at' | 'updated_at'
+        >
+        Update: Partial<Pick<Database['public']['Tables']['candidate_comments']['Row'], 'body'>>
+      }
+      hiring_rounds: {
+        Row: {
+          id: number
+          name: string
+          role: string
+          role_short: string
+          start_date: string
+          end_date: string
+          score_categories: string[]
+          checklist_items: string[]
+          is_active: boolean
+          created_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['hiring_rounds']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['hiring_rounds']['Insert']>
+      }
       profiles: {
         Row: {
           id: string

@@ -2,6 +2,7 @@ import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
+import { useHiringRound, formatRoundDateRange } from '@/hooks/useHiringRound'
 import { usePipelineStats } from '@/hooks/usePipelineStats'
 import { Button } from '@/components/ui/button'
 
@@ -25,6 +26,7 @@ export function Header({
   const { user } = useAuth()
   const stats = usePipelineStats()
   const { data: profile } = useProfile(user?.id)
+  const { data: round } = useHiringRound()
 
   const displayName = profile?.first_name
     ? `${profile.first_name}${profile.last_name ? ' ' + profile.last_name[0] + '.' : ''}`
@@ -67,7 +69,9 @@ export function Header({
           style={{ background: 'var(--surface)' }}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
-          Senior PM · May 17–21
+          {round
+            ? `${round.role_short} · ${formatRoundDateRange(round.start_date, round.end_date)}`
+            : 'Hiring Round'}
         </div>
         <Button size="sm" variant="default" onClick={onAddCandidate}>
           + Add candidate

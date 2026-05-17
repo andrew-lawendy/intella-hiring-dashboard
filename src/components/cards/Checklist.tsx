@@ -1,7 +1,7 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 
-const CHECKLIST_ITEMS = [
+const DEFAULT_CHECKLIST_ITEMS = [
   'CV reviewed',
   'LinkedIn checked',
   'Questions prepared',
@@ -12,10 +12,15 @@ const CHECKLIST_ITEMS = [
 interface ChecklistProps {
   candidateId: string
   checklist: Record<string, boolean>
+  items?: string[]
   onChange: (updated: Record<string, boolean>) => void
 }
 
-export function Checklist({ checklist, onChange }: ChecklistProps) {
+export function Checklist({
+  checklist,
+  items = DEFAULT_CHECKLIST_ITEMS,
+  onChange,
+}: ChecklistProps) {
   const toggle = (item: string) => {
     onChange({ ...checklist, [item]: !checklist[item] })
   }
@@ -25,7 +30,7 @@ export function Checklist({ checklist, onChange }: ChecklistProps) {
       <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2.5">
         Pre-Interview Checklist
       </p>
-      {CHECKLIST_ITEMS.map((item) => (
+      {items.map((item) => (
         <div key={item} className="flex items-center gap-2 mb-1.5">
           <Checkbox
             id={`checklist-${item}`}

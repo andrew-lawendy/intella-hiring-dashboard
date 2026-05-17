@@ -182,7 +182,7 @@ export function LoginPage({ error }: LoginPageProps) {
         {/* Headline + card preview */}
         <div className="z-10">
           <p className="text-white/40 text-[11px] font-semibold uppercase tracking-[0.1em] mb-5">
-            May 2026 Hiring Round
+            Internal · Hiring
           </p>
           <h1 className="text-white text-[34px] font-semibold tracking-[-0.03em] leading-[1.15] mb-10">
             Hiring at Intella, <em className="not-italic text-white/60">in one place.</em>
