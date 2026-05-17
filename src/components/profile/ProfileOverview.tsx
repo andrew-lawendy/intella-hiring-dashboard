@@ -18,7 +18,7 @@ export function ProfileOverview({ profile, analysis }: ProfileOverviewProps) {
   ]
 
   return (
-    <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
+    <div className="p-6">
       <div className="mb-5">
         <div className="flex items-center gap-3 mb-3">
           <span className="text-[28px] font-medium tracking-tight text-text">
