@@ -29,11 +29,19 @@ A production-grade interview management dashboard for the Intella team. Migrated
    yarn
    ```
 
-2. Copy the environment template and fill in your Supabase credentials:
+2. Copy the environment template and fill in your credentials:
 
    ```bash
    cp .env.example .env.local
    ```
+
+   | Variable                    | Where to find it                                                                                                       |
+   | --------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+   | `VITE_SUPABASE_URL`         | Supabase dashboard → Project Settings → API → Project URL                                                              |
+   | `VITE_SUPABASE_ANON_KEY`    | Supabase dashboard → Project Settings → API → `anon` `public` key                                                      |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API → `service_role` key — **seed scripts only, never exposed to the browser** |
+
+   > AI provider keys (Claude, OpenAI, Gemini) are entered at runtime via the API Key banner in the UI and stored in `localStorage`. They are never read from env vars.
 
 3. Run database migrations and seed data (see `supabase/README.md`).
 
