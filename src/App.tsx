@@ -12,6 +12,7 @@ import { SalaryPage } from '@/pages/SalaryPage'
 import { BriefingPage } from '@/pages/BriefingPage'
 import { AnalysisPage } from '@/pages/AnalysisPage'
 import { ChatPage } from '@/pages/ChatPage'
+import { ProfilePage } from '@/pages/ProfilePage'
 
 function LoginPageWithError() {
   const [params] = useSearchParams()
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="briefing" element={<BriefingPage />} />
             <Route path="analysis" element={<AnalysisPage />} />
             <Route path="chat" element={<ChatPage />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </BrowserRouter>

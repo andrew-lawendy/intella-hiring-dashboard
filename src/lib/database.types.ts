@@ -94,6 +94,21 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['interview_questions']['Row'], 'id'>
         Update: Partial<Database['public']['Tables']['interview_questions']['Insert']>
       }
+      profiles: {
+        Row: {
+          id: string
+          first_name: string | null
+          last_name: string | null
+          title: string | null
+          avatar_url: string | null
+          scorer_slot: 'peter' | 'ossama' | null
+          theme: 'light' | 'dark' | 'system'
+          created_at: string
+          updated_at: string
+        }
+        Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['profiles']['Insert']>
+      }
       audit_log: {
         Row: {
           id: number

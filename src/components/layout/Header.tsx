@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom'
 import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/hooks/useAuth'
+import { useProfile } from '@/hooks/useProfile'
 import { usePipelineStats } from '@/hooks/usePipelineStats'
 import { Button } from '@/components/ui/button'
 
@@ -20,8 +22,17 @@ export function Header({
   onExportExcel,
   onPrint,
 }: HeaderProps) {
-  const { signOut } = useAuth()
+  const { user } = useAuth()
   const stats = usePipelineStats()
+  const { data: profile } = useProfile(user?.id)
+
+  const displayName = profile?.first_name
+    ? `${profile.first_name}${profile.last_name ? ' ' + profile.last_name[0] + '.' : ''}`
+    : (user?.email?.split('@')[0] ?? '')
+
+  const avatarInitials = profile?.first_name
+    ? ((profile.first_name[0] ?? '') + (profile.last_name?.[0] ?? '')).toUpperCase()
+    : (user?.email?.[0] ?? '?').toUpperCase()
 
   return (
     <header
@@ -79,9 +90,20 @@ export function Header({
           Print
         </Button>
         <ThemeToggle />
-        <Button size="sm" variant="ghost" onClick={signOut} className="text-muted-foreground">
-          Sign out
-        </Button>
+        <Link
+          to="/profile"
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-border hover:bg-muted transition-colors text-[12.5px] font-medium text-text2"
+          style={{ background: 'var(--surface)' }}
+        >
+          <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold flex-shrink-0 overflow-hidden">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+            ) : (
+              avatarInitials
+            )}
+          </span>
+          <span className="hidden sm:inline">{displayName}</span>
+        </Link>
       </div>
     </header>
   )
