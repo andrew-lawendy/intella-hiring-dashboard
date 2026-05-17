@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 
@@ -25,53 +25,38 @@ export function formatAuditEntry(
 }
 
 export function useAuditLog(candidateId: string | null) {
-  const [entries, setEntries] = useState<AuditEntry[]>([])
-  const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(false)
+  const {
+    data,
+    isLoading: loading,
+    isFetchingNextPage,
+    hasNextPage: hasMore,
+    fetchNextPage: loadMore,
+  } = useInfiniteQuery({
+    queryKey: ['audit-log', candidateId],
+    queryFn: async ({ pageParam }) => {
+      let query = supabase
+        .from('audit_log')
+        .select('*')
+        .eq('candidate_id', candidateId!)
+        .order('created_at', { ascending: false })
+        .limit(PAGE_SIZE)
 
-  useEffect(() => {
-    if (!candidateId) {
-      setEntries([])
-      setHasMore(false)
-      return
-    }
+      if (pageParam) {
+        query = query.lt('created_at', pageParam)
+      }
 
-    setLoading(true)
+      const { data: rows } = await query
+      return (rows ?? []) as AuditEntry[]
+    },
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.length < PAGE_SIZE) return undefined
+      return lastPage[lastPage.length - 1].created_at
+    },
+    enabled: !!candidateId,
+  })
 
-    supabase
-      .from('audit_log')
-      .select('*')
-      .eq('candidate_id', candidateId)
-      .order('created_at', { ascending: false })
-      .limit(PAGE_SIZE)
-      .then(({ data }) => {
-        const rows = data ?? []
-        setEntries(rows)
-        setHasMore(rows.length === PAGE_SIZE)
-        setLoading(false)
-      })
-  }, [candidateId])
+  const entries = data?.pages.flat() ?? []
 
-  const loadMore = useCallback(() => {
-    const cursor = entries[entries.length - 1]?.created_at
-    if (!cursor || !candidateId) return
-
-    setLoading(true)
-
-    supabase
-      .from('audit_log')
-      .select('*')
-      .eq('candidate_id', candidateId)
-      .order('created_at', { ascending: false })
-      .lt('created_at', cursor)
-      .limit(PAGE_SIZE)
-      .then(({ data }) => {
-        const rows = data ?? []
-        setEntries((prev) => [...prev, ...rows])
-        setHasMore(rows.length === PAGE_SIZE)
-        setLoading(false)
-      })
-  }, [candidateId, entries])
-
-  return { entries, loading, hasMore, loadMore }
+  return { entries, loading, loadingMore: isFetchingNextPage, hasMore: !!hasMore, loadMore }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 
@@ -35,16 +35,13 @@ export function computePipelineStats(states: State[], now: Date): PipelineStats 
 }
 
 export function usePipelineStats() {
-  const [stats, setStats] = useState<PipelineStats | null>(null)
-
-  useEffect(() => {
-    supabase
-      .from('interview_state')
-      .select('*')
-      .then(({ data }) => {
-        if (data) setStats(computePipelineStats(data, new Date()))
-      })
-  }, [])
+  const { data: stats = null } = useQuery({
+    queryKey: ['pipeline-stats'],
+    queryFn: async () => {
+      const { data } = await supabase.from('interview_state').select('*')
+      return data ? computePipelineStats(data, new Date()) : null
+    },
+  })
 
   return stats
 }

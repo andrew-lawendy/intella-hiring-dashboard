@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 import type { Scores } from '@/lib/scoring'
@@ -8,33 +9,31 @@ type InterviewStateUpdate = Database['public']['Tables']['interview_state']['Upd
 export type StateMap = Record<string, InterviewState>
 
 export function useCandidateState() {
-  const [stateMap, setStateMap] = useState<StateMap>({})
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    supabase
-      .from('interview_state')
-      .select('*')
-      .then(({ data }) => {
-        const rows = (data ?? []) as InterviewState[]
-        const map: StateMap = {}
-        for (const s of rows) {
-          map[s.candidate_id] = s
-        }
-        setStateMap(map)
-        setLoading(false)
-      })
-  }, [])
+  const { data: stateMap = {}, isLoading: loading } = useQuery({
+    queryKey: ['interview-state'],
+    queryFn: async () => {
+      const { data } = await supabase.from('interview_state').select('*')
+      const rows = (data ?? []) as InterviewState[]
+      const map: StateMap = {}
+      for (const s of rows) map[s.candidate_id] = s
+      return map
+    },
+  })
 
-  const updateState = useCallback(async (candidateId: string, patch: InterviewStateUpdate) => {
-    setStateMap((prev) => ({
-      ...prev,
-      [candidateId]: { ...prev[candidateId], ...patch },
-    }))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pg = supabase.from('interview_state') as any
-    await pg.update(patch).eq('candidate_id', candidateId)
-  }, [])
+  const updateState = useCallback(
+    async (candidateId: string, patch: InterviewStateUpdate) => {
+      queryClient.setQueryData<StateMap>(['interview-state'], (prev = {}) => ({
+        ...prev,
+        [candidateId]: { ...prev[candidateId], ...patch },
+      }))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pg = supabase.from('interview_state') as any
+      await pg.update(patch).eq('candidate_id', candidateId)
+    },
+    [queryClient],
+  )
 
   const setVerdict = useCallback(
     (id: string, verdict: InterviewState['verdict']) => {

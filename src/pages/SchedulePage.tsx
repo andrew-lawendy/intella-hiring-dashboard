@@ -1,8 +1,8 @@
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
+import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
-import { Spinner } from '@/components/ui/spinner'
 import { DataTable } from '@/components/ui/data-table'
 import {
   Select,
@@ -25,23 +25,37 @@ type ScheduleRow = {
 const PAGE_SIZE = 20
 
 export function SchedulePage() {
-  const { data, loading } = useCandidates()
+  const { candidates: allMeta } = useCandidateMeta()
   const { stateMap, setConfirmed, setInterviewStatus } = useCandidateState()
+  const [page, setPage] = useState(1)
 
-  const rows = useMemo<ScheduleRow[]>(() => {
-    const sorted = [...data].sort((a, b) => {
-      if (!a.candidate.slot || a.candidate.slot === 'TBD') return 1
-      if (!b.candidate.slot || b.candidate.slot === 'TBD') return -1
-      return a.candidate.slot.localeCompare(b.candidate.slot)
-    })
-    return sorted
-      .map((d, i) => ({
-        index: i + 1,
-        candidate: d.candidate,
-        state: stateMap[d.candidate.id],
-      }))
-      .filter((r) => !!r.state)
-  }, [data, stateMap])
+  const sortedMeta = useMemo(
+    () =>
+      [...allMeta].sort((a, b) => {
+        if (!a.slot || a.slot === 'TBD') return 1
+        if (!b.slot || b.slot === 'TBD') return -1
+        return a.slot.localeCompare(b.slot)
+      }),
+    [allMeta],
+  )
+
+  const pageIds = useMemo(
+    () => sortedMeta.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((m) => m.id),
+    [sortedMeta, page],
+  )
+
+  const { data, loading } = useCandidates({ ids: pageIds })
+
+  const rows = useMemo<ScheduleRow[]>(
+    () =>
+      pageIds.flatMap((id, i) => {
+        const d = data.find((d) => d.candidate.id === id)
+        const state = stateMap[id]
+        if (!d || !state) return []
+        return [{ index: (page - 1) * PAGE_SIZE + i + 1, candidate: d.candidate, state }]
+      }),
+    [pageIds, data, stateMap, page],
+  )
 
   const columns = useMemo<ColumnDef<ScheduleRow>[]>(
     () => [
@@ -156,20 +170,21 @@ export function SchedulePage() {
     [setConfirmed, setInterviewStatus],
   )
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner className="size-7" />
-      </div>
-    )
-  }
-
   return (
     <div>
       <h1 className="text-[30px] font-medium tracking-[-0.025em] mb-1 text-text">Schedule</h1>
-      <p className="text-text2 text-[13.5px] mb-6">May 17–21, 2026 · {data.length} interviews</p>
+      <p className="text-text2 text-[13.5px] mb-6">May 17–21, 2026 · {allMeta.length} interviews</p>
 
-      <DataTable columns={columns} data={rows} pageSize={PAGE_SIZE} />
+      <DataTable
+        columns={columns}
+        data={rows}
+        pageSize={PAGE_SIZE}
+        loading={loading}
+        manualPagination
+        page={page}
+        total={sortedMeta.length}
+        onPageChange={setPage}
+      />
     </div>
   )
 }

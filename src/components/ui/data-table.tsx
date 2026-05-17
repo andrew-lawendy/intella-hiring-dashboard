@@ -31,6 +31,10 @@ interface DataTableProps<TData, TValue> {
   onRowClick?: (row: TData) => void
   rowClassName?: (row: TData) => string
   className?: string
+  manualPagination?: boolean
+  page?: number
+  total?: number
+  onPageChange?: (page: number) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -43,6 +47,10 @@ export function DataTable<TData, TValue>({
   onRowClick,
   rowClassName,
   className,
+  manualPagination = false,
+  page,
+  total,
+  onPageChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize })
@@ -51,12 +59,14 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: manualPagination ? undefined : getPaginationRowModel(),
     getSortedRowModel: sortable ? getSortedRowModel() : undefined,
+    manualPagination,
+    pageCount: manualPagination ? Math.ceil((total ?? 0) / pageSize) : undefined,
     enableSorting: sortable,
     onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    state: { sorting, pagination },
+    ...(manualPagination ? {} : { onPaginationChange: setPagination }),
+    state: { sorting, ...(manualPagination ? {} : { pagination }) },
   })
 
   return (
@@ -154,10 +164,14 @@ export function DataTable<TData, TValue>({
       </div>
 
       <TablePagination
-        page={pagination.pageIndex + 1}
+        page={manualPagination ? (page ?? 1) : pagination.pageIndex + 1}
         pageSize={pageSize}
-        total={data.length}
-        onChange={(p) => setPagination((prev) => ({ ...prev, pageIndex: p - 1 }))}
+        total={manualPagination ? (total ?? 0) : data.length}
+        onChange={
+          manualPagination
+            ? (onPageChange ?? (() => {}))
+            : (p) => setPagination((prev) => ({ ...prev, pageIndex: p - 1 }))
+        }
       />
     </div>
   )

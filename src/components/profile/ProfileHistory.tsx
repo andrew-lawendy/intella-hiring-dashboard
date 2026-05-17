@@ -6,7 +6,7 @@ interface ProfileHistoryProps {
 }
 
 export function ProfileHistory({ candidateId }: ProfileHistoryProps) {
-  const { entries, loading, hasMore, loadMore } = useAuditLog(candidateId)
+  const { entries, loading, loadingMore, hasMore, loadMore } = useAuditLog(candidateId)
 
   if (loading && entries.length === 0) {
     return <div className="p-6 text-text3 text-sm">Loading history...</div>
@@ -42,11 +42,11 @@ export function ProfileHistory({ candidateId }: ProfileHistoryProps) {
         <Button
           variant="outline"
           size="sm"
-          onClick={loadMore}
-          disabled={loading}
+          onClick={() => loadMore()}
+          disabled={loadingMore}
           className="mt-4 w-full"
         >
-          {loading ? 'Loading…' : 'Load more'}
+          {loadingMore ? 'Loading…' : 'Load more'}
         </Button>
       )}
     </div>
