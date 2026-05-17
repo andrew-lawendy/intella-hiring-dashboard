@@ -76,7 +76,7 @@ export function buildDebriefPrompt(
 
 Format your response with these sections:
 1. **Top Candidates** — rank the top 3-5 by combined score and explain why
-2. **Consensus vs. Disagreement** — where Peter and Ossama agree/disagree on verdicts
+2. **Consensus vs. Disagreement** — where interviewers agree/disagree on verdicts
 3. **Key Trade-offs** — e.g., high AI experience but low seniority; strong B2B but no fintech
 4. **Recommendation** — who to advance to next stage and why
 5. **Suggested Debrief Talking Points** — 3-5 questions to discuss as a team
