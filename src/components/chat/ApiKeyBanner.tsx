@@ -9,6 +9,8 @@ import {
   PROVIDER_PLACEHOLDERS,
 } from '@/lib/chat'
 import type { Provider } from '@/lib/chat'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const PROVIDERS: Provider[] = ['anthropic', 'openai', 'google']
 
@@ -67,45 +69,36 @@ export function ApiKeyBanner({ onKeyChange }: ApiKeyBannerProps) {
 
       <div className="flex gap-1 mb-3">
         {PROVIDERS.map((p) => (
-          <button
+          <Button
             key={p}
+            size="xs"
+            variant={provider === p ? 'default' : 'outline'}
             onClick={() => setProvider(p)}
-            className={`text-[11px] px-2.5 py-1 rounded-[var(--radius-xs)] border transition-all cursor-pointer ${
-              provider === p
-                ? 'bg-text text-bg border-text font-medium'
-                : 'bg-surface border-border text-text2 hover:bg-surface2'
-            }`}
           >
             {PROVIDER_LABELS[p].split(' ')[0]}
-          </button>
+          </Button>
         ))}
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex-1">
           <p className="text-[10px] text-text3 mb-1.5">{PROVIDER_LABELS[provider]}</p>
-          <input
+          <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSave()}
             placeholder={PROVIDER_PLACEHOLDERS[provider]}
-            className="w-full max-w-xs px-2.5 py-1.5 border border-border rounded-[var(--radius-xs)] bg-surface text-text font-mono text-xs outline-none focus:border-text"
+            className="max-w-xs font-mono text-xs"
           />
         </div>
         <div className="flex gap-1.5">
-          <button
-            onClick={handleSave}
-            className="text-[11px] font-medium px-2.5 py-1.5 bg-text text-bg rounded-[var(--radius-xs)] border-none cursor-pointer hover:opacity-85"
-          >
+          <Button size="xs" onClick={handleSave}>
             Save
-          </button>
+          </Button>
           {active && (
-            <button
-              onClick={handleClear}
-              className="text-[11px] font-medium px-2.5 py-1.5 bg-surface border border-border text-text2 rounded-[var(--radius-xs)] cursor-pointer hover:bg-[var(--red-bg)] hover:text-[var(--red)] hover:border-[var(--red-line)] transition-all"
-            >
+            <Button size="xs" variant="outline" onClick={handleClear}>
               Clear
-            </button>
+            </Button>
           )}
         </div>
       </div>

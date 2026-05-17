@@ -13,6 +13,7 @@ import { ProfileModal } from '@/components/profile/ProfileModal'
 import { EmailDraftModal } from '@/components/profile/EmailDraftModal'
 import { Pagination } from '@/components/ui/Pagination'
 import { Spinner } from '@/components/ui/spinner'
+import { Button } from '@/components/ui/button'
 import { filterCandidates } from '@/lib/filters'
 import type { FilterType } from '@/lib/filters'
 import type { Scores } from '@/lib/scoring'
@@ -128,17 +129,14 @@ export function CardsPage() {
       />
 
       <div className="flex justify-end mb-3">
-        <button
+        <Button
+          size="sm"
+          variant="outline"
           onClick={() => setShowShortlist(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 border"
-          style={{
-            background: 'var(--brand-soft)',
-            color: 'var(--brand)',
-            borderColor: 'color-mix(in srgb, var(--brand) 25%, transparent)',
-          }}
+          className="bg-primary/10 text-primary border-primary/25 hover:bg-primary/15"
         >
           ★ Compare Shortlisted ({shortlistedIds.length})
-        </button>
+        </Button>
       </div>
 
       {filteredMeta.length === 0 ? (

@@ -1,4 +1,5 @@
 import { useAuditLog, formatAuditEntry } from '@/hooks/useAuditLog'
+import { Button } from '@/components/ui/button'
 
 interface ProfileHistoryProps {
   candidateId: string
@@ -38,13 +39,15 @@ export function ProfileHistory({ candidateId }: ProfileHistoryProps) {
       </div>
 
       {hasMore && (
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={loadMore}
           disabled={loading}
-          className="mt-4 w-full py-2 text-[11.5px] font-medium text-text2 border border-border rounded-[var(--radius-xs)] bg-surface hover:bg-surface2 hover:text-text transition-colors cursor-pointer disabled:opacity-50"
+          className="mt-4 w-full"
         >
           {loading ? 'Loading…' : 'Load more'}
-        </button>
+        </Button>
       )}
     </div>
   )

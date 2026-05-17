@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
 
 const TOTAL_SECONDS = 3600
 
@@ -54,21 +55,19 @@ export function InterviewTimer() {
         </div>
       </div>
       <div className="flex gap-1.5">
-        <button
-          onClick={() => setRunning((r) => !r)}
-          className="text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius-xs)] bg-surface border border-border text-text2 hover:bg-text hover:text-bg transition-all cursor-pointer"
-        >
+        <Button size="xs" variant="outline" onClick={() => setRunning((r) => !r)}>
           {running ? 'Pause' : seconds < TOTAL_SECONDS ? 'Resume' : 'Start'}
-        </button>
-        <button
+        </Button>
+        <Button
+          size="xs"
+          variant="outline"
           onClick={() => {
             setRunning(false)
             setSeconds(TOTAL_SECONDS)
           }}
-          className="text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius-xs)] bg-surface border border-border text-text3 hover:bg-surface2 transition-all cursor-pointer"
         >
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   )

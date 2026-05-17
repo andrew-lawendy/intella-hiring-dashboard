@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TriangleAlertIcon, ClockIcon, XIcon } from 'lucide-react'
 import { Alert } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 
 interface AlertItem {
   id: string
@@ -37,13 +38,15 @@ export function AlertBanners() {
           {item.icon}
           <div className="flex items-center justify-between col-start-2">
             <span>{item.message}</span>
-            <button
+            <Button
+              size="icon-xs"
+              variant="ghost"
               onClick={() => setDismissed((prev) => new Set([...prev, item.id]))}
-              className="ml-3 opacity-60 hover:opacity-100 cursor-pointer transition-opacity"
               aria-label="Dismiss"
+              className="ml-3 opacity-60 hover:opacity-100"
             >
               <XIcon className="size-3.5" />
-            </button>
+            </Button>
           </div>
         </Alert>
       ))}

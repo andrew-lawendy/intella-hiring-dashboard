@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { sendChatMessage, trimChatHistory } from '@/lib/chat'
 import type { ChatMessage, Provider } from '@/lib/chat'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 interface ChatInterfaceProps {
   systemPrompt: string
@@ -79,20 +81,16 @@ export function ChatInterface({ systemPrompt, apiKey, provider }: ChatInterfaceP
       </div>
 
       <div className="flex gap-2">
-        <input
+        <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && send()}
           placeholder="Ask about candidates..."
-          className="flex-1 px-4 py-2.5 bg-surface border border-border rounded-[var(--radius-sm)] text-[13px] font-sans text-text outline-none focus:border-text transition-colors placeholder:text-text3"
+          className="flex-1"
         />
-        <button
-          onClick={send}
-          disabled={loading || !input.trim()}
-          className="px-4 py-2.5 bg-text text-bg rounded-[var(--radius-sm)] text-[12px] font-medium cursor-pointer hover:opacity-85 disabled:opacity-50 transition-opacity border-none"
-        >
+        <Button onClick={send} disabled={loading || !input.trim()}>
           Send
-        </button>
+        </Button>
       </div>
     </div>
   )

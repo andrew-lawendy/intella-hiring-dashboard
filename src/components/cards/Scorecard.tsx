@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SCORE_CATEGORIES, isScoreSubmitted, sumScores, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
+import { Button } from '@/components/ui/button'
 
 interface ScorecardProps {
   currentUser: 'peter' | 'ossama'
@@ -101,12 +102,9 @@ export function Scorecard({
         ) : !coSubmitted ? (
           <p className="text-[11px] text-text3 italic">{coName} hasn&apos;t scored yet.</p>
         ) : !revealed ? (
-          <button
-            onClick={() => setRevealed(true)}
-            className="text-[11px] font-medium text-brand bg-[var(--brand-soft)] border border-[color-mix(in_srgb,var(--brand)_25%,transparent)] px-3 py-1.5 rounded-[var(--radius-xs)] cursor-pointer hover:bg-brand hover:text-white transition-all"
-          >
+          <Button size="xs" onClick={() => setRevealed(true)}>
             Reveal {coName}&apos;s scores
-          </button>
+          </Button>
         ) : (
           SCORE_CATEGORIES.map((cat) => (
             <StarRating key={cat} category={cat} value={coScores[cat]} readonly />

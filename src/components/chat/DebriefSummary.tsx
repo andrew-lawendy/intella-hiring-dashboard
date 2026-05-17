@@ -4,6 +4,7 @@ import { buildDebriefPrompt } from '@/lib/systemPrompt'
 import type { Provider } from '@/lib/chat'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
+import { Button } from '@/components/ui/button'
 
 interface DebriefSummaryProps {
   candidates: CandidateWithDetails[]
@@ -53,13 +54,14 @@ export function DebriefSummary({ candidates, stateMap, apiKey, provider }: Debri
             AI-generated summary of {completedCount} completed interviews
           </p>
         </div>
-        <button
+        <Button
+          size="sm"
           onClick={generate}
           disabled={loading || completedCount === 0}
-          className="px-4 py-2 bg-[var(--brand-soft)] text-brand border border-[color-mix(in_srgb,var(--brand)_25%,transparent)] rounded-[var(--radius-sm)] text-[12px] font-medium cursor-pointer hover:bg-brand hover:text-white hover:border-brand transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          loading={loading}
         >
           {loading ? 'Generating…' : 'Generate Debrief'}
-        </button>
+        </Button>
       </div>
 
       {error && (
@@ -73,7 +75,10 @@ export function DebriefSummary({ candidates, stateMap, apiKey, provider }: Debri
           <div className="text-[13px] text-text leading-relaxed whitespace-pre-wrap font-sans">
             {summary}
           </div>
-          <button
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-4"
             onClick={() => {
               const w = window.open('', '_blank')
               if (w) {
@@ -84,10 +89,9 @@ export function DebriefSummary({ candidates, stateMap, apiKey, provider }: Debri
                 setTimeout(() => w.print(), 300)
               }
             }}
-            className="mt-4 text-[11px] font-medium px-3 py-1.5 border border-border rounded-[var(--radius-xs)] text-text2 hover:bg-text hover:text-bg transition-all cursor-pointer"
           >
             Print / Export
-          </button>
+          </Button>
         </div>
       )}
 

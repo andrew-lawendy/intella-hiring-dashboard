@@ -1,6 +1,7 @@
 import { InterviewTimer } from './InterviewTimer'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
+import { Button } from '@/components/ui/button'
 
 type State = Database['public']['Tables']['interview_state']['Row']
 
@@ -27,12 +28,9 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
         </div>
         <div className="flex items-center gap-2">
           <InterviewTimer />
-          <button
-            onClick={onPrintBrief}
-            className="text-[11.5px] font-medium px-3 py-1.5 rounded-[var(--radius-sm)] border border-[var(--red-line)] text-[var(--red)] bg-surface hover:bg-[var(--red)] hover:text-white transition-all cursor-pointer"
-          >
+          <Button size="sm" variant="outline" onClick={onPrintBrief}>
             Print Brief
-          </button>
+          </Button>
         </div>
       </div>
 

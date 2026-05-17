@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface CommentsProps {
   candidateId: string
@@ -65,12 +66,9 @@ export function Comments({
             placeholder={`${scorer.label}'s notes...`}
             className="w-full font-sans text-xs text-text bg-surface2 border border-border rounded-[var(--radius-xs)] px-2.5 py-1.5 resize-y min-h-[54px] outline-none focus:border-text focus:bg-surface transition-colors"
           />
-          <button
-            onClick={() => handleSave(scorer.key)}
-            className="mt-1.5 text-[11px] font-medium px-2.5 py-1 rounded-[var(--radius-xs)] bg-text text-bg cursor-pointer hover:opacity-85 transition-opacity border-none font-sans"
-          >
+          <Button size="xs" onClick={() => handleSave(scorer.key)} className="mt-1.5">
             Save
-          </button>
+          </Button>
           {scorer.saved && (
             <span className="text-[10.5px] text-[var(--green)] ml-2 font-medium">Saved</span>
           )}

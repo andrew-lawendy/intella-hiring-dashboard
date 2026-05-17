@@ -4,6 +4,7 @@ import { useCandidateState } from '@/hooks/useCandidateState'
 import { BriefCard } from '@/components/briefing/BriefCard'
 import { printBriefCard } from '@/lib/exports'
 import { Spinner } from '@/components/ui/spinner'
+import { Button } from '@/components/ui/button'
 
 const DAYS = [
   'All',
@@ -39,17 +40,14 @@ export function BriefingPage() {
 
       <div className="flex gap-1.5 mb-6 flex-wrap">
         {DAYS.map((d) => (
-          <button
+          <Button
             key={d}
+            size="sm"
+            variant={day === d ? 'default' : 'outline'}
             onClick={() => setDay(d)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium font-sans border transition-all cursor-pointer ${
-              day === d
-                ? 'bg-text text-bg border-text'
-                : 'bg-surface border-border text-text2 hover:border-border-strong hover:text-text'
-            }`}
           >
             {d === 'All' ? 'All Days' : d.split(' ').slice(0, 2).join(' ')}
-          </button>
+          </Button>
         ))}
       </div>
 
