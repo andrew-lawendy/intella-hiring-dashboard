@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { useAuth } from '@/hooks/useAuth'
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button'
 
 interface HeaderProps {
   onAddCandidate?: () => void
+  onOpenProfile?: () => void
   onShortlist?: () => void
   onExportReport?: () => void
   onExportExcel?: () => void
@@ -16,6 +16,7 @@ interface HeaderProps {
 
 export function Header({
   onAddCandidate,
+  onOpenProfile,
   onShortlist,
   onExportReport,
   onExportExcel,
@@ -88,9 +89,11 @@ export function Header({
         <Button size="sm" variant="outline" onClick={onPrint}>
           Print
         </Button>
-        <Link
-          to="/profile"
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-border hover:bg-muted transition-colors text-[12.5px] font-medium text-text2"
+        <button
+          type="button"
+          onClick={onOpenProfile}
+          aria-label="Open profile settings"
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-border hover:bg-muted transition-colors text-[12.5px] font-medium text-text2 cursor-pointer"
           style={{ background: 'var(--surface)' }}
         >
           <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold flex-shrink-0 overflow-hidden">
@@ -101,7 +104,7 @@ export function Header({
             )}
           </span>
           <span className="hidden sm:inline">{displayName}</span>
-        </Link>
+        </button>
       </div>
     </header>
   )
