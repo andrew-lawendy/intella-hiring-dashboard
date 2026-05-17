@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { useForm } from '@tanstack/react-form'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircle2Icon, PlusIcon, XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -62,8 +61,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   const { candidates: allMeta } = useCandidateMeta()
   const { mutateAsync: createCandidate, isPending } = useCreateCandidate()
 
-  const form = useForm({ defaultValues: DEFAULT_VALUES })
-  const values = form.state.values
+  const [values, setValues] = useState<CreateCandidateInput>(DEFAULT_VALUES)
 
   const duplicateEmail = useMemo(() => {
     const email = values.email.trim().toLowerCase()
@@ -81,7 +79,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   }
 
   function setField<K extends keyof CreateCandidateInput>(key: K, value: CreateCandidateInput[K]) {
-    form.setFieldValue(key as never, value as never)
+    setValues((prev) => ({ ...prev, [key]: value }))
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: '' }))
   }
 
@@ -133,7 +131,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   }
 
   function reset() {
-    form.reset()
+    setValues(DEFAULT_VALUES)
     setStep(0)
     setErrors({})
     setSubmitted(false)
