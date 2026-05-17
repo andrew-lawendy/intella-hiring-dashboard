@@ -11,7 +11,15 @@ export function Layout() {
   const { stateMap } = useCandidateState()
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div
+      className="relative min-h-screen bg-bg"
+      style={{
+        backgroundImage: 'url("/assets/images/illustrations/background-image.svg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <Header
         onExportReport={() => exportDecisionReport(data, stateMap)}
         onExportExcel={() => exportToExcel(data, stateMap)}
