@@ -27,15 +27,14 @@ export function Header({ onShortlist, onExportReport, onExportExcel, onPrint }: 
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2.5">
-          <div
-            className="w-[26px] h-[26px] rounded-[7px] flex-shrink-0 bg-primary"
-            style={{
-              boxShadow: '0 1px 0 rgba(255,255,255,.25) inset, 0 4px 12px -4px rgba(25,95,107,.5)',
-            }}
+          <img
+            src="/assets/images/intella-logo.webp"
+            alt="Intella"
+            className="h-[22px] w-auto block flex-shrink-0 dark:brightness-0 dark:invert"
           />
-          <span className="text-[17px] font-semibold tracking-tight text-text font-sans">
-            Intella{' '}
-            <span className="text-text2 font-normal text-[14px]">/ Interview Dashboard</span>
+          <span className="w-px h-[18px] bg-border opacity-70 flex-shrink-0" />
+          <span className="text-[13px] font-normal tracking-[-0.005em] text-text2">
+            Interview Dashboard
           </span>
         </div>
         <div className="flex items-center gap-3 ml-2">

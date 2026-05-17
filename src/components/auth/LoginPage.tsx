@@ -55,9 +55,14 @@ export function LoginPage({ error }: LoginPageProps) {
         <div className="w-full max-w-[360px]">
           {/* Mobile logo */}
           <div className="flex items-center gap-2.5 mb-10 lg:hidden">
-            <div className="size-8 rounded-lg bg-primary flex-shrink-0" />
-            <span className="text-foreground font-semibold text-[17px] tracking-tight">
-              Intella
+            <img
+              src="/assets/images/intella-logo.webp"
+              alt="Intella"
+              className="h-[22px] w-auto block flex-shrink-0 dark:brightness-0 dark:invert"
+            />
+            <span className="w-px h-[18px] bg-border opacity-70 flex-shrink-0" />
+            <span className="text-[13px] font-normal tracking-[-0.005em] text-muted-foreground">
+              Hiring
             </span>
           </div>
 
@@ -121,9 +126,14 @@ export function LoginPage({ error }: LoginPageProps) {
         style={{ background: 'var(--color-teal-950)' }}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 z-10">
-          <div className="size-9 rounded-xl bg-white/15 ring-1 ring-white/25 flex-shrink-0" />
-          <span className="text-white font-semibold text-[18px] tracking-tight">Intella</span>
+        <div className="flex items-center gap-2.5 z-10">
+          <img
+            src="/assets/images/intella-logo.webp"
+            alt="Intella"
+            className="h-[22px] w-auto block flex-shrink-0 brightness-0 invert"
+          />
+          <span className="w-px h-[18px] bg-white/25 flex-shrink-0" />
+          <span className="text-[13px] font-normal tracking-[-0.005em] text-white/60">Hiring</span>
         </div>
 
         {/* Headline + card preview */}
