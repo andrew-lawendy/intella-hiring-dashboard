@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
+import { useQueryState, parseAsInteger, parseAsString } from 'nuqs'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
 import {
@@ -41,12 +42,16 @@ export function CardsPage() {
     [round],
   )
 
-  const [filter, setFilter] = useState<FilterType>('all')
-  const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
-  const [showShortlist, setShowShortlist] = useState(false)
-  const [profileId, setProfileId] = useState<string | null>(null)
-  const [emailId, setEmailId] = useState<string | null>(null)
+  const [filter, setFilter] = useQueryState('filter', parseAsString.withDefault('all'))
+  const [search, setSearch] = useQueryState('q', parseAsString.withDefault(''))
+  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [showShortlist, setShowShortlist] = useQueryState('compare', {
+    parse: (v) => v === '1',
+    serialize: (v) => (v ? '1' : ''),
+    defaultValue: false,
+  })
+  const [profileId, setProfileId] = useQueryState('profile', parseAsString)
+  const [emailId, setEmailId] = useQueryState('email', parseAsString)
 
   const handleFilterChange = (f: FilterType) => {
     setFilter(f)
@@ -75,7 +80,7 @@ export function CardsPage() {
 
   const debouncedSearch = useDebounce(search, 300)
   const filteredMeta = useMemo(
-    () => filterCandidates(allMeta, stateMin, filter, debouncedSearch, dayMap),
+    () => filterCandidates(allMeta, stateMin, filter as FilterType, debouncedSearch, dayMap),
     [allMeta, stateMin, filter, debouncedSearch, dayMap],
   )
   const pageIds = useMemo(
