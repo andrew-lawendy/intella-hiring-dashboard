@@ -11,8 +11,8 @@ const FIELD_LABELS: Record<string, string> = {
   shortlisted: 'Shortlisted',
   interview_status: 'Status',
   confirmed: 'Confirmation',
-  peter_scores: 'Peter scores',
-  ossama_scores: 'Ossama scores',
+  peter_scores: 'Scorecard (slot A)',
+  ossama_scores: 'Scorecard (slot B)',
 }
 
 export function formatAuditEntry(

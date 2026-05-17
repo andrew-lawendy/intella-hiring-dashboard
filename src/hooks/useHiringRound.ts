@@ -19,44 +19,53 @@ export function useHiringRound() {
   })
 }
 
+// Parse YYYY-MM-DD as local date to avoid UTC offset shifting the day
+function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const DAY_ABBREVS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+
 export function formatRoundDateRange(startDate: string, endDate: string): string {
-  const start = new Date(startDate)
-  const end = new Date(endDate)
-  const month = start.toLocaleDateString('en-US', { month: 'long' })
-  return `${month} ${start.getDate()}–${end.getDate()}`
+  const start = parseLocalDate(startDate)
+  const end = parseLocalDate(endDate)
+  return `${MONTH_NAMES[start.getMonth()]} ${start.getDate()}–${end.getDate()}`
 }
 
 export function formatRoundYear(startDate: string): string {
-  return new Date(startDate).getFullYear().toString()
+  return parseLocalDate(startDate).getFullYear().toString()
 }
 
 export function generateDayMap(startDate: string, endDate: string): Record<string, string> {
-  const abbrevs = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
-  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-
   const map: Record<string, string> = {}
-  const current = new Date(startDate)
-  const end = new Date(endDate)
+  const current = parseLocalDate(startDate)
+  const end = parseLocalDate(endDate)
 
   while (current <= end) {
     const d = current.getDay()
-    map[abbrevs[d]] = `${names[d]} ${current.getDate()} ${months[current.getMonth()]}`
+    map[DAY_ABBREVS[d]] = `${DAY_NAMES[d]} ${current.getDate()} ${MONTH_NAMES[current.getMonth()]}`
     current.setDate(current.getDate() + 1)
   }
 
   return map
+}
+
+export function getRoundDays(startDate: string, endDate: string): string[] {
+  return Object.values(generateDayMap(startDate, endDate))
 }

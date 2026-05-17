@@ -25,6 +25,7 @@ export function exportToExcel(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
   round: HiringRound | null = null,
+  scorerNames: { a: string; b: string } = { a: 'Scorer A', b: 'Scorer B' },
 ): void {
   const max = maxScore()
   const rows = candidates.map(({ candidate, profile, analysis }) => {
@@ -47,18 +48,18 @@ export function exportToExcel(
       'Fit Score': profile?.fit_score ?? '',
       'Fit Label': profile?.fit_label ?? '',
       'Combined Score': `${score}/${max}`,
-      'Peter Score': state
+      [`${scorerNames.a} Score`]: state
         ? Object.values(state.peter_scores as Scores).reduce((a, b) => a + b, 0)
         : '',
-      'Ossama Score': state
+      [`${scorerNames.b} Score`]: state
         ? Object.values(state.ossama_scores as Scores).reduce((a, b) => a + b, 0)
         : '',
       Verdict: state?.verdict ?? '',
       Status: state?.interview_status ?? '',
       Confirmed: state?.confirmed ? 'Yes' : 'No',
       Shortlisted: state?.shortlisted === true ? 'Yes' : state?.shortlisted === false ? 'No' : '',
-      'Peter Notes': state?.peter_comment ?? '',
-      'Ossama Notes': state?.ossama_comment ?? '',
+      [`${scorerNames.a} Notes`]: state?.peter_comment ?? '',
+      [`${scorerNames.b} Notes`]: state?.ossama_comment ?? '',
     }
   })
 
@@ -72,6 +73,7 @@ export function exportDecisionReport(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
   round: HiringRound | null = null,
+  scorerNames: { a: string; b: string } = { a: 'Scorer A', b: 'Scorer B' },
 ): void {
   const max = maxScore()
   const sorted = [...candidates].sort((a, b) => {
@@ -101,7 +103,7 @@ export function exportDecisionReport(
         <td>${profile?.fit_score ?? '—'}%</td>
         <td><strong>${score}/${max}</strong></td>
         <td style="color:${state?.verdict === 'strong-yes' ? 'green' : state?.verdict === 'no' ? 'red' : 'inherit'}">${verdictLabels[state?.verdict ?? ''] ?? '—'}</td>
-        <td><small>${state?.peter_comment ? 'P: ' + state.peter_comment.slice(0, 60) : ''}${state?.ossama_comment ? '<br/>O: ' + state.ossama_comment.slice(0, 60) : ''}</small></td>
+        <td><small>${state?.peter_comment ? scorerNames.a + ': ' + state.peter_comment.slice(0, 60) : ''}${state?.ossama_comment ? '<br/>' + scorerNames.b + ': ' + state.ossama_comment.slice(0, 60) : ''}</small></td>
       </tr>`
     })
     .join('')

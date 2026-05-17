@@ -1,38 +1,24 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 
 interface CommentsProps {
   candidateId: string
-  peterComment: string
-  ossamaComment: string
-  onSavePeter: (comment: string) => void
-  onSaveOssama: (comment: string) => void
+  myComment: string
+  coComment: string
+  myLabel: string
+  coLabel: string
+  onMySave: (comment: string) => void
 }
 
-export function Comments({
-  peterComment,
-  ossamaComment,
-  onSavePeter,
-  onSaveOssama,
-}: CommentsProps) {
-  const [peter, setPeter] = useState(peterComment)
-  const [ossama, setOssama] = useState(ossamaComment)
-  const [peterSaved, setPeterSaved] = useState(false)
-  const [ossamaSaved, setOssamaSaved] = useState(false)
-  const interviewers = useInterviewerNames()
+export function Comments({ myComment, coComment, myLabel, coLabel, onMySave }: CommentsProps) {
+  const [myDraft, setMyDraft] = useState(myComment)
+  const [saved, setSaved] = useState(false)
 
-  const handleSave = (scorer: 'peter' | 'ossama') => {
-    if (scorer === 'peter') {
-      onSavePeter(peter)
-      setPeterSaved(true)
-      setTimeout(() => setPeterSaved(false), 2000)
-    } else {
-      onSaveOssama(ossama)
-      setOssamaSaved(true)
-      setTimeout(() => setOssamaSaved(false), 2000)
-    }
+  const handleSave = () => {
+    onMySave(myDraft)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
   }
 
   return (
@@ -40,43 +26,38 @@ export function Comments({
       <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
         Comments
       </p>
-      {[
-        {
-          key: 'peter' as const,
-          label: interviewers.peter,
-          value: peter,
-          saved: peterSaved,
-          color: 'var(--purple)',
-          onChange: setPeter,
-        },
-        {
-          key: 'ossama' as const,
-          label: interviewers.ossama,
-          value: ossama,
-          saved: ossamaSaved,
-          color: 'var(--blue)',
-          onChange: setOssama,
-        },
-      ].map((scorer) => (
-        <div key={scorer.key} className="mb-3 last:mb-0">
-          <p className="text-[10.5px] font-medium text-text2 mb-1 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: scorer.color }} />
-            {scorer.label}
-          </p>
-          <Textarea
-            value={scorer.value}
-            onChange={(e) => scorer.onChange(e.target.value)}
-            placeholder={`${scorer.label}'s notes...`}
-            className="min-h-[54px] text-xs resize-y"
-          />
-          <Button size="xs" onClick={() => handleSave(scorer.key)} className="mt-1.5">
-            Save
-          </Button>
-          {scorer.saved && (
-            <span className="text-[10.5px] text-[var(--green)] ml-2 font-medium">Saved</span>
-          )}
-        </div>
-      ))}
+
+      {/* Current user's comment — editable */}
+      <div className="mb-3">
+        <p className="text-[10.5px] font-medium text-text2 mb-1 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--purple)]" />
+          {myLabel}
+        </p>
+        <Textarea
+          value={myDraft}
+          onChange={(e) => setMyDraft(e.target.value)}
+          placeholder={`${myLabel}'s notes...`}
+          className="min-h-[54px] text-xs resize-y"
+        />
+        <Button size="xs" onClick={handleSave} className="mt-1.5">
+          Save
+        </Button>
+        {saved && <span className="text-[10.5px] text-[var(--green)] ml-2 font-medium">Saved</span>}
+      </div>
+
+      {/* Co-scorer's comment — read-only */}
+      <div>
+        <p className="text-[10.5px] font-medium text-text2 mb-1 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--blue)]" />
+          {coLabel}
+        </p>
+        <Textarea
+          value={coComment}
+          readOnly
+          placeholder={`${coLabel}'s notes...`}
+          className="min-h-[54px] text-xs resize-y opacity-60 cursor-default"
+        />
+      </div>
     </div>
   )
 }

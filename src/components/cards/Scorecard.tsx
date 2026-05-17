@@ -1,17 +1,15 @@
 import { useState } from 'react'
 import { DEFAULT_SCORE_CATEGORIES, isScoreSubmitted, sumScores, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
-import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { Button } from '@/components/ui/button'
 
 interface ScorecardProps {
-  currentUser: 'peter' | 'ossama'
-  currentUserName: string
-  peterScores: Scores
-  ossamaScores: Scores
+  myName: string
+  coName: string
+  myScores: Scores
+  coScores: Scores
   scoreCategories?: readonly string[]
-  onPeterChange: (scores: Scores) => void
-  onOssamaChange: (scores: Scores) => void
+  onMyScoreChange: (scores: Scores) => void
 }
 
 function StarRating({
@@ -50,29 +48,22 @@ function StarRating({
 }
 
 export function Scorecard({
-  currentUser,
-  currentUserName,
-  peterScores,
-  ossamaScores,
+  myName,
+  coName,
+  myScores,
+  coScores,
   scoreCategories = DEFAULT_SCORE_CATEGORIES,
-  onPeterChange,
-  onOssamaChange,
+  onMyScoreChange,
 }: ScorecardProps) {
   const [revealed, setRevealed] = useState(false)
-  const interviewers = useInterviewerNames()
 
-  const myScores = currentUser === 'peter' ? peterScores : ossamaScores
-  const coScores = currentUser === 'peter' ? ossamaScores : peterScores
-  const coName = currentUser === 'peter' ? interviewers.ossama : interviewers.peter
-  const onMyChange = currentUser === 'peter' ? onPeterChange : onOssamaChange
+  const mySubmitted = isScoreSubmitted(myScores, scoreCategories)
+  const coSubmitted = isScoreSubmitted(coScores, scoreCategories)
 
-  const mySubmitted = isScoreSubmitted(myScores)
-  const coSubmitted = isScoreSubmitted(coScores)
-  const canReveal = mySubmitted
-
-  const pTotal = sumScores(peterScores)
-  const oTotal = sumScores(ossamaScores)
-  const combined = pTotal > 0 && oTotal > 0 ? Math.round((pTotal + oTotal) / 2) : pTotal || oTotal
+  const myTotal = sumScores(myScores)
+  const coTotal = sumScores(coScores)
+  const combined =
+    myTotal > 0 && coTotal > 0 ? Math.round((myTotal + coTotal) / 2) : myTotal || coTotal
 
   return (
     <div className="px-4 py-3.5 border-t border-border bg-surface">
@@ -86,14 +77,14 @@ export function Scorecard({
       </div>
 
       <p className="text-[10px] font-medium text-text3 mb-1.5 uppercase tracking-[0.06em]">
-        {currentUserName} (you)
+        {myName} (you)
       </p>
       {scoreCategories.map((cat) => (
         <StarRating
           key={cat}
           category={cat}
           value={myScores[cat] ?? 0}
-          onChange={(v) => onMyChange({ ...myScores, [cat]: v })}
+          onChange={(v) => onMyScoreChange({ ...myScores, [cat]: v })}
         />
       ))}
 
@@ -101,7 +92,7 @@ export function Scorecard({
         <p className="text-[10px] font-medium text-text3 mb-1.5 uppercase tracking-[0.06em]">
           {coName}
         </p>
-        {!canReveal ? (
+        {!mySubmitted ? (
           <p className="text-[11px] text-text3 italic">
             Submit your own scores first to see {coName}&apos;s ratings.
           </p>

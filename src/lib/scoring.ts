@@ -26,15 +26,18 @@ export function sumScores(scores: Scores): number {
   return Object.values(scores).reduce((a, b) => a + b, 0)
 }
 
-export function totalScore(peter: Scores, ossama: Scores): number {
-  const ps = sumScores(peter)
-  const os = sumScores(ossama)
-  if (ps > 0 && os > 0) return Math.round((ps + os) / 2)
-  return ps || os
+export function totalScore(slotA: Scores, slotB: Scores): number {
+  const sa = sumScores(slotA)
+  const sb = sumScores(slotB)
+  if (sa > 0 && sb > 0) return Math.round((sa + sb) / 2)
+  return sa || sb
 }
 
-export function isScoreSubmitted(scores: Scores): boolean {
-  return SCORE_CATEGORIES.every((cat) => scores[cat] > 0)
+export function isScoreSubmitted(
+  scores: Scores,
+  categories: readonly string[] = DEFAULT_SCORE_CATEGORIES,
+): boolean {
+  return categories.every((cat) => (scores[cat] ?? 0) > 0)
 }
 
 export function fitColorFromScore(score: number | null): string {

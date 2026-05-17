@@ -3,6 +3,7 @@ import type { StateMap } from '@/hooks/useCandidateState'
 import { totalScore, maxScore } from '@/lib/scoring'
 import type { Scores } from '@/lib/scoring'
 import { VERDICT_MAP } from '@/lib/verdicts'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { Spinner } from '@/components/ui/spinner'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -30,6 +31,7 @@ interface ShortlistComparisonProps {
 
 export function ShortlistComparison({ candidateIds, stateMap, onClose }: ShortlistComparisonProps) {
   const { data, loading } = useCandidates({ ids: candidateIds })
+  const interviewers = useInterviewerNames()
   const max = maxScore()
 
   if (!candidateIds.length) {
@@ -71,7 +73,14 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted">
-                  {['Candidate', 'Peter', 'Ossama', 'Combined', 'Verdict', 'Notes'].map((h) => (
+                  {[
+                    'Candidate',
+                    interviewers.peter,
+                    interviewers.ossama,
+                    'Combined',
+                    'Verdict',
+                    'Notes',
+                  ].map((h) => (
                     <TableHead
                       key={h}
                       className="px-3 py-2.5 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground"
@@ -130,10 +139,16 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                         )}
                       </TableCell>
                       <TableCell className="px-3 py-2.5 text-[10px] text-muted-foreground max-w-[180px]">
-                        {state.peter_comment && <span>P: {state.peter_comment.slice(0, 50)}</span>}
+                        {state.peter_comment && (
+                          <span>
+                            {interviewers.peter}: {state.peter_comment.slice(0, 50)}
+                          </span>
+                        )}
                         {state.peter_comment && state.ossama_comment && <br />}
                         {state.ossama_comment && (
-                          <span>O: {state.ossama_comment.slice(0, 50)}</span>
+                          <span>
+                            {interviewers.ossama}: {state.ossama_comment.slice(0, 50)}
+                          </span>
                         )}
                       </TableCell>
                     </TableRow>

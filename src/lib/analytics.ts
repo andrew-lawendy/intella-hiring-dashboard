@@ -11,6 +11,7 @@ interface AnalysisRow {
   pm_exp: number | null
   domains: string[] | null
 }
+
 interface StateRow {
   candidate_id: string
   peter_scores: unknown
@@ -54,8 +55,8 @@ export interface RankingEntry {
   candidateId: string
   combinedScore: number
   verdict: string | null
-  peterScore: number
-  ossamaScore: number
+  scoreA: number
+  scoreB: number
 }
 
 export function computeRanking(
@@ -67,14 +68,14 @@ export function computeRanking(
     .map((a) => {
       const s = stateMap[a.candidate_id]
       if (!s) return null
-      const ps = s.peter_scores as Scores
-      const os = s.ossama_scores as Scores
+      const slotA = s.peter_scores as Scores
+      const slotB = s.ossama_scores as Scores
       return {
         candidateId: a.candidate_id,
-        combinedScore: totalScore(ps, os),
+        combinedScore: totalScore(slotA, slotB),
         verdict: s.verdict,
-        peterScore: Object.values(ps).reduce((x, y) => x + y, 0),
-        ossamaScore: Object.values(os).reduce((x, y) => x + y, 0),
+        scoreA: Object.values(slotA).reduce((x, y) => x + y, 0),
+        scoreB: Object.values(slotB).reduce((x, y) => x + y, 0),
       }
     })
     .filter(Boolean)

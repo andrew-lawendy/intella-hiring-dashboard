@@ -15,6 +15,7 @@ interface CandidateMin {
   name: string
   slot: string | null
 }
+
 interface StateMin {
   confirmed: boolean
   interview_status: string
@@ -38,7 +39,7 @@ export function deriveActionItems(
         type: 'unconfirmed',
         candidateId: c.id,
         candidateName: c.name,
-        message: `Confirmation pending`,
+        message: 'Confirmation pending',
       })
     }
 
@@ -47,7 +48,7 @@ export function deriveActionItems(
         type: 'no-verdict',
         candidateId: c.id,
         candidateName: c.name,
-        message: `Interview done — no verdict set`,
+        message: 'Interview done — no verdict set',
       })
     }
 
@@ -60,7 +61,7 @@ export function deriveActionItems(
         type: 'overdue-scorecard',
         candidateId: c.id,
         candidateName: c.name,
-        message: `Scorecard overdue`,
+        message: 'Scorecard overdue',
       })
     }
   }

@@ -3,6 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import type { RankingEntry } from '@/lib/analytics'
 import { maxScore } from '@/lib/scoring'
 import { VERDICT_MAP } from '@/lib/verdicts'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { DataTable } from '@/components/ui/data-table'
 
 interface RankingTableProps {
@@ -14,6 +15,7 @@ type RankingRow = RankingEntry & { rank: number; name: string }
 
 export function RankingTable({ entries, nameMap }: RankingTableProps) {
   const max = maxScore()
+  const interviewers = useInterviewerNames()
 
   const rows = useMemo<RankingRow[]>(
     () =>
@@ -52,22 +54,22 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
         ),
       },
       {
-        id: 'peter',
-        header: 'Peter',
+        id: 'scorer-a',
+        header: interviewers.peter,
         size: 100,
         cell: ({ row }) => (
           <span className="font-mono text-[var(--purple)]">
-            {row.original.peterScore || '—'}/{max}
+            {row.original.scoreA || '—'}/{max}
           </span>
         ),
       },
       {
-        id: 'ossama',
-        header: 'Ossama',
+        id: 'scorer-b',
+        header: interviewers.ossama,
         size: 100,
         cell: ({ row }) => (
           <span className="font-mono text-[var(--blue)]">
-            {row.original.ossamaScore || '—'}/{max}
+            {row.original.scoreB || '—'}/{max}
           </span>
         ),
       },
@@ -81,20 +83,17 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
               className="text-[11px] font-semibold"
               style={{
                 color:
-                  (row.original.verdict
-                    ? VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.color
-                    : undefined) ?? 'var(--text3)',
+                  VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.color ??
+                  'var(--text3)',
               }}
             >
-              {row.original.verdict
-                ? (VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.short ??
-                  row.original.verdict)
-                : '—'}
+              {VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.short ??
+                row.original.verdict}
             </span>
           ) : null,
       },
     ],
-    [max],
+    [max, interviewers],
   )
 
   return <DataTable columns={columns} data={rows} sortable pageSize={rows.length || 1} />

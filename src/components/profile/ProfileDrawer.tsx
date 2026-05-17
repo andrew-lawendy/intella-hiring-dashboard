@@ -18,10 +18,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
-function resolveScoreSlot(email: string | undefined): 'peter' | 'ossama' {
-  return email?.startsWith('peter') ? 'peter' : 'ossama'
-}
-
 function getInitials(first: string, last: string): string {
   return ((first[0] ?? '') + (last[0] ?? '')).toUpperCase() || '?'
 }
@@ -37,8 +33,8 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
   const { data: profile } = useProfile(user?.id)
   const { mutateAsync: upsert, isPending: saving } = useUpsertProfile()
 
-  const scorerSlot = resolveScoreSlot(user?.email)
-  const scorerLabel = scorerSlot === 'peter' ? 'Scorer A · Peter' : 'Scorer B · Ossama'
+  const scorerSlot = profile?.scorer_slot
+  const scorerLabel = scorerSlot ? `Scorer slot: ${scorerSlot}` : 'No slot assigned'
 
   const [draft, setDraft] = useState({ first_name: '', last_name: '', title: '', avatar_url: '' })
   const [confirmSignout, setConfirmSignout] = useState(false)
@@ -84,7 +80,7 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
       last_name: draft.last_name.trim() || null,
       title: draft.title.trim() || null,
       avatar_url: draft.avatar_url.trim() || null,
-      scorer_slot: scorerSlot,
+      scorer_slot: (scorerSlot as 'peter' | 'ossama' | null) ?? null,
       theme,
     })
     setSaved(true)

@@ -3,8 +3,16 @@ import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useHiringRound, generateDayMap } from '@/hooks/useHiringRound'
 import { useCandidates } from '@/hooks/useCandidates'
-import { useCandidateState } from '@/hooks/useCandidateState'
+import {
+  useCandidateState,
+  getSlotScores,
+  getCoSlotScores,
+  getSlotComment,
+  getCoSlotComment,
+} from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
+import { useProfile } from '@/hooks/useProfile'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { SummaryBar } from '@/components/cards/SummaryBar'
 import { InterviewTimeline } from '@/components/cards/InterviewTimeline'
 import { ActionQueue } from '@/components/cards/ActionQueue'
@@ -25,17 +33,6 @@ type State = Database['public']['Tables']['interview_state']['Row']
 
 const PAGE_SIZE = 24
 
-function resolveScoreSlot(email: string | undefined): 'peter' | 'ossama' {
-  return email?.startsWith('peter') ? 'peter' : 'ossama'
-}
-
-function displayNameFromEmail(email: string | undefined): string {
-  if (!email) return 'You'
-  const local = email.split('@')[0]
-  const first = local.split('.')[0]
-  return first.charAt(0).toUpperCase() + first.slice(1)
-}
-
 export function CardsPage() {
   const { candidates: allMeta, loading: metaLoading } = useCandidateMeta()
   const {
@@ -45,13 +42,18 @@ export function CardsPage() {
     setInterviewStatus,
     setShortlisted,
     setConfirmed,
-    setScores,
-    setComment,
+    setScoresBySlot,
+    setCommentBySlot,
     setChecklist,
   } = useCandidateState()
   const { user } = useAuth()
-  const currentUser = resolveScoreSlot(user?.email)
-  const currentUserName = displayNameFromEmail(user?.email)
+  const { data: myProfile } = useProfile(user?.id)
+  const interviewers = useInterviewerNames()
+
+  // Slot is the DB column selector — only known here, never passed to children
+  const mySlot = myProfile?.scorer_slot ?? 'ossama'
+  const myName = interviewers[mySlot as keyof typeof interviewers] ?? 'You'
+  const coName = interviewers[mySlot === 'peter' ? 'ossama' : 'peter'] ?? 'Co-scorer'
   const { data: round } = useHiringRound()
   const dayMap = useMemo(
     () => (round ? generateDayMap(round.start_date, round.end_date) : {}),
@@ -179,8 +181,12 @@ export function CardsPage() {
                   key={candidate.id}
                   candidate={candidate}
                   state={state}
-                  currentUser={currentUser}
-                  currentUserName={currentUserName}
+                  myName={myName}
+                  coName={coName}
+                  myScores={getSlotScores(state, mySlot)}
+                  coScores={getCoSlotScores(state, mySlot)}
+                  myComment={getSlotComment(state, mySlot)}
+                  coComment={getCoSlotComment(state, mySlot)}
                   scoreCategories={round?.score_categories}
                   checklistItems={round?.checklist_items}
                   onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
@@ -196,10 +202,10 @@ export function CardsPage() {
                   onReject={() =>
                     setShortlisted(candidate.id, state.shortlisted === false ? null : false)
                   }
-                  onScoreChange={(scorer, scores: Scores) =>
-                    setScores(candidate.id, scorer, scores)
+                  onMyScoreChange={(scores: Scores) =>
+                    setScoresBySlot(candidate.id, mySlot, scores)
                   }
-                  onCommentChange={(scorer, comment) => setComment(candidate.id, scorer, comment)}
+                  onMyCommentSave={(comment) => setCommentBySlot(candidate.id, mySlot, comment)}
                   onChecklistChange={(checklist) => setChecklist(candidate.id, checklist)}
                   onOpenProfile={() => setProfileId(candidate.id)}
                   onEmailDraft={() => setEmailId(candidate.id)}

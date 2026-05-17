@@ -36,8 +36,8 @@ export function buildSystemPrompt(
         state
           ? `- Combined score: ${score}/${max} | Status: ${state.interview_status} | Verdict: ${state.verdict ?? 'none'}`
           : '',
-        state?.peter_comment ? `- Peter's notes: ${state.peter_comment}` : '',
-        state?.ossama_comment ? `- Ossama's notes: ${state.ossama_comment}` : '',
+        state?.peter_comment ? `- Interviewer notes (A): ${state.peter_comment}` : '',
+        state?.ossama_comment ? `- Interviewer notes (B): ${state.ossama_comment}` : '',
       ]
         .filter(Boolean)
         .join('\n')

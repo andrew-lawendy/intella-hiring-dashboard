@@ -8,6 +8,33 @@ type InterviewState = Database['public']['Tables']['interview_state']['Row']
 type InterviewStateUpdate = Database['public']['Tables']['interview_state']['Update']
 export type StateMap = Record<string, InterviewState>
 
+// Internal type — maps scorer profile slots to DB column names
+type ScorerSlot = 'peter' | 'ossama'
+
+function scoresKey(slot: ScorerSlot): 'peter_scores' | 'ossama_scores' {
+  return slot === 'peter' ? 'peter_scores' : 'ossama_scores'
+}
+
+function commentKey(slot: ScorerSlot): 'peter_comment' | 'ossama_comment' {
+  return slot === 'peter' ? 'peter_comment' : 'ossama_comment'
+}
+
+export function getSlotScores(state: InterviewState, slot: string): Scores {
+  return (slot === 'peter' ? state.peter_scores : state.ossama_scores) as Scores
+}
+
+export function getCoSlotScores(state: InterviewState, slot: string): Scores {
+  return (slot === 'peter' ? state.ossama_scores : state.peter_scores) as Scores
+}
+
+export function getSlotComment(state: InterviewState, slot: string): string {
+  return slot === 'peter' ? state.peter_comment : state.ossama_comment
+}
+
+export function getCoSlotComment(state: InterviewState, slot: string): string {
+  return slot === 'peter' ? state.ossama_comment : state.peter_comment
+}
+
 export function useCandidateState() {
   const queryClient = useQueryClient()
 
@@ -59,19 +86,15 @@ export function useCandidateState() {
     [updateState],
   )
 
-  const setScores = useCallback(
-    (id: string, scorer: 'peter' | 'ossama', scores: Scores) => {
-      const key = scorer === 'peter' ? 'peter_scores' : 'ossama_scores'
-      updateState(id, { [key]: scores })
-    },
+  const setScoresBySlot = useCallback(
+    (id: string, slot: string, scores: Scores) =>
+      updateState(id, { [scoresKey(slot as ScorerSlot)]: scores }),
     [updateState],
   )
 
-  const setComment = useCallback(
-    (id: string, scorer: 'peter' | 'ossama', comment: string) => {
-      const key = scorer === 'peter' ? 'peter_comment' : 'ossama_comment'
-      updateState(id, { [key]: comment })
-    },
+  const setCommentBySlot = useCallback(
+    (id: string, slot: string, comment: string) =>
+      updateState(id, { [commentKey(slot as ScorerSlot)]: comment }),
     [updateState],
   )
 
@@ -88,8 +111,8 @@ export function useCandidateState() {
     setInterviewStatus,
     setShortlisted,
     setConfirmed,
-    setScores,
-    setComment,
+    setScoresBySlot,
+    setCommentBySlot,
     setChecklist,
   }
 }

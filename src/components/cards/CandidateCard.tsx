@@ -14,8 +14,12 @@ type State = Database['public']['Tables']['interview_state']['Row']
 interface CandidateCardProps {
   candidate: Candidate
   state: State
-  currentUser: 'peter' | 'ossama'
-  currentUserName: string
+  myName: string
+  coName: string
+  myScores: Scores
+  coScores: Scores
+  myComment: string
+  coComment: string
   scoreCategories?: readonly string[]
   checklistItems?: string[]
   onConfirmToggle: () => void
@@ -23,8 +27,8 @@ interface CandidateCardProps {
   onVerdictChange: (v: NonNullable<State['verdict']>) => void
   onShortlist: () => void
   onReject: () => void
-  onScoreChange: (scorer: 'peter' | 'ossama', scores: Scores) => void
-  onCommentChange: (scorer: 'peter' | 'ossama', comment: string) => void
+  onMyScoreChange: (scores: Scores) => void
+  onMyCommentSave: (comment: string) => void
   onChecklistChange: (checklist: Record<string, boolean>) => void
   onOpenProfile: () => void
   onEmailDraft: () => void
@@ -49,8 +53,12 @@ const STATUS_BANNER: Record<string, { label: string; cls: string }> = {
 export function CandidateCard({
   candidate,
   state,
-  currentUser,
-  currentUserName,
+  myName,
+  coName,
+  myScores,
+  coScores,
+  myComment,
+  coComment,
   scoreCategories,
   checklistItems,
   onConfirmToggle,
@@ -58,17 +66,16 @@ export function CandidateCard({
   onVerdictChange,
   onShortlist,
   onReject,
-  onScoreChange,
-  onCommentChange,
+  onMyScoreChange,
+  onMyCommentSave,
   onChecklistChange,
   onOpenProfile,
   onEmailDraft,
   auditLine,
 }: CandidateCardProps) {
-  const overdueWarning =
-    state.interview_status === 'completed' &&
-    Object.values(state.peter_scores as Scores).every((v) => v === 0) &&
-    Object.values(state.ossama_scores as Scores).every((v) => v === 0)
+  const allScoresZero =
+    Object.values(myScores).every((v) => v === 0) && Object.values(coScores).every((v) => v === 0)
+  const overdueWarning = state.interview_status === 'completed' && allScoresZero
 
   const bannerKey =
     state.shortlisted === true
@@ -117,13 +124,12 @@ export function CandidateCard({
         onVerdictChange={onVerdictChange}
       />
       <Scorecard
-        currentUser={currentUser}
-        currentUserName={currentUserName}
+        myName={myName}
+        coName={coName}
+        myScores={myScores}
+        coScores={coScores}
         scoreCategories={scoreCategories}
-        peterScores={state.peter_scores as Scores}
-        ossamaScores={state.ossama_scores as Scores}
-        onPeterChange={(scores) => onScoreChange('peter', scores)}
-        onOssamaChange={(scores) => onScoreChange('ossama', scores)}
+        onMyScoreChange={onMyScoreChange}
       />
       <Checklist
         candidateId={candidate.id}
@@ -133,10 +139,11 @@ export function CandidateCard({
       />
       <Comments
         candidateId={candidate.id}
-        peterComment={state.peter_comment}
-        ossamaComment={state.ossama_comment}
-        onSavePeter={(c) => onCommentChange('peter', c)}
-        onSaveOssama={(c) => onCommentChange('ossama', c)}
+        myComment={myComment}
+        coComment={coComment}
+        myLabel={myName}
+        coLabel={coName}
+        onMySave={onMyCommentSave}
       />
       <CardActions
         isShortlisted={state.shortlisted}
