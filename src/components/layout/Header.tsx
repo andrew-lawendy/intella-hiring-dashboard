@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
-import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
 import { usePipelineStats } from '@/hooks/usePipelineStats'
@@ -89,7 +88,6 @@ export function Header({
         <Button size="sm" variant="outline" onClick={onPrint}>
           Print
         </Button>
-        <ThemeToggle />
         <Link
           to="/profile"
           className="flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-border hover:bg-muted transition-colors text-[12.5px] font-medium text-text2"
