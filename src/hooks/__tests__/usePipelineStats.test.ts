@@ -69,7 +69,7 @@ describe('computePipelineStats', () => {
 
   it('calculates days since round opened from May 17 2026', () => {
     const states = [makeState({})]
-    const stats = computePipelineStats(states, new Date('2026-05-19'))
+    const stats = computePipelineStats(states, new Date('2026-05-19T12:00:00'), '2026-05-17')
     expect(stats.daysSinceStart).toBe(2)
   })
 })
