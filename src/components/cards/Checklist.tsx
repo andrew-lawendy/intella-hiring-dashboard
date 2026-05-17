@@ -1,3 +1,6 @@
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+
 const CHECKLIST_ITEMS = [
   'CV reviewed',
   'LinkedIn checked',
@@ -23,22 +26,24 @@ export function Checklist({ checklist, onChange }: ChecklistProps) {
         Pre-Interview Checklist
       </p>
       {CHECKLIST_ITEMS.map((item) => (
-        <label
-          key={item}
-          className={`flex items-center gap-2 mb-1.5 text-[11.5px] cursor-pointer transition-colors ${
-            checklist[item]
-              ? 'text-text3 line-through decoration-[1px]'
-              : 'text-text2 hover:text-text'
-          }`}
-        >
-          <input
-            type="checkbox"
+        <div key={item} className="flex items-center gap-2 mb-1.5">
+          <Checkbox
+            id={`checklist-${item}`}
             checked={!!checklist[item]}
-            onChange={() => toggle(item)}
-            className="w-3.5 h-3.5 cursor-pointer flex-shrink-0 accent-[var(--green)]"
+            onCheckedChange={() => toggle(item)}
+            className="flex-shrink-0"
           />
-          {item}
-        </label>
+          <Label
+            htmlFor={`checklist-${item}`}
+            className={`text-[11.5px] cursor-pointer transition-colors ${
+              checklist[item]
+                ? 'text-text3 line-through decoration-[1px]'
+                : 'text-text2 hover:text-text'
+            }`}
+          >
+            {item}
+          </Label>
+        </div>
       ))}
     </div>
   )
