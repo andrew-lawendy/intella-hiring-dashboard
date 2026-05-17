@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Input } from '@/components/ui/input'
 import { CheckCircle2Icon, MailIcon } from 'lucide-react'
 
 interface LoginPageProps {
@@ -25,21 +24,29 @@ const VERDICT_STYLES: Record<string, string> = {
   Maybe: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
 }
 
+const DOMAIN = 'intellaworld.com'
+
+function isValidAlias(s: string) {
+  return /^[a-zA-Z0-9._+-]{1,64}$/.test(s.trim())
+}
+
 export function LoginPage({ error }: LoginPageProps) {
   const { signInWithEmail } = useAuth()
-  const [email, setEmail] = useState('')
+  const [alias, setAlias] = useState('')
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [emailError, setEmailError] = useState<string | null>(null)
 
+  const fullEmail = `${alias.trim()}@${DOMAIN}`
+
   const handleMagicLink = async () => {
-    if (!email.endsWith('@intellaworld.com')) {
-      setEmailError('Must be an @intellaworld.com email address')
+    if (!isValidAlias(alias)) {
+      setEmailError('Enter your Intella username')
       return
     }
     setSending(true)
     setEmailError(null)
-    const { error: err } = await signInWithEmail(email)
+    const { error: err } = await signInWithEmail(fullEmail)
     setSending(false)
     if (err) {
       setEmailError(err.message)
@@ -85,27 +92,63 @@ export function LoginPage({ error }: LoginPageProps) {
               <div>
                 <p className="font-semibold text-sm mb-1">Check your email</p>
                 <p className="text-xs opacity-80">
-                  We sent a magic link to <strong>{email}</strong>. Click it to sign in.
+                  We sent a magic link to <strong>{fullEmail}</strong>. Click it to sign in.
                 </p>
               </div>
             </Alert>
           ) : (
             <div className="flex flex-col gap-2">
-              <div className="relative">
-                <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleMagicLink()}
-                  placeholder="you@intellaworld.com"
-                  className="pl-9 pr-4 py-3 h-auto rounded-md bg-background text-foreground text-[14px] font-sans"
+              <div
+                className={`flex items-center rounded-md border bg-background transition-[color,box-shadow] ${emailError ? 'border-destructive ring-[3px] ring-destructive/20' : 'border-input focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50'}`}
+              >
+                <MailIcon
+                  className="ml-3 size-4 text-muted-foreground flex-shrink-0"
+                  aria-hidden="true"
                 />
+                <input
+                  id="login-email"
+                  type="text"
+                  autoComplete="username"
+                  inputMode="email"
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  value={alias}
+                  disabled={sending}
+                  placeholder="yasmin"
+                  aria-label="Intella username"
+                  aria-describedby={emailError ? 'login-email-error' : 'login-email-suffix'}
+                  aria-invalid={!!emailError}
+                  onChange={(e) => {
+                    setAlias(e.target.value.split('@')[0])
+                    if (emailError) setEmailError(null)
+                  }}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData('text')
+                    if (text.includes('@')) {
+                      e.preventDefault()
+                      setAlias(text.split('@')[0].trim())
+                      if (emailError) setEmailError(null)
+                    }
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleMagicLink()}
+                  className="flex-1 min-w-0 bg-transparent outline-none px-2 py-2.5 text-[14px] text-foreground placeholder:text-muted-foreground disabled:opacity-50"
+                />
+                <span
+                  id="login-email-suffix"
+                  className="pr-3 text-[13px] text-muted-foreground font-mono whitespace-nowrap flex-shrink-0"
+                >
+                  @{DOMAIN}
+                </span>
               </div>
-              {emailError && <p className="text-[12px] text-destructive">{emailError}</p>}
+              {emailError && (
+                <p id="login-email-error" role="alert" className="text-[12px] text-destructive">
+                  {emailError}
+                </p>
+              )}
               <Button
                 onClick={handleMagicLink}
-                disabled={sending || !email}
+                disabled={sending || !alias.trim()}
                 loading={sending}
                 className="w-full py-3 h-auto text-[14px]"
               >
