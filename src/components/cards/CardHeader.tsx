@@ -7,7 +7,6 @@ type State = Database['public']['Tables']['interview_state']['Row']
 interface CardHeaderProps {
   candidate: Candidate
   state: State
-  index: number
   onConfirmToggle: () => void
   onOpenProfile: () => void
 }
