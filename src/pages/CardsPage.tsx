@@ -153,7 +153,7 @@ export function CardsPage() {
             className="grid gap-3.5"
             style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}
           >
-            {pageIds.map((id, i) => {
+            {pageIds.map((id) => {
               const cardData = pageData.find((d) => d.candidate.id === id)
               if (!cardData) return null
               const { candidate } = cardData
@@ -164,7 +164,6 @@ export function CardsPage() {
                   key={candidate.id}
                   candidate={candidate}
                   state={state}
-                  index={(page - 1) * PAGE_SIZE + i}
                   currentUser={currentUser}
                   onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
                   onStatusChange={(s: State['interview_status']) =>

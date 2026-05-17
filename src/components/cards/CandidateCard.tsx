@@ -14,7 +14,6 @@ type State = Database['public']['Tables']['interview_state']['Row']
 interface CandidateCardProps {
   candidate: Candidate
   state: State
-  index: number
   currentUser: 'peter' | 'ossama'
   onConfirmToggle: () => void
   onStatusChange: (s: State['interview_status']) => void
@@ -47,7 +46,6 @@ const STATUS_BANNER: Record<string, { label: string; cls: string }> = {
 export function CandidateCard({
   candidate,
   state,
-  index,
   currentUser,
   onConfirmToggle,
   onStatusChange,
@@ -102,7 +100,6 @@ export function CandidateCard({
       <CardHeader
         candidate={candidate}
         state={state}
-        index={index}
         onConfirmToggle={onConfirmToggle}
         onOpenProfile={onOpenProfile}
       />
