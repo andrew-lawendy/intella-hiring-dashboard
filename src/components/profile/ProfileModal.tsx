@@ -14,11 +14,13 @@ import { cn } from '@/lib/utils'
 
 type State = Database['public']['Tables']['interview_state']['Row']
 
+const TABS = ['Overview', 'Score', 'Career', 'Questions', 'CV', 'History'] as const
+type Tab = (typeof TABS)[number]
+
 interface ProfileModalProps {
   data: CandidateWithDetails
   state: State
   onClose: () => void
-  onPhotoSave: (url: string | null) => void
   // Prev/next navigation
   currentIndex?: number
   total?: number
@@ -32,14 +34,10 @@ interface ProfileModalProps {
   onStatusChange?: (s: State['interview_status']) => void
 }
 
-const TABS = ['Overview', 'Score', 'Career', 'Questions', 'CV', 'History'] as const
-type Tab = (typeof TABS)[number]
-
 export function ProfileModal({
   data,
   state,
   onClose,
-  onPhotoSave,
   currentIndex,
   total,
   onPrev,
@@ -53,7 +51,6 @@ export function ProfileModal({
   const [activeTab, setActiveTab] = useState<Tab>('Overview')
   const { candidate, profile, analysis } = data
 
-  // Reset tab when candidate changes
   useEffect(() => {
     setActiveTab('Overview')
   }, [candidate.id])
@@ -181,13 +178,7 @@ export function ProfileModal({
             {activeTab === 'Questions' && (
               <ProfileQuestions questions={(profile.custom_questions ?? []) as string[]} />
             )}
-            {activeTab === 'CV' && (
-              <ProfileCV
-                candidateId={candidate.id}
-                photoUrl={state.photo_url}
-                onPhotoSave={onPhotoSave}
-              />
-            )}
+            {activeTab === 'CV' && <ProfileCV candidateId={candidate.id} />}
             {activeTab === 'History' && <ProfileHistory candidateId={candidate.id} />}
           </div>
         </DialogPrimitive.Content>

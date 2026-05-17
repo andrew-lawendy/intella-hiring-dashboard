@@ -19,6 +19,7 @@ import { CandidateCard } from '@/components/cards/CandidateCard'
 import { ShortlistComparison } from '@/components/cards/ShortlistComparison'
 import { ProfileModal } from '@/components/profile/ProfileModal'
 import { EmailDraftModal } from '@/components/profile/EmailDraftModal'
+import { supabase } from '@/lib/supabase'
 import { Pagination } from '@/components/ui/Pagination'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
@@ -29,15 +30,8 @@ const PAGE_SIZE = 24
 
 export function CardsPage() {
   const { candidates: allMeta, loading: metaLoading } = useCandidateMeta()
-  const {
-    stateMap,
-    updateState,
-    setShortlisted,
-    setConfirmed,
-    setChecklist,
-    setVerdict,
-    setInterviewStatus,
-  } = useCandidateState()
+  const { stateMap, setShortlisted, setConfirmed, setChecklist, setVerdict, setInterviewStatus } =
+    useCandidateState()
   const { user } = useAuth()
   const { myScoresFor, coScoresFor } = useAllScores(user?.id)
   const { data: round } = useHiringRound()
@@ -185,7 +179,12 @@ export function CardsPage() {
                   onReject={() =>
                     setShortlisted(candidate.id, state.shortlisted === false ? null : false)
                   }
-                  onCVDownload={() => setEmailId(candidate.id)}
+                  onCVDownload={async () => {
+                    const { data } = await supabase.storage
+                      .from('candidate-cvs')
+                      .createSignedUrl(`${candidate.id}.pdf`, 3600)
+                    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
+                  }}
                   onOpenProfile={() => setProfileId(candidate.id)}
                 />
               )
@@ -214,7 +213,6 @@ export function CardsPage() {
           data={profileData}
           state={stateMap[profileData.candidate.id]}
           onClose={() => setProfileId(null)}
-          onPhotoSave={(url) => updateState(profileData.candidate.id, { photo_url: url })}
           currentIndex={profileIndex}
           total={filteredMeta.length}
           onPrev={() => navigateProfile(-1)}
