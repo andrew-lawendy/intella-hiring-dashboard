@@ -1,14 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { type ColumnDef } from '@tanstack/react-table'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@/components/ui/table'
+import { DataTable } from '@/components/ui/data-table'
 
 type AuditLogRow = Database['public']['Tables']['audit_log']['Row']
 
@@ -17,6 +11,36 @@ interface AccountabilityRow {
   avgSubmitHours: number | null
   totalScorecards: number
 }
+
+const columns: ColumnDef<AccountabilityRow>[] = [
+  {
+    id: 'interviewer',
+    header: 'Interviewer',
+    cell: ({ row }) => (
+      <span className="font-semibold capitalize text-foreground">{row.original.interviewer}</span>
+    ),
+  },
+  {
+    id: 'scorecards',
+    header: 'Scorecards Submitted',
+    size: 180,
+    cell: ({ row }) => (
+      <span className="font-mono text-primary">{row.original.totalScorecards}</span>
+    ),
+  },
+  {
+    id: 'avgTime',
+    header: 'Avg Submission Time',
+    size: 180,
+    cell: ({ row }) => (
+      <span className="text-muted-foreground">
+        {row.original.avgSubmitHours !== null
+          ? `${row.original.avgSubmitHours.toFixed(1)}h`
+          : 'N/A'}
+      </span>
+    ),
+  },
+]
 
 export function InterviewerAccountability() {
   const [rows, setRows] = useState<AccountabilityRow[]>([])
@@ -45,43 +69,10 @@ export function InterviewerAccountability() {
       })
   }, [])
 
+  const stableRows = useMemo(() => rows, [rows])
+
   if (!rows.length)
     return <p className="text-text3 text-sm">No scorecard submissions recorded yet.</p>
 
-  return (
-    <div className="rounded-[var(--radius)] border border-border shadow-[var(--shadow-sm)]">
-      <Table className="text-[12px]">
-        <TableHeader>
-          <TableRow className="border-b border-border">
-            {['Interviewer', 'Scorecards Submitted', 'Avg Submission Time'].map((h) => (
-              <TableHead
-                key={h}
-                className="px-4 py-2.5 bg-surface2 text-[10.5px] font-medium tracking-[0.06em] text-text3"
-              >
-                {h}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.interviewer}
-              className="border-b border-border last:border-b-0 hover:bg-surface2"
-            >
-              <TableCell className="px-4 py-2.5 font-semibold text-text capitalize">
-                {row.interviewer}
-              </TableCell>
-              <TableCell className="px-4 py-2.5 font-mono text-brand">
-                {row.totalScorecards}
-              </TableCell>
-              <TableCell className="px-4 py-2.5 text-text3">
-                {row.avgSubmitHours !== null ? `${row.avgSubmitHours.toFixed(1)}h` : 'N/A'}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  )
+  return <DataTable columns={columns} data={stableRows} pageSize={stableRows.length || 1} />
 }
