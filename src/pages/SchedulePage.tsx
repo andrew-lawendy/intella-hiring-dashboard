@@ -3,6 +3,14 @@ import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { Pagination } from '@/components/ui/Pagination'
 import { Spinner } from '@/components/ui/spinner'
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table'
 
 const PAGE_SIZE = 20
 
@@ -39,54 +47,56 @@ export function SchedulePage() {
       <h1 className="text-[30px] font-medium tracking-[-0.025em] mb-1 text-text">Schedule</h1>
       <p className="text-text2 text-[13.5px] mb-6">May 17–21, 2026 · {data.length} interviews</p>
 
-      <div className="overflow-x-auto bg-surface border border-border rounded-[var(--radius)] shadow-[var(--shadow-sm)]">
-        <table className="w-full border-collapse text-[13px]">
-          <thead>
-            <tr>
+      <div className="bg-surface border border-border rounded-[var(--radius)] shadow-[var(--shadow-sm)]">
+        <Table className="text-[13px]">
+          <TableHeader>
+            <TableRow className="border-b border-border">
               {['#', 'Candidate', 'Slot', 'Type', 'Salary', 'Notice', 'Confirmation', 'Status'].map(
                 (h) => (
-                  <th
+                  <TableHead
                     key={h}
-                    className="text-left px-4 py-3 bg-surface2 border-b border-border text-[10.5px] font-medium uppercase tracking-[0.08em] text-text3 whitespace-nowrap"
+                    className="px-4 py-3 bg-surface2 text-[10.5px] font-medium tracking-[0.08em] text-text3"
                   >
                     {h}
-                  </th>
+                  </TableHead>
                 ),
               )}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {pageRows.map(({ candidate }, i) => {
               const state = stateMap[candidate.id]
               if (!state) return null
               const globalIndex = (page - 1) * PAGE_SIZE + i + 1
               return (
-                <tr
+                <TableRow
                   key={candidate.id}
                   className="border-b border-border last:border-b-0 hover:bg-surface2 transition-colors"
                 >
-                  <td className="px-4 py-3 text-text3 font-mono text-[11px]">{globalIndex}</td>
-                  <td className="px-4 py-3">
+                  <TableCell className="px-4 py-3 text-text3 font-mono text-[11px]">
+                    {globalIndex}
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <div className="font-semibold text-text text-[13px]">{candidate.name}</div>
                     <div className="text-text3 text-[11px] font-mono">{candidate.email}</div>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-[11.5px] text-text2 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 font-mono text-[11.5px] text-text2 whitespace-nowrap">
                     {candidate.slot ?? 'TBD'}
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <span
                       className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${candidate.type === 'Remote' ? 'bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]' : 'bg-surface2 text-text2 border-border'}`}
                     >
                       {candidate.type}
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-[12px] text-text2 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-[12px] text-text2 whitespace-nowrap">
                     {candidate.salary ?? '—'}
-                  </td>
-                  <td className="px-4 py-3 text-[12px] text-text2 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-[12px] text-text2 whitespace-nowrap">
                     {candidate.notice ?? '—'}
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <button
                       onClick={() => setConfirmed(candidate.id, !state.confirmed)}
                       className={`text-[10.5px] font-medium px-2.5 py-1 rounded-full border cursor-pointer transition-all whitespace-nowrap ${
@@ -97,8 +107,8 @@ export function SchedulePage() {
                     >
                       {state.confirmed ? 'Confirmed' : 'Pending'}
                     </button>
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3">
                     <select
                       value={state.interview_status}
                       onChange={(e) =>
@@ -113,12 +123,12 @@ export function SchedulePage() {
                       <option value="in-progress">In Progress</option>
                       <option value="completed">Done</option>
                     </select>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       <Pagination page={page} pageSize={PAGE_SIZE} total={sorted.length} onChange={setPage} />

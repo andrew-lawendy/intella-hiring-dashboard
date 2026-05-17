@@ -3,6 +3,7 @@ import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/hooks/useAuth'
 import { usePipelineStats } from '@/hooks/usePipelineStats'
+import { Button } from '@/components/ui/button'
 
 interface HeaderProps {
   onShortlist?: () => void
@@ -27,10 +28,9 @@ export function Header({ onShortlist, onExportReport, onExportExcel, onPrint }: 
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-[26px] h-[26px] rounded-[7px] flex-shrink-0"
+            className="w-[26px] h-[26px] rounded-[7px] flex-shrink-0 bg-primary"
             style={{
-              background: 'radial-gradient(120% 100% at 0% 0%, #4c44c4, #2a2479 70%)',
-              boxShadow: '0 1px 0 rgba(255,255,255,.35) inset, 0 4px 12px -4px rgba(42,36,121,.5)',
+              boxShadow: '0 1px 0 rgba(255,255,255,.25) inset, 0 4px 12px -4px rgba(25,95,107,.5)',
             }}
           />
           <span className="text-[17px] font-semibold tracking-tight text-text font-sans">
@@ -52,42 +52,27 @@ export function Header({ onShortlist, onExportReport, onExportExcel, onPrint }: 
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
           Senior PM · May 17–21
         </div>
-        <button
+        <Button
+          size="sm"
+          variant="outline"
           onClick={onShortlist}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 border"
-          style={{
-            background: 'var(--brand-soft)',
-            color: 'var(--brand)',
-            borderColor: 'color-mix(in srgb, var(--brand) 25%, transparent)',
-          }}
+          className="bg-primary/10 text-primary border-primary/25 hover:bg-primary/15"
         >
           ★ Shortlist
-        </button>
-        <button
-          onClick={onExportReport}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 bg-text text-bg border border-text hover:bg-text2"
-        >
+        </Button>
+        <Button size="sm" variant="default" onClick={onExportReport}>
           Report PDF
-        </button>
-        <button
-          onClick={onExportExcel}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 bg-surface border border-border text-text2 hover:bg-surface2 hover:text-text"
-        >
+        </Button>
+        <Button size="sm" variant="outline" onClick={onExportExcel}>
           Export Excel
-        </button>
-        <button
-          onClick={onPrint}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 bg-surface border border-border text-text2 hover:bg-surface2 hover:text-text"
-        >
+        </Button>
+        <Button size="sm" variant="outline" onClick={onPrint}>
           Print
-        </button>
+        </Button>
         <ThemeToggle />
-        <button
-          onClick={signOut}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-medium font-sans cursor-pointer transition-all duration-150 text-text3 hover:text-text"
-        >
+        <Button size="sm" variant="ghost" onClick={signOut} className="text-muted-foreground">
           Sign out
-        </button>
+        </Button>
       </div>
     </header>
   )

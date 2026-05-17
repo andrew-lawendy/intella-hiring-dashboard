@@ -12,6 +12,14 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table'
 
 interface ShortlistComparisonProps {
   candidateIds: string[]
@@ -75,21 +83,21 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
             <Spinner className="size-6" />
           </div>
         ) : (
-          <div className="overflow-x-auto p-4">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-muted">
+          <div className="p-4">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted">
                   {['Candidate', 'Peter', 'Ossama', 'Combined', 'Verdict', 'Notes'].map((h) => (
-                    <th
+                    <TableHead
                       key={h}
-                      className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
+                      className="px-3 py-2.5 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground"
                     >
                       {h}
-                    </th>
+                    </TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {data.map(({ candidate, analysis }) => {
                   const state = stateMap[candidate.id]
                   if (!state) return null
@@ -100,46 +108,46 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                   const combined = totalScore(ps, os)
 
                   return (
-                    <tr
+                    <TableRow
                       key={candidate.id}
                       className="border-t border-border hover:bg-muted/50 transition-colors"
                     >
-                      <td className="px-3 py-2.5">
+                      <TableCell className="px-3 py-2.5">
                         <p className="font-semibold text-[13px] text-foreground">
                           {candidate.name}
                         </p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">
                           {analysis?.current_role ?? ''}
                         </p>
-                      </td>
-                      <td className="px-3 py-2.5 font-mono font-semibold text-[13px] text-center text-foreground">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 font-mono font-semibold text-[13px] text-center text-foreground">
                         {pTotal || '—'}/{max}
-                      </td>
-                      <td className="px-3 py-2.5 font-mono font-semibold text-[13px] text-center text-foreground">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 font-mono font-semibold text-[13px] text-center text-foreground">
                         {oTotal || '—'}/{max}
-                      </td>
-                      <td className="px-3 py-2.5 font-mono font-bold text-[14px] text-center text-foreground">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 font-mono font-bold text-[14px] text-center text-foreground">
                         {combined || '—'}/{max}
-                      </td>
-                      <td className="px-3 py-2.5 text-center">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 text-center">
                         {state.verdict && (
                           <Badge variant={VERDICT_VARIANTS[state.verdict] ?? 'secondary'}>
                             {VERDICT_LABELS[state.verdict]}
                           </Badge>
                         )}
-                      </td>
-                      <td className="px-3 py-2.5 text-[10px] text-muted-foreground max-w-[180px]">
+                      </TableCell>
+                      <TableCell className="px-3 py-2.5 text-[10px] text-muted-foreground max-w-[180px]">
                         {state.peter_comment && <span>P: {state.peter_comment.slice(0, 50)}</span>}
                         {state.peter_comment && state.ossama_comment && <br />}
                         {state.ossama_comment && (
                           <span>O: {state.ossama_comment.slice(0, 50)}</span>
                         )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </DialogContent>

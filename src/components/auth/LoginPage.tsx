@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
 import { CheckCircle2Icon, MailIcon } from 'lucide-react'
 
 interface LoginPageProps {
@@ -87,13 +88,13 @@ export function LoginPage({ error }: LoginPageProps) {
             <div className="flex flex-col gap-2">
               <div className="relative">
                 <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input
+                <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleMagicLink()}
                   placeholder="you@intellaworld.com"
-                  className="w-full pl-9 pr-4 py-3 rounded-md border border-border bg-background text-foreground text-[14px] font-sans outline-none focus:border-ring transition-colors placeholder:text-muted-foreground"
+                  className="pl-9 pr-4 py-3 h-auto rounded-md bg-background text-foreground text-[14px] font-sans"
                 />
               </div>
               {emailError && <p className="text-[12px] text-destructive">{emailError}</p>}

@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import type { RankingEntry } from '@/lib/analytics'
 import { maxScore } from '@/lib/scoring'
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table'
 
 interface RankingTableProps {
   entries: RankingEntry[]
@@ -35,14 +43,14 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
   })
 
   const thCls =
-    'text-left px-3 py-2.5 bg-surface2 border-b border-border text-[10.5px] font-medium uppercase tracking-[0.06em] text-text3 whitespace-nowrap cursor-pointer select-none hover:text-text transition-colors'
+    'px-3 py-2.5 bg-surface2 border-b border-border text-[10.5px] font-medium tracking-[0.06em] text-text3 cursor-pointer select-none hover:text-text transition-colors'
   const tdCls = 'px-3 py-2.5 border-b border-border align-middle'
 
   return (
-    <div className="overflow-x-auto rounded-[var(--radius)] border border-border shadow-[var(--shadow-sm)]">
-      <table className="w-full border-collapse text-[12px]">
-        <thead>
-          <tr>
+    <div className="rounded-[var(--radius)] border border-border shadow-[var(--shadow-sm)]">
+      <Table className="text-[12px]">
+        <TableHeader>
+          <TableRow className="border-b border-border">
             {[
               { key: 'rank' as SortKey, label: '#' },
               { key: 'name' as SortKey, label: 'Candidate' },
@@ -51,29 +59,29 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
               { key: 'rank' as SortKey, label: 'Ossama' },
               { key: 'verdict' as SortKey, label: 'Verdict' },
             ].map((col, i) => (
-              <th key={i} className={thCls} onClick={() => setSort(col.key)}>
+              <TableHead key={i} className={thCls} onClick={() => setSort(col.key)}>
                 {col.label} {sort === col.key ? '↓' : ''}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {sorted.map((entry, i) => (
-            <tr key={entry.candidateId} className="hover:bg-surface2 transition-colors">
-              <td className={`${tdCls} font-mono text-text3 text-[11px]`}>{i + 1}</td>
-              <td className={`${tdCls} font-semibold text-text`}>
+            <TableRow key={entry.candidateId} className="hover:bg-surface2 transition-colors">
+              <TableCell className={`${tdCls} font-mono text-text3 text-[11px]`}>{i + 1}</TableCell>
+              <TableCell className={`${tdCls} font-semibold text-text`}>
                 {nameMap[entry.candidateId] ?? entry.candidateId}
-              </td>
-              <td className={`${tdCls} font-mono font-bold text-green`}>
+              </TableCell>
+              <TableCell className={`${tdCls} font-mono font-bold text-green`}>
                 {entry.combinedScore || '—'}/{max}
-              </td>
-              <td className={`${tdCls} font-mono text-purple`}>
+              </TableCell>
+              <TableCell className={`${tdCls} font-mono text-purple`}>
                 {entry.peterScore || '—'}/{max}
-              </td>
-              <td className={`${tdCls} font-mono text-blue`}>
+              </TableCell>
+              <TableCell className={`${tdCls} font-mono text-blue`}>
                 {entry.ossamaScore || '—'}/{max}
-              </td>
-              <td className={tdCls}>
+              </TableCell>
+              <TableCell className={tdCls}>
                 {entry.verdict && (
                   <span
                     className="text-[11px] font-semibold"
@@ -82,11 +90,11 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
                     {VERDICT_LABELS[entry.verdict] ?? entry.verdict}
                   </span>
                 )}
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   )
 }

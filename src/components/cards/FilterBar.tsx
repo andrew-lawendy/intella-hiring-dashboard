@@ -32,7 +32,7 @@ export function FilterBar({
   return (
     <div className="flex gap-1.5 mb-[18px] flex-wrap items-center">
       <Button
-        size="xs"
+        size="sm"
         variant={filter === 'all' ? 'default' : 'outline'}
         onClick={() => onFilterChange('all')}
       >
@@ -41,7 +41,7 @@ export function FilterBar({
       {FILTERS.map((f) => (
         <Button
           key={f.value}
-          size="xs"
+          size="sm"
           variant={filter === f.value ? 'default' : 'outline'}
           onClick={() => onFilterChange(f.value)}
         >

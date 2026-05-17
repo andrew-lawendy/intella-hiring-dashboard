@@ -9,6 +9,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -50,25 +53,25 @@ export function EmailDraftModal({ candidate, state, domains, onClose }: EmailDra
             { label: 'Subject', value: subject, onChange: setSubject },
           ].map((field) => (
             <div key={field.label}>
-              <label className="block text-[11px] font-semibold uppercase text-muted-foreground mb-1">
+              <Label className="block text-[11px] font-semibold uppercase text-muted-foreground mb-1">
                 {field.label}
-              </label>
-              <input
+              </Label>
+              <Input
                 value={field.value}
                 onChange={(e) => field.onChange(e.target.value)}
-                className="w-full px-2.5 py-2 border border-border rounded-md bg-muted text-foreground font-sans text-xs outline-none focus:border-ring transition-colors"
+                className="px-2.5 py-2 bg-muted text-foreground font-sans text-xs"
               />
             </div>
           ))}
           <div>
-            <label className="block text-[11px] font-semibold uppercase text-muted-foreground mb-1">
+            <Label className="block text-[11px] font-semibold uppercase text-muted-foreground mb-1">
               Body
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={8}
-              className="w-full px-2.5 py-2 border border-border rounded-md bg-muted text-foreground font-sans text-xs outline-none focus:border-ring transition-colors resize-y"
+              className="px-2.5 py-2 bg-muted text-foreground font-sans text-xs resize-y"
             />
           </div>
         </div>
