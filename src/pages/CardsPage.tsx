@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
+import { useDebounce } from '@/hooks/useDebounce'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
@@ -75,9 +76,11 @@ export function CardsPage() {
     [stateMap],
   )
 
+  const debouncedSearch = useDebounce(search, 300)
+
   const filteredMeta = useMemo(
-    () => filterCandidates(allMeta, stateMin, filter, search),
-    [allMeta, stateMin, filter, search],
+    () => filterCandidates(allMeta, stateMin, filter, debouncedSearch),
+    [allMeta, stateMin, filter, debouncedSearch],
   )
 
   const pageIds = useMemo(

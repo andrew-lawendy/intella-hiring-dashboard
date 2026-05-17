@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircle2Icon, PlusIcon, XIcon } from 'lucide-react'
+import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Sheet } from '@/components/ui/sheet'
@@ -63,11 +64,13 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
 
   const [values, setValues] = useState<CreateCandidateInput>(DEFAULT_VALUES)
 
+  const debouncedEmail = useDebounce(values.email, 400)
+
   const duplicateEmail = useMemo(() => {
-    const email = values.email.trim().toLowerCase()
+    const email = debouncedEmail.trim().toLowerCase()
     if (!email || !email.includes('@')) return null
     return allMeta.find((c) => c.email?.toLowerCase() === email)?.email ?? null
-  }, [values.email, allMeta])
+  }, [debouncedEmail, allMeta])
 
   function validateStep1() {
     const errs: Record<string, string> = {}
