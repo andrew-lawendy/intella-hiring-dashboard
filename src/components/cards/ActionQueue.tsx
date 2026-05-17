@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { deriveActionItems, type ActionItem } from '@/lib/actionQueue'
 import type { StateMap } from '@/hooks/useCandidateState'
 import type { Scores } from '@/lib/scoring'
+import { Badge } from '@/components/ui/badge'
 
 interface CandidateSlot {
   id: string
@@ -50,9 +51,7 @@ export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-surface2 transition-colors cursor-pointer"
       >
         <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 flex items-center gap-2">
-          <span className="w-4 h-4 rounded-full bg-[var(--amber-bg)] border border-[var(--amber-line)] text-[var(--amber)] text-[9px] flex items-center justify-center font-bold">
-            {items.length}
-          </span>
+          <Badge variant="secondary">{items.length}</Badge>
           Needs Attention
         </span>
         <span className="text-text3 text-xs">{open ? '▲' : '▼'}</span>

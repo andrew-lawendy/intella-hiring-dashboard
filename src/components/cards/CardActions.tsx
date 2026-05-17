@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button'
+
 interface CardActionsProps {
   isShortlisted: boolean | null
   onShortlist: () => void
@@ -17,38 +19,26 @@ export function CardActions({
 }: CardActionsProps) {
   return (
     <div className="px-4 py-2.5 border-t border-border bg-surface2 flex gap-1.5 flex-wrap items-center">
-      <button
-        onClick={onViewProfile}
-        className="text-[11.5px] font-medium px-2.5 py-1 rounded-[var(--radius-sm)] border border-text bg-text text-bg cursor-pointer hover:bg-text2 hover:border-text2 transition-all"
-      >
+      <Button size="sm" variant="default" onClick={onViewProfile}>
         📄 View Profile
-      </button>
-      <button
-        onClick={onEmailDraft}
-        className="text-[11.5px] font-medium px-2.5 py-1 rounded-[var(--radius-sm)] border border-border text-text2 bg-transparent cursor-pointer hover:bg-surface3 hover:text-text transition-all"
-      >
+      </Button>
+      <Button size="sm" variant="outline" onClick={onEmailDraft}>
         ⬇ CV
-      </button>
-      <button
+      </Button>
+      <Button
+        size="sm"
+        variant={isShortlisted === true ? 'success' : 'outline'}
         onClick={onShortlist}
-        className={`text-[11.5px] font-medium px-2.5 py-1 rounded-[var(--radius-sm)] border transition-all cursor-pointer ${
-          isShortlisted === true
-            ? 'bg-[var(--green)] text-white border-[var(--green)]'
-            : 'border-[var(--green-line)] text-[var(--green)] bg-surface hover:bg-[var(--green)] hover:text-white hover:border-[var(--green)]'
-        }`}
       >
         ★ {isShortlisted === true ? 'Shortlisted' : 'Shortlist'}
-      </button>
-      <button
+      </Button>
+      <Button
+        size="sm"
+        variant={isShortlisted === false ? 'destructive' : 'outline'}
         onClick={onReject}
-        className={`text-[11.5px] font-medium px-2.5 py-1 rounded-[var(--radius-sm)] border transition-all cursor-pointer ${
-          isShortlisted === false
-            ? 'bg-[var(--red)] text-white border-[var(--red)]'
-            : 'border-[var(--red-line)] text-[var(--red)] bg-surface hover:bg-[var(--red)] hover:text-white hover:border-[var(--red)]'
-        }`}
       >
         ✕ Reject
-      </button>
+      </Button>
       {auditLine && <span className="ml-auto text-[10px] text-text3 truncate">{auditLine}</span>}
     </div>
   )

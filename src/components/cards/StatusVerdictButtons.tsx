@@ -1,19 +1,20 @@
 import type { Database } from '@/lib/database.types'
+import { Button } from '@/components/ui/button'
 
 type Status = Database['public']['Tables']['interview_state']['Row']['interview_status']
 type Verdict = Database['public']['Tables']['interview_state']['Row']['verdict']
 
-const STATUS_OPTIONS: { value: Status; label: string; color: string }[] = [
-  { value: 'pending', label: 'Not Started', color: 'var(--text3)' },
-  { value: 'in-progress', label: 'In Progress', color: 'var(--amber)' },
-  { value: 'completed', label: 'Done', color: 'var(--green)' },
+const STATUS_OPTIONS: { value: Status; label: string }[] = [
+  { value: 'pending', label: 'Not Started' },
+  { value: 'in-progress', label: 'In Progress' },
+  { value: 'completed', label: 'Done' },
 ]
 
-const VERDICT_OPTIONS: { value: NonNullable<Verdict>; label: string; color: string }[] = [
-  { value: 'strong-yes', label: '⭐ Strong Yes', color: 'var(--green)' },
-  { value: 'yes', label: '✓ Yes', color: 'var(--blue)' },
-  { value: 'maybe', label: '? Maybe', color: 'var(--amber)' },
-  { value: 'no', label: '✗ No', color: 'var(--red)' },
+const VERDICT_OPTIONS: { value: NonNullable<Verdict>; label: string }[] = [
+  { value: 'strong-yes', label: '⭐ Strong Yes' },
+  { value: 'yes', label: '✓ Yes' },
+  { value: 'maybe', label: '? Maybe' },
+  { value: 'no', label: '✗ No' },
 ]
 
 interface Props {
@@ -31,18 +32,14 @@ export function StatusVerdictButtons({ status, verdict, onStatusChange, onVerdic
           Status:
         </span>
         {STATUS_OPTIONS.map((s) => (
-          <button
+          <Button
             key={s.value}
+            size="xs"
+            variant={status === s.value ? 'default' : 'outline'}
             onClick={() => onStatusChange(s.value)}
-            className="text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-all font-sans border"
-            style={
-              status === s.value
-                ? { background: s.color, color: '#fff', borderColor: s.color }
-                : { background: 'none', color: 'var(--text2)', borderColor: 'var(--border)' }
-            }
           >
             {s.label}
-          </button>
+          </Button>
         ))}
       </div>
       <div className="flex items-center gap-1.5 flex-wrap">
@@ -50,18 +47,14 @@ export function StatusVerdictButtons({ status, verdict, onStatusChange, onVerdic
           Verdict:
         </span>
         {VERDICT_OPTIONS.map((v) => (
-          <button
+          <Button
             key={v.value}
+            size="xs"
+            variant={verdict === v.value ? 'default' : 'outline'}
             onClick={() => onVerdictChange(v.value)}
-            className="text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-all font-sans border"
-            style={
-              verdict === v.value
-                ? { background: v.color, color: '#fff', borderColor: v.color }
-                : { background: 'none', color: 'var(--text2)', borderColor: 'var(--border)' }
-            }
           >
             {v.label}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

@@ -1,4 +1,6 @@
 import type { FilterType } from '@/lib/filters'
+import { Button } from '@/components/ui/button'
+import { SearchInput } from '@/components/ui/search-input'
 
 interface FilterBarProps {
   filter: FilterType
@@ -29,43 +31,30 @@ export function FilterBar({
 }: FilterBarProps) {
   return (
     <div className="flex gap-1.5 mb-[18px] flex-wrap items-center">
-      <button
+      <Button
+        size="xs"
+        variant={filter === 'all' ? 'default' : 'outline'}
         onClick={() => onFilterChange('all')}
-        className={[
-          'px-3 py-1.5 rounded-full text-xs font-medium font-sans border transition-all duration-150 cursor-pointer',
-          filter === 'all'
-            ? 'bg-text text-bg border-text'
-            : 'bg-surface border-border text-text2 hover:border-border-strong hover:text-text',
-        ].join(' ')}
       >
         All ({total})
-      </button>
+      </Button>
       {FILTERS.map((f) => (
-        <button
+        <Button
           key={f.value}
+          size="xs"
+          variant={filter === f.value ? 'default' : 'outline'}
           onClick={() => onFilterChange(f.value)}
-          className={[
-            'px-3 py-1.5 rounded-full text-xs font-medium font-sans border transition-all duration-150 cursor-pointer',
-            filter === f.value
-              ? 'bg-text text-bg border-text'
-              : 'bg-surface border-border text-text2 hover:border-border-strong hover:text-text',
-          ].join(' ')}
         >
           {f.label}
-        </button>
+        </Button>
       ))}
-      <div className="ml-auto relative">
-        <input
-          type="search"
+      <div className="ml-auto w-64">
+        <SearchInput
           placeholder="Search name, email, notes..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="bg-surface border border-border rounded-full pl-8 pr-4 py-1.5 text-[12.5px] font-sans text-text w-64 outline-none focus:border-text transition-colors placeholder:text-text3"
-          style={{
-            backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%2392907f' stroke-width='1.6' stroke-linecap='round'><circle cx='6.2' cy='6.2' r='4.5'/><path d='m9.7 9.7 3.3 3.3'/></svg>")`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: '10px center',
-          }}
+          onClear={() => onSearchChange('')}
+          size="sm"
         />
       </div>
     </div>
