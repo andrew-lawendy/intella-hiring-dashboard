@@ -45,19 +45,20 @@ export function Comments({ myComment, coComment, myLabel, coLabel, onMySave }: C
         {saved && <span className="text-[10.5px] text-[var(--green)] ml-2 font-medium">Saved</span>}
       </div>
 
-      {/* Co-scorer's comment — read-only */}
-      <div>
-        <p className="text-[10.5px] font-medium text-text2 mb-1 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--blue)]" />
-          {coLabel}
-        </p>
-        <Textarea
-          value={coComment}
-          readOnly
-          placeholder={`${coLabel}'s notes...`}
-          className="min-h-[54px] text-xs resize-y opacity-60 cursor-default"
-        />
-      </div>
+      {/* Co-scorer's comment — only shown when they've written something */}
+      {coComment && (
+        <div>
+          <p className="text-[10.5px] font-medium text-text2 mb-1 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--blue)]" />
+            {coLabel}
+          </p>
+          <Textarea
+            value={coComment}
+            readOnly
+            className="min-h-[54px] text-xs resize-y opacity-60 cursor-default"
+          />
+        </div>
+      )}
     </div>
   )
 }
