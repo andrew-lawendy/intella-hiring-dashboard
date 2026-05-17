@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { useTeamProfiles, displayName } from './useTeamProfiles'
 
 interface CommentRow {
   candidate_id: string
@@ -8,8 +9,16 @@ interface CommentRow {
   body: string
 }
 
+export interface CommentEntry {
+  userId: string
+  name: string
+  body: string
+  isMe: boolean
+}
+
 export function useAllComments(userId: string | undefined) {
   const queryClient = useQueryClient()
+  const teamProfiles = useTeamProfiles()
 
   const { data: rows = [] } = useQuery({
     queryKey: ['all-comments'],
@@ -29,40 +38,46 @@ export function useAllComments(userId: string | undefined) {
     return map
   }, [rows])
 
+  function myCommentFor(candidateId: string): string {
+    if (!userId) return ''
+    return byCandidate[candidateId]?.[userId] ?? ''
+  }
+
+  function allCommentsFor(candidateId: string): CommentEntry[] {
+    const byUser = byCandidate[candidateId] ?? {}
+    return Object.entries(byUser)
+      .filter(([, body]) => body.trim())
+      .map(([uid, body]) => ({
+        userId: uid,
+        name: displayName(teamProfiles[uid], uid.slice(0, 8)),
+        body,
+        isMe: uid === userId,
+      }))
+  }
+
+  function coCommentsFor(candidateId: string): string[] {
+    return allCommentsFor(candidateId)
+      .filter((c) => !c.isMe)
+      .map((c) => c.body)
+  }
+
   const { mutateAsync: upsertComment } = useMutation({
     mutationFn: async ({ candidateId, body }: { candidateId: string; body: string }) => {
       if (!userId) return
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pg = supabase as any
-      await pg
+      await (supabase as any)
         .from('candidate_comments')
         .upsert(
           { candidate_id: candidateId, user_id: userId, body },
           { onConflict: 'candidate_id,user_id' },
         )
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['all-comments'] })
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['all-comments'] }),
   })
-
-  function myCommentFor(candidateId: string): string {
-    if (!userId) return ''
-    return byCandidate[candidateId]?.[userId] ?? ''
-  }
-
-  function coCommentsFor(candidateId: string): string[] {
-    if (!userId) return []
-    const all = byCandidate[candidateId] ?? {}
-    return Object.entries(all)
-      .filter(([uid]) => uid !== userId)
-      .map(([, body]) => body)
-      .filter(Boolean)
-  }
 
   async function setMyComment(candidateId: string, body: string) {
     await upsertComment({ candidateId, body })
   }
 
-  return { byCandidate, myCommentFor, coCommentsFor, setMyComment }
+  return { byCandidate, myCommentFor, allCommentsFor, coCommentsFor, setMyComment }
 }

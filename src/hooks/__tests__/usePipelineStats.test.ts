@@ -10,10 +10,6 @@ const makeState = (overrides: Partial<State>): State => ({
   shortlisted: null,
   interview_status: 'pending',
   verdict: null,
-  peter_scores: { Communication: 0, Technical: 0, 'Culture Fit': 0, Leadership: 0, Overall: 0 },
-  ossama_scores: { Communication: 0, Technical: 0, 'Culture Fit': 0, Leadership: 0, Overall: 0 },
-  peter_comment: '',
-  ossama_comment: '',
   checklist: {},
   photo_url: null,
   updated_at: new Date().toISOString(),
@@ -42,28 +38,11 @@ describe('computePipelineStats', () => {
     expect(stats.withVerdictCount).toBe(2)
   })
 
-  it('counts filled scorecards (at least one non-zero score)', () => {
-    const states = [
-      makeState({
-        peter_scores: {
-          Communication: 3,
-          Technical: 0,
-          'Culture Fit': 0,
-          Leadership: 0,
-          Overall: 0,
-        },
-      }),
-      makeState({
-        peter_scores: {
-          Communication: 0,
-          Technical: 0,
-          'Culture Fit': 0,
-          Leadership: 0,
-          Overall: 0,
-        },
-      }),
-    ]
-    const stats = computePipelineStats(states, new Date('2026-05-17'))
+  it('counts filled scorecards from scores map', () => {
+    const states = [makeState({ candidate_id: 'a' }), makeState({ candidate_id: 'b' })]
+    // Only candidate 'a' has scores
+    const scoredIds = new Set(['a'])
+    const stats = computePipelineStats(states, new Date('2026-05-17'), undefined, scoredIds)
     expect(stats.scorecardFilledCount).toBe(1)
   })
 

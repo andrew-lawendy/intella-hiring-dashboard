@@ -33,9 +33,6 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
   const { data: profile } = useProfile(user?.id)
   const { mutateAsync: upsert, isPending: saving } = useUpsertProfile()
 
-  const scorerSlot = profile?.scorer_slot
-  const scorerLabel = scorerSlot ? `Scorer slot: ${scorerSlot}` : 'No slot assigned'
-
   const [draft, setDraft] = useState({ first_name: '', last_name: '', title: '', avatar_url: '' })
   const [confirmSignout, setConfirmSignout] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -80,7 +77,6 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
       last_name: draft.last_name.trim() || null,
       title: draft.title.trim() || null,
       avatar_url: draft.avatar_url.trim() || null,
-      scorer_slot: (scorerSlot as 'peter' | 'ossama' | null) ?? null,
       theme,
     })
     setSaved(true)
@@ -229,23 +225,6 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
                 <span className="flex items-center gap-2 text-muted-foreground min-w-0">
                   <MailIcon className="size-3.5 flex-shrink-0" aria-hidden="true" />
                   <span className="truncate">{user?.email}</span>
-                </span>
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground/60 flex-shrink-0 ml-2">
-                  <LockIcon className="size-3" aria-hidden="true" /> Read-only
-                </span>
-              </div>
-            </FieldWrapper>
-            <FieldWrapper
-              label="Scorer slot"
-              hint="Determines which scoring column your reviews land in."
-            >
-              <div className="flex items-center justify-between h-9 px-3 rounded-md border border-input bg-muted/40 text-[13px]">
-                <span className="flex items-center gap-2">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse flex-shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span className="font-medium text-foreground">{scorerLabel}</span>
                 </span>
                 <span className="flex items-center gap-1 text-[11px] text-muted-foreground/60 flex-shrink-0 ml-2">
                   <LockIcon className="size-3" aria-hidden="true" /> Read-only

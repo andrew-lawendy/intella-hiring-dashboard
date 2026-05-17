@@ -1,11 +1,9 @@
-import { useAuth } from '@/hooks/useAuth'
-import { useAllScores } from '@/hooks/useAllScores'
-import { useAllComments } from '@/hooks/useAllComments'
-import { useInterviewerNames } from '@/hooks/useInterviewerNames'
+import { useState } from 'react'
 import { Scorecard } from '@/components/cards/Scorecard'
-import { Checklist } from '@/components/cards/Checklist'
 import { Comments } from '@/components/cards/Comments'
 import { StatusVerdictButtons } from '@/components/cards/StatusVerdictButtons'
+import { Checklist } from '@/components/cards/Checklist'
+import { cn } from '@/lib/utils'
 import type { Database } from '@/lib/database.types'
 
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -20,6 +18,8 @@ interface ProfileScoreProps {
   onStatusChange?: (s: State['interview_status']) => void
 }
 
+type SubTab = 'scores' | 'summary'
+
 export function ProfileScore({
   state,
   candidateId,
@@ -29,19 +29,11 @@ export function ProfileScore({
   onVerdictChange,
   onStatusChange,
 }: ProfileScoreProps) {
-  const { user } = useAuth()
-  const getInterviewerName = useInterviewerNames()
-
-  const { myScoresFor, coScoresFor, setMyScores } = useAllScores(user?.id)
-  const { myCommentFor, coCommentsFor, setMyComment } = useAllComments(user?.id)
-
-  const mySlot = user?.email?.split('@')[0] ?? 'you'
-  const myName = getInterviewerName(mySlot)
-
-  const coComments = coCommentsFor(candidateId)
+  const [subTab, setSubTab] = useState<SubTab>('scores')
 
   return (
     <div className="divide-y divide-border">
+      {/* Status & Verdict */}
       {onStatusChange && onVerdictChange && (
         <StatusVerdictButtons
           status={state.interview_status}
@@ -51,15 +43,35 @@ export function ProfileScore({
         />
       )}
 
-      <Scorecard
-        myName={myName}
-        coName="Co-scorer"
-        myScores={myScoresFor(candidateId)}
-        coScores={coScoresFor(candidateId)}
-        scoreCategories={scoreCategories}
-        onMyScoreChange={(scores) => setMyScores(candidateId, scores)}
-      />
+      {/* Scorecard with sub-tabs */}
+      <div>
+        {/* Sub-tab strip */}
+        <div className="flex border-b border-border px-4">
+          {(['scores', 'summary'] as SubTab[]).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setSubTab(t)}
+              className={cn(
+                'px-3 py-2.5 text-[12.5px] font-medium capitalize border-b-2 -mb-px transition-colors cursor-pointer',
+                subTab === t
+                  ? 'text-primary border-primary'
+                  : 'text-muted-foreground border-transparent hover:text-foreground',
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
 
+        <Scorecard
+          candidateId={candidateId}
+          scoreCategories={scoreCategories}
+          activeSubTab={subTab}
+        />
+      </div>
+
+      {/* Checklist */}
       <Checklist
         candidateId={candidateId}
         checklist={state.checklist as Record<string, boolean>}
@@ -67,14 +79,8 @@ export function ProfileScore({
         onChange={onChecklistChange ?? (() => {})}
       />
 
-      <Comments
-        candidateId={candidateId}
-        myComment={myCommentFor(candidateId)}
-        coComment={coComments[0] ?? ''}
-        myLabel={myName}
-        coLabel="Co-scorer"
-        onMySave={(body) => setMyComment(candidateId, body)}
-      />
+      {/* Comments */}
+      <Comments candidateId={candidateId} />
     </div>
   )
 }

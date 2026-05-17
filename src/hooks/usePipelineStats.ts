@@ -4,7 +4,6 @@ import type { Database } from '@/lib/database.types'
 import { useHiringRound } from './useHiringRound'
 
 type State = Database['public']['Tables']['interview_state']['Row']
-type Scores = Record<string, number>
 
 export interface PipelineStats {
   totalCount: number
@@ -18,15 +17,12 @@ export function computePipelineStats(
   states: State[],
   now: Date,
   roundStartDate?: string,
+  scoredCandidateIds: Set<string> = new Set(),
 ): PipelineStats {
   const totalCount = states.length
   const completedCount = states.filter((s) => s.interview_status === 'completed').length
   const withVerdictCount = states.filter((s) => s.verdict !== null).length
-  const scorecardFilledCount = states.filter((s) => {
-    const slotA = s.peter_scores as Scores
-    const slotB = s.ossama_scores as Scores
-    return Object.values(slotA).some((v) => v > 0) || Object.values(slotB).some((v) => v > 0)
-  }).length
+  const scorecardFilledCount = states.filter((s) => scoredCandidateIds.has(s.candidate_id)).length
 
   let daysSinceStart = 0
   if (roundStartDate) {
@@ -47,8 +43,17 @@ export function usePipelineStats() {
   const { data: stats = null } = useQuery({
     queryKey: ['pipeline-stats', round?.start_date],
     queryFn: async () => {
-      const { data } = await supabase.from('interview_state').select('*')
-      return data ? computePipelineStats(data, new Date(), round?.start_date) : null
+      const [{ data: states }, { data: scores }] = await Promise.all([
+        supabase.from('interview_state').select('*'),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any).from('scores').select('candidate_id'),
+      ])
+
+      const scoredIds = new Set<string>(
+        (scores ?? []).map((r: { candidate_id: string }) => r.candidate_id),
+      )
+
+      return states ? computePipelineStats(states, new Date(), round?.start_date, scoredIds) : null
     },
     enabled: round !== undefined,
   })

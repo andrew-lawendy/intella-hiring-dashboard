@@ -69,10 +69,6 @@ export interface Database {
           shortlisted: boolean | null
           interview_status: 'pending' | 'in-progress' | 'completed'
           verdict: 'strong-yes' | 'yes' | 'maybe' | 'no' | null
-          peter_scores: Json
-          ossama_scores: Json
-          peter_comment: string
-          ossama_comment: string
           checklist: Json
           photo_url: string | null
           updated_at: string
@@ -153,7 +149,6 @@ export interface Database {
           last_name: string | null
           title: string | null
           avatar_url: string | null
-          scorer_slot: 'peter' | 'ossama' | null
           theme: 'light' | 'dark' | 'system'
           created_at: string
           updated_at: string
