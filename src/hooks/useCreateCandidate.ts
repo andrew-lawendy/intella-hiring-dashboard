@@ -106,22 +106,6 @@ export function useCreateCandidate() {
         shortlisted: null,
         interview_status: 'pending',
         verdict: null,
-        peter_scores: {
-          Communication: 0,
-          Technical: 0,
-          'Culture Fit': 0,
-          Leadership: 0,
-          Overall: 0,
-        },
-        ossama_scores: {
-          Communication: 0,
-          Technical: 0,
-          'Culture Fit': 0,
-          Leadership: 0,
-          Overall: 0,
-        },
-        peter_comment: '',
-        ossama_comment: '',
         checklist: {
           'CV reviewed': false,
           'LinkedIn checked': false,

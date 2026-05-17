@@ -2,38 +2,10 @@ import { useCallback } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
-import type { Scores } from '@/lib/scoring'
 
 type InterviewState = Database['public']['Tables']['interview_state']['Row']
 type InterviewStateUpdate = Database['public']['Tables']['interview_state']['Update']
 export type StateMap = Record<string, InterviewState>
-
-// Internal type — maps scorer profile slots to DB column names
-type ScorerSlot = 'peter' | 'ossama'
-
-function scoresKey(slot: ScorerSlot): 'peter_scores' | 'ossama_scores' {
-  return slot === 'peter' ? 'peter_scores' : 'ossama_scores'
-}
-
-function commentKey(slot: ScorerSlot): 'peter_comment' | 'ossama_comment' {
-  return slot === 'peter' ? 'peter_comment' : 'ossama_comment'
-}
-
-export function getSlotScores(state: InterviewState, slot: string): Scores {
-  return (slot === 'peter' ? state.peter_scores : state.ossama_scores) as Scores
-}
-
-export function getCoSlotScores(state: InterviewState, slot: string): Scores {
-  return (slot === 'peter' ? state.ossama_scores : state.peter_scores) as Scores
-}
-
-export function getSlotComment(state: InterviewState, slot: string): string {
-  return slot === 'peter' ? state.peter_comment : state.ossama_comment
-}
-
-export function getCoSlotComment(state: InterviewState, slot: string): string {
-  return slot === 'peter' ? state.ossama_comment : state.peter_comment
-}
 
 export function useCandidateState() {
   const queryClient = useQueryClient()
@@ -86,18 +58,6 @@ export function useCandidateState() {
     [updateState],
   )
 
-  const setScoresBySlot = useCallback(
-    (id: string, slot: string, scores: Scores) =>
-      updateState(id, { [scoresKey(slot as ScorerSlot)]: scores }),
-    [updateState],
-  )
-
-  const setCommentBySlot = useCallback(
-    (id: string, slot: string, comment: string) =>
-      updateState(id, { [commentKey(slot as ScorerSlot)]: comment }),
-    [updateState],
-  )
-
   const setChecklist = useCallback(
     (id: string, checklist: Record<string, boolean>) => updateState(id, { checklist }),
     [updateState],
@@ -111,8 +71,6 @@ export function useCandidateState() {
     setInterviewStatus,
     setShortlisted,
     setConfirmed,
-    setScoresBySlot,
-    setCommentBySlot,
     setChecklist,
   }
 }

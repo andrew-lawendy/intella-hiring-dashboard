@@ -4,8 +4,7 @@ import type { StateMap } from '@/hooks/useCandidateState'
 import type { HiringRound } from '@/hooks/useHiringRound'
 import { VERDICT_MAP } from './verdicts'
 import { formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
-import { totalScore, maxScore } from './scoring'
-import type { Scores } from './scoring'
+import { maxScore } from './scoring'
 
 function roundLabel(round: HiringRound | null): string {
   if (!round) return 'Hiring Round'
@@ -25,14 +24,14 @@ export function exportToExcel(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
   round: HiringRound | null = null,
-  scorerNames: { a: string; b: string } = { a: 'Scorer A', b: 'Scorer B' },
+  combinedScoreMap: Record<string, number> = {},
+  commentsMap: Record<string, string[]> = {},
 ): void {
   const max = maxScore()
   const rows = candidates.map(({ candidate, profile, analysis }) => {
     const state = stateMap[candidate.id]
-    const score = state
-      ? totalScore(state.peter_scores as Scores, state.ossama_scores as Scores)
-      : 0
+    const score = combinedScoreMap[candidate.id] ?? 0
+    const comments = commentsMap[candidate.id] ?? []
     return {
       Name: candidate.name,
       Email: candidate.email,
@@ -48,18 +47,11 @@ export function exportToExcel(
       'Fit Score': profile?.fit_score ?? '',
       'Fit Label': profile?.fit_label ?? '',
       'Combined Score': `${score}/${max}`,
-      [`${scorerNames.a} Score`]: state
-        ? Object.values(state.peter_scores as Scores).reduce((a, b) => a + b, 0)
-        : '',
-      [`${scorerNames.b} Score`]: state
-        ? Object.values(state.ossama_scores as Scores).reduce((a, b) => a + b, 0)
-        : '',
       Verdict: state?.verdict ?? '',
       Status: state?.interview_status ?? '',
       Confirmed: state?.confirmed ? 'Yes' : 'No',
       Shortlisted: state?.shortlisted === true ? 'Yes' : state?.shortlisted === false ? 'No' : '',
-      [`${scorerNames.a} Notes`]: state?.peter_comment ?? '',
-      [`${scorerNames.b} Notes`]: state?.ossama_comment ?? '',
+      Notes: comments.join(' | '),
     }
   })
 
@@ -73,14 +65,13 @@ export function exportDecisionReport(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
   round: HiringRound | null = null,
-  scorerNames: { a: string; b: string } = { a: 'Scorer A', b: 'Scorer B' },
+  combinedScoreMap: Record<string, number> = {},
+  commentsMap: Record<string, string[]> = {},
 ): void {
   const max = maxScore()
   const sorted = [...candidates].sort((a, b) => {
-    const sa = stateMap[a.candidate.id]
-    const sb = stateMap[b.candidate.id]
-    const ta = sa ? totalScore(sa.peter_scores as Scores, sa.ossama_scores as Scores) : 0
-    const tb = sb ? totalScore(sb.peter_scores as Scores, sb.ossama_scores as Scores) : 0
+    const ta = combinedScoreMap[a.candidate.id] ?? 0
+    const tb = combinedScoreMap[b.candidate.id] ?? 0
     return tb - ta
   })
 
@@ -92,9 +83,8 @@ export function exportDecisionReport(
     .map((d, i) => {
       const { candidate, profile, analysis } = d
       const state = stateMap[candidate.id]
-      const score = state
-        ? totalScore(state.peter_scores as Scores, state.ossama_scores as Scores)
-        : 0
+      const score = combinedScoreMap[candidate.id] ?? 0
+      const comments = (commentsMap[candidate.id] ?? []).join(' | ')
       return `<tr>
         <td>${i + 1}</td>
         <td><strong>${candidate.name}</strong><br/><small>${analysis?.current_role ?? ''} @ ${analysis?.current_company ?? ''}</small></td>
@@ -103,7 +93,7 @@ export function exportDecisionReport(
         <td>${profile?.fit_score ?? '—'}%</td>
         <td><strong>${score}/${max}</strong></td>
         <td style="color:${state?.verdict === 'strong-yes' ? 'green' : state?.verdict === 'no' ? 'red' : 'inherit'}">${verdictLabels[state?.verdict ?? ''] ?? '—'}</td>
-        <td><small>${state?.peter_comment ? scorerNames.a + ': ' + state.peter_comment.slice(0, 60) : ''}${state?.ossama_comment ? '<br/>' + scorerNames.b + ': ' + state.ossama_comment.slice(0, 60) : ''}</small></td>
+        <td><small>${comments}</small></td>
       </tr>`
     })
     .join('')

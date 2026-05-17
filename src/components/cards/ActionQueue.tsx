@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { deriveActionItems, type ActionItem } from '@/lib/actionQueue'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { Scores } from '@/lib/scoring'
+import { useAuth } from '@/hooks/useAuth'
+import { useAllScores } from '@/hooks/useAllScores'
 import { Badge } from '@/components/ui/badge'
 
 interface CandidateSlot {
@@ -23,23 +24,25 @@ const TYPE_COLORS: Record<ActionItem['type'], string> = {
 
 export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
   const [open, setOpen] = useState(true)
+  const { user } = useAuth()
+  const { byCandidate } = useAllScores(user?.id)
+
+  // My scores per candidate (for overdue-scorecard check)
+  const myScoresMap = Object.fromEntries(
+    Object.entries(byCandidate).map(([cid, byUser]) => [cid, byUser[user?.id ?? ''] ?? {}]),
+  )
 
   const stateMin = Object.fromEntries(
     Object.entries(stateMap).map(([id, s]) => [
       id,
-      {
-        confirmed: s.confirmed,
-        interview_status: s.interview_status,
-        verdict: s.verdict,
-        peter_scores: s.peter_scores as Scores,
-        ossama_scores: s.ossama_scores as Scores,
-      },
+      { confirmed: s.confirmed, interview_status: s.interview_status, verdict: s.verdict },
     ]),
   )
 
   const items = deriveActionItems(
     candidates.map((c) => ({ id: c.id, name: c.name, slot: c.slot })),
     stateMin,
+    myScoresMap,
   )
 
   if (!items.length) return null

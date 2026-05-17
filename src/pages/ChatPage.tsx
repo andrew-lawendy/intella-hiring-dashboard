@@ -4,6 +4,10 @@ import { ChatInterface } from '@/components/chat/ChatInterface'
 import { DebriefSummary } from '@/components/chat/DebriefSummary'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
+import { useHiringRound } from '@/hooks/useHiringRound'
+import { useAuth } from '@/hooks/useAuth'
+import { useAllScores } from '@/hooks/useAllScores'
+import { useAllComments } from '@/hooks/useAllComments'
 import { buildSystemPrompt } from '@/lib/systemPrompt'
 import type { Provider } from '@/lib/chat'
 
@@ -12,8 +16,22 @@ export function ChatPage() {
   const [provider, setProvider] = useState<Provider>('anthropic')
   const { data } = useCandidates()
   const { stateMap } = useCandidateState()
+  const { data: round } = useHiringRound()
+  const { user } = useAuth()
+  const { combinedScoreMap } = useAllScores(user?.id)
+  const { byCandidate: commentsByCandidate } = useAllComments(user?.id)
 
-  const systemPrompt = buildSystemPrompt(data, stateMap)
+  const commentsMap = Object.fromEntries(
+    Object.entries(commentsByCandidate).map(([cid, byUser]) => [cid, Object.values(byUser)]),
+  )
+
+  const systemPrompt = buildSystemPrompt(
+    data,
+    stateMap,
+    round ?? null,
+    combinedScoreMap,
+    commentsMap,
+  )
 
   const handleKeyChange = useCallback((key: string | null, p: Provider) => {
     setApiKey(key)
@@ -30,7 +48,15 @@ export function ChatPage() {
       <ApiKeyBanner onKeyChange={handleKeyChange} />
 
       <div className="grid gap-5">
-        <DebriefSummary candidates={data} stateMap={stateMap} apiKey={apiKey} provider={provider} />
+        <DebriefSummary
+          candidates={data}
+          stateMap={stateMap}
+          apiKey={apiKey}
+          provider={provider}
+          round={round ?? null}
+          combinedScoreMap={combinedScoreMap}
+          commentsMap={commentsMap}
+        />
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
             Ask Anything

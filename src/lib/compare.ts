@@ -1,5 +1,4 @@
-import { totalScore, maxScore } from './scoring'
-import type { Scores } from './scoring'
+import { maxScore } from './scoring'
 
 interface CompareRow {
   label: string
@@ -38,12 +37,12 @@ export function buildCompareRows(
     fintech_score: number | null
     seniority_score: number | null
   },
-  stateA: { peter_scores: unknown; ossama_scores: unknown; verdict: string | null },
-  stateB: { peter_scores: unknown; ossama_scores: unknown; verdict: string | null },
+  stateA: { verdict: string | null; combinedScore?: number },
+  stateB: { verdict: string | null; combinedScore?: number },
 ): CompareRow[] {
   const max = maxScore()
-  const scoreA = totalScore(stateA.peter_scores as Scores, stateA.ossama_scores as Scores)
-  const scoreB = totalScore(stateB.peter_scores as Scores, stateB.ossama_scores as Scores)
+  const scoreA = stateA.combinedScore ?? 0
+  const scoreB = stateB.combinedScore ?? 0
 
   return [
     { label: 'Slot', a: candidateA.slot ?? '—', b: candidateB.slot ?? '—' },

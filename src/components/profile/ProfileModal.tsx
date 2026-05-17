@@ -7,7 +7,6 @@ import { ProfileHistory } from './ProfileHistory'
 import { ProfileScore } from './ProfileScore'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
-import type { Scores } from '@/lib/scoring'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 import { NavTabs, NavTab } from '@/components/ui/nav-tabs'
 import { XIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
@@ -25,17 +24,9 @@ interface ProfileModalProps {
   total?: number
   onPrev?: () => void
   onNext?: () => void
-  // Evaluation (optional — read-only when omitted)
-  myName?: string
-  coName?: string
-  myScores?: Scores
-  coScores?: Scores
-  myComment?: string
-  coComment?: string
+  // Evaluation callbacks (optional)
   scoreCategories?: readonly string[]
   checklistItems?: string[]
-  onMyScoreChange?: (scores: Scores) => void
-  onMyCommentSave?: (comment: string) => void
   onChecklistChange?: (checklist: Record<string, boolean>) => void
   onVerdictChange?: (v: NonNullable<State['verdict']>) => void
   onStatusChange?: (s: State['interview_status']) => void
@@ -53,16 +44,8 @@ export function ProfileModal({
   total,
   onPrev,
   onNext,
-  myName = 'You',
-  coName = 'Co-scorer',
-  myScores = {},
-  coScores = {},
-  myComment = '',
-  coComment = '',
   scoreCategories,
   checklistItems,
-  onMyScoreChange,
-  onMyCommentSave,
   onChecklistChange,
   onVerdictChange,
   onStatusChange,
@@ -187,16 +170,8 @@ export function ProfileModal({
               <ProfileScore
                 state={state}
                 candidateId={candidate.id}
-                myName={myName}
-                coName={coName}
-                myScores={myScores}
-                coScores={coScores}
-                myComment={myComment}
-                coComment={coComment}
                 scoreCategories={scoreCategories}
                 checklistItems={checklistItems}
-                onMyScoreChange={onMyScoreChange}
-                onMyCommentSave={onMyCommentSave}
                 onChecklistChange={onChecklistChange}
                 onVerdictChange={onVerdictChange}
                 onStatusChange={onStatusChange}

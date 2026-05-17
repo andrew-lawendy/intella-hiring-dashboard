@@ -1,6 +1,3 @@
-import { totalScore } from './scoring'
-import type { Scores } from './scoring'
-
 interface AnalysisRow {
   candidate_id: string
   ai_exp: boolean
@@ -14,8 +11,6 @@ interface AnalysisRow {
 
 interface StateRow {
   candidate_id: string
-  peter_scores: unknown
-  ossama_scores: unknown
   shortlisted: boolean | null
   verdict: string | null
   interview_status: string
@@ -63,19 +58,19 @@ export function computeRanking(
   analysis: { candidate_id: string }[],
   stateMap: Record<string, StateRow>,
   _profileMap: Record<string, { fit_score?: number | null }>,
+  combinedScoreMap: Record<string, number> = {},
 ): RankingEntry[] {
   return analysis
     .map((a) => {
       const s = stateMap[a.candidate_id]
       if (!s) return null
-      const slotA = s.peter_scores as Scores
-      const slotB = s.ossama_scores as Scores
+      const combined = combinedScoreMap[a.candidate_id] ?? 0
       return {
         candidateId: a.candidate_id,
-        combinedScore: totalScore(slotA, slotB),
+        combinedScore: combined,
         verdict: s.verdict,
-        scoreA: Object.values(slotA).reduce((x, y) => x + y, 0),
-        scoreB: Object.values(slotB).reduce((x, y) => x + y, 0),
+        scoreA: combined,
+        scoreB: 0,
       }
     })
     .filter(Boolean)

@@ -1,6 +1,3 @@
-import { isScoreSubmitted } from './scoring'
-import type { Scores } from './scoring'
-
 export type ActionItemType = 'unconfirmed' | 'no-verdict' | 'overdue-scorecard'
 
 export interface ActionItem {
@@ -20,13 +17,12 @@ interface StateMin {
   confirmed: boolean
   interview_status: string
   verdict: string | null
-  peter_scores: Scores
-  ossama_scores: Scores
 }
 
 export function deriveActionItems(
   candidates: CandidateMin[],
   stateMap: Record<string, StateMin>,
+  myScoresMap: Record<string, Record<string, number>>,
 ): ActionItem[] {
   const items: ActionItem[] = []
 
@@ -52,11 +48,9 @@ export function deriveActionItems(
       })
     }
 
-    if (
-      s.interview_status === 'completed' &&
-      !isScoreSubmitted(s.peter_scores) &&
-      !isScoreSubmitted(s.ossama_scores)
-    ) {
+    const myScores = myScoresMap[c.id] ?? {}
+    const hasScored = Object.values(myScores).some((v) => v > 0)
+    if (s.interview_status === 'completed' && !hasScored) {
       items.push({
         type: 'overdue-scorecard',
         candidateId: c.id,

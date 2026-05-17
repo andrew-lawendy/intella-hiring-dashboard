@@ -1,18 +1,16 @@
 import { useState, useMemo } from 'react'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
-import { useHiringRound, generateDayMap } from '@/hooks/useHiringRound'
-import { useCandidates } from '@/hooks/useCandidates'
 import {
-  useCandidateState,
-  getSlotScores,
-  getCoSlotScores,
-  getSlotComment,
-  getCoSlotComment,
-} from '@/hooks/useCandidateState'
+  useHiringRound,
+  generateDayMap,
+  formatRoundDateRange,
+  formatRoundYear,
+} from '@/hooks/useHiringRound'
+import { useCandidates } from '@/hooks/useCandidates'
+import { useCandidateState } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
-import { useProfile } from '@/hooks/useProfile'
-import { useInterviewerNames } from '@/hooks/useInterviewerNames'
+import { useAllScores } from '@/hooks/useAllScores'
 import { SummaryBar } from '@/components/cards/SummaryBar'
 import { InterviewTimeline } from '@/components/cards/InterviewTimeline'
 import { ActionQueue } from '@/components/cards/ActionQueue'
@@ -26,6 +24,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
 import { filterCandidates } from '@/lib/filters'
 import type { FilterType } from '@/lib/filters'
+
 const PAGE_SIZE = 24
 
 export function CardsPage() {
@@ -35,21 +34,14 @@ export function CardsPage() {
     updateState,
     setShortlisted,
     setConfirmed,
-    setScoresBySlot,
-    setCommentBySlot,
     setChecklist,
     setVerdict,
     setInterviewStatus,
   } = useCandidateState()
   const { user } = useAuth()
-  const { data: myProfile } = useProfile(user?.id)
-
-  const getInterviewerName = useInterviewerNames()
-  const mySlot = myProfile?.scorer_slot ?? 'ossama'
-  const coSlot = mySlot === 'peter' ? 'ossama' : 'peter'
-  const myName = getInterviewerName(mySlot)
-  const coName = getInterviewerName(coSlot)
+  const { myScoresFor, coScoresFor } = useAllScores(user?.id)
   const { data: round } = useHiringRound()
+
   const dayMap = useMemo(
     () => (round ? generateDayMap(round.start_date, round.end_date) : {}),
     [round],
@@ -88,17 +80,14 @@ export function CardsPage() {
   )
 
   const debouncedSearch = useDebounce(search, 300)
-
   const filteredMeta = useMemo(
     () => filterCandidates(allMeta, stateMin, filter, debouncedSearch, dayMap),
     [allMeta, stateMin, filter, debouncedSearch, dayMap],
   )
-
   const pageIds = useMemo(
     () => filteredMeta.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((m) => m.id),
     [filteredMeta, page],
   )
-
   const shortlistedIds = useMemo(
     () =>
       Object.entries(stateMap)
@@ -107,10 +96,8 @@ export function CardsPage() {
     [stateMap],
   )
 
-  // Fetch full data (profile + analysis) for current page only
   const { data: pageData, loading: cardsLoading } = useCandidates({ ids: pageIds })
 
-  // Profile modal — navigate across all filtered candidates
   const profileIndex = profileId ? filteredMeta.findIndex((m) => m.id === profileId) : -1
   const profileData = profileId
     ? (pageData.find((d) => d.candidate.id === profileId) ?? null)
@@ -132,12 +119,16 @@ export function CardsPage() {
     )
   }
 
+  const roundSubtitle = round
+    ? `${round.role_short} · ${formatRoundDateRange(round.start_date, round.end_date)}, ${formatRoundYear(round.start_date)}`
+    : ''
+
   return (
     <div>
       <h1 className="text-[30px] font-medium tracking-[-0.025em] mb-1 leading-none text-text">
         Candidate Cards
       </h1>
-      <p className="text-[13.5px] text-text2 mb-6">Senior PM · May 17–21, 2026</p>
+      <p className="text-[13.5px] text-text2 mb-6">{roundSubtitle}</p>
 
       <InterviewTimeline candidates={allMeta} stateMap={stateMap} />
       <SummaryBar total={allMeta.length} stateMap={stateMap} />
@@ -184,8 +175,8 @@ export function CardsPage() {
                   key={candidate.id}
                   candidate={candidate}
                   state={state}
-                  myScores={getSlotScores(state, mySlot)}
-                  coScores={getCoSlotScores(state, mySlot)}
+                  myScores={myScoresFor(candidate.id)}
+                  coScores={coScoresFor(candidate.id)}
                   checklistItems={round?.checklist_items}
                   onConfirmToggle={() => setConfirmed(candidate.id, !state.confirmed)}
                   onShortlist={() =>
@@ -228,16 +219,8 @@ export function CardsPage() {
           total={filteredMeta.length}
           onPrev={() => navigateProfile(-1)}
           onNext={() => navigateProfile(1)}
-          myName={myName}
-          coName={coName}
-          myScores={getSlotScores(stateMap[profileData.candidate.id], mySlot)}
-          coScores={getCoSlotScores(stateMap[profileData.candidate.id], mySlot)}
-          myComment={getSlotComment(stateMap[profileData.candidate.id], mySlot)}
-          coComment={getCoSlotComment(stateMap[profileData.candidate.id], mySlot)}
           scoreCategories={round?.score_categories}
           checklistItems={round?.checklist_items}
-          onMyScoreChange={(scores) => setScoresBySlot(profileData.candidate.id, mySlot, scores)}
-          onMyCommentSave={(comment) => setCommentBySlot(profileData.candidate.id, mySlot, comment)}
           onChecklistChange={(checklist) => setChecklist(profileData.candidate.id, checklist)}
           onVerdictChange={(v) => setVerdict(profileData.candidate.id, v)}
           onStatusChange={(s) => setInterviewStatus(profileData.candidate.id, s)}

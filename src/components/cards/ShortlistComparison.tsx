@@ -1,9 +1,10 @@
 import { useCandidates } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
-import { totalScore, maxScore } from '@/lib/scoring'
-import type { Scores } from '@/lib/scoring'
+import { useAuth } from '@/hooks/useAuth'
+import { useAllScores } from '@/hooks/useAllScores'
+import { useAllComments } from '@/hooks/useAllComments'
+import { maxScore } from '@/lib/scoring'
 import { VERDICT_MAP } from '@/lib/verdicts'
-import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { Spinner } from '@/components/ui/spinner'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -31,7 +32,9 @@ interface ShortlistComparisonProps {
 
 export function ShortlistComparison({ candidateIds, stateMap, onClose }: ShortlistComparisonProps) {
   const { data, loading } = useCandidates({ ids: candidateIds })
-  const getInterviewerName = useInterviewerNames()
+  const { user } = useAuth()
+  const { combinedScoreFor } = useAllScores(user?.id)
+  const { coCommentsFor } = useAllComments(user?.id)
   const max = maxScore()
 
   if (!candidateIds.length) {
@@ -73,14 +76,7 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted">
-                  {[
-                    'Candidate',
-                    getInterviewerName('peter'),
-                    getInterviewerName('ossama'),
-                    'Combined',
-                    'Verdict',
-                    'Notes',
-                  ].map((h) => (
+                  {['Candidate', 'Score', 'Verdict', 'Notes'].map((h) => (
                     <TableHead
                       key={h}
                       className="px-3 py-2.5 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground"
@@ -94,11 +90,8 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                 {data.map(({ candidate, analysis }) => {
                   const state = stateMap[candidate.id]
                   if (!state) return null
-                  const ps = state.peter_scores as Scores
-                  const os = state.ossama_scores as Scores
-                  const pTotal = Object.values(ps).reduce((a, b) => a + b, 0)
-                  const oTotal = Object.values(os).reduce((a, b) => a + b, 0)
-                  const combined = totalScore(ps, os)
+                  const combined = combinedScoreFor(candidate.id)
+                  const coComments = coCommentsFor(candidate.id)
 
                   return (
                     <TableRow
@@ -112,12 +105,6 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                         <p className="text-[10px] text-muted-foreground mt-0.5">
                           {analysis?.current_role ?? ''}
                         </p>
-                      </TableCell>
-                      <TableCell className="px-3 py-2.5 font-mono font-semibold text-[13px] text-center text-foreground">
-                        {pTotal || '—'}/{max}
-                      </TableCell>
-                      <TableCell className="px-3 py-2.5 font-mono font-semibold text-[13px] text-center text-foreground">
-                        {oTotal || '—'}/{max}
                       </TableCell>
                       <TableCell className="px-3 py-2.5 font-mono font-bold text-[14px] text-center text-foreground">
                         {combined || '—'}/{max}
@@ -139,17 +126,9 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                         )}
                       </TableCell>
                       <TableCell className="px-3 py-2.5 text-[10px] text-muted-foreground max-w-[180px]">
-                        {state.peter_comment && (
-                          <span>
-                            {getInterviewerName('peter')}: {state.peter_comment.slice(0, 50)}
-                          </span>
-                        )}
-                        {state.peter_comment && state.ossama_comment && <br />}
-                        {state.ossama_comment && (
-                          <span>
-                            {getInterviewerName('ossama')}: {state.ossama_comment.slice(0, 50)}
-                          </span>
-                        )}
+                        {coComments.map((c, i) => (
+                          <span key={i}>{c.slice(0, 80)}</span>
+                        ))}
                       </TableCell>
                     </TableRow>
                   )

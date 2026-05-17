@@ -2,13 +2,14 @@ import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
 import type { HiringRound } from '@/hooks/useHiringRound'
 import { formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
-import { totalScore, maxScore } from './scoring'
-import type { Scores } from './scoring'
+import { maxScore } from './scoring'
 
 export function buildSystemPrompt(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
   round: HiringRound | null = null,
+  combinedScoreMap: Record<string, number> = {},
+  commentsMap: Record<string, string[]> = {},
 ): string {
   const role = round?.role ?? 'Senior Product Manager'
   const dateRange = round
@@ -18,9 +19,8 @@ export function buildSystemPrompt(
   const candidateSummaries = candidates
     .map(({ candidate, profile, analysis }) => {
       const state = stateMap[candidate.id]
-      const score = state
-        ? totalScore(state.peter_scores as Scores, state.ossama_scores as Scores)
-        : 0
+      const score = combinedScoreMap[candidate.id] ?? 0
+      const comments = commentsMap[candidate.id] ?? []
       return [
         `**${candidate.name}** (${candidate.id})`,
         `- Slot: ${candidate.slot} | Type: ${candidate.type} | Salary: ${candidate.salary} | Notice: ${candidate.notice}`,
@@ -36,8 +36,7 @@ export function buildSystemPrompt(
         state
           ? `- Combined score: ${score}/${max} | Status: ${state.interview_status} | Verdict: ${state.verdict ?? 'none'}`
           : '',
-        state?.peter_comment ? `- Interviewer notes (A): ${state.peter_comment}` : '',
-        state?.ossama_comment ? `- Interviewer notes (B): ${state.ossama_comment}` : '',
+        ...comments.map((c, i) => `- Interviewer notes (${i + 1}): ${c}`),
       ]
         .filter(Boolean)
         .join('\n')
@@ -65,12 +64,20 @@ export function buildDebriefPrompt(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
   round: HiringRound | null = null,
+  combinedScoreMap: Record<string, number> = {},
+  commentsMap: Record<string, string[]> = {},
 ): string {
   const completedCandidates = candidates.filter(
     ({ candidate }) => stateMap[candidate.id]?.interview_status === 'completed',
   )
 
-  const summaries = buildSystemPrompt(completedCandidates, stateMap, round)
+  const summaries = buildSystemPrompt(
+    completedCandidates,
+    stateMap,
+    round,
+    combinedScoreMap,
+    commentsMap,
+  )
 
   return `Based on the interview data below, generate a structured debrief summary for the Intella hiring team.
 

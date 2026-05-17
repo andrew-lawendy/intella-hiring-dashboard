@@ -4,6 +4,7 @@ import { buildDebriefPrompt } from '@/lib/systemPrompt'
 import type { Provider } from '@/lib/chat'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
+import type { HiringRound } from '@/hooks/useHiringRound'
 import { Button } from '@/components/ui/button'
 
 interface DebriefSummaryProps {
@@ -11,9 +12,20 @@ interface DebriefSummaryProps {
   stateMap: StateMap
   apiKey: string | null
   provider: Provider
+  round?: HiringRound | null
+  combinedScoreMap?: Record<string, number>
+  commentsMap?: Record<string, string[]>
 }
 
-export function DebriefSummary({ candidates, stateMap, apiKey, provider }: DebriefSummaryProps) {
+export function DebriefSummary({
+  candidates,
+  stateMap,
+  apiKey,
+  provider,
+  round,
+  combinedScoreMap = {},
+  commentsMap = {},
+}: DebriefSummaryProps) {
   const [summary, setSummary] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +42,13 @@ export function DebriefSummary({ candidates, stateMap, apiKey, provider }: Debri
     setLoading(true)
     setError(null)
     try {
-      const prompt = buildDebriefPrompt(candidates, stateMap)
+      const prompt = buildDebriefPrompt(
+        candidates,
+        stateMap,
+        round ?? null,
+        combinedScoreMap,
+        commentsMap,
+      )
       const result = await sendChatMessage(
         [{ role: 'user', content: 'Generate the debrief summary.' }],
         prompt,

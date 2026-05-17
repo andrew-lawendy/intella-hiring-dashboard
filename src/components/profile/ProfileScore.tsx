@@ -1,8 +1,11 @@
+import { useAuth } from '@/hooks/useAuth'
+import { useAllScores } from '@/hooks/useAllScores'
+import { useAllComments } from '@/hooks/useAllComments'
+import { useInterviewerNames } from '@/hooks/useInterviewerNames'
 import { Scorecard } from '@/components/cards/Scorecard'
 import { Checklist } from '@/components/cards/Checklist'
 import { Comments } from '@/components/cards/Comments'
 import { StatusVerdictButtons } from '@/components/cards/StatusVerdictButtons'
-import type { Scores } from '@/lib/scoring'
 import type { Database } from '@/lib/database.types'
 
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -10,16 +13,8 @@ type State = Database['public']['Tables']['interview_state']['Row']
 interface ProfileScoreProps {
   state: State
   candidateId: string
-  myName: string
-  coName: string
-  myScores: Scores
-  coScores: Scores
-  myComment: string
-  coComment: string
   scoreCategories?: readonly string[]
   checklistItems?: string[]
-  onMyScoreChange?: (scores: Scores) => void
-  onMyCommentSave?: (comment: string) => void
   onChecklistChange?: (checklist: Record<string, boolean>) => void
   onVerdictChange?: (v: NonNullable<State['verdict']>) => void
   onStatusChange?: (s: State['interview_status']) => void
@@ -28,20 +23,23 @@ interface ProfileScoreProps {
 export function ProfileScore({
   state,
   candidateId,
-  myName,
-  coName,
-  myScores,
-  coScores,
-  myComment,
-  coComment,
   scoreCategories,
   checklistItems,
-  onMyScoreChange,
-  onMyCommentSave,
   onChecklistChange,
   onVerdictChange,
   onStatusChange,
 }: ProfileScoreProps) {
+  const { user } = useAuth()
+  const getInterviewerName = useInterviewerNames()
+
+  const { myScoresFor, coScoresFor, setMyScores } = useAllScores(user?.id)
+  const { myCommentFor, coCommentsFor, setMyComment } = useAllComments(user?.id)
+
+  const mySlot = user?.email?.split('@')[0] ?? 'you'
+  const myName = getInterviewerName(mySlot)
+
+  const coComments = coCommentsFor(candidateId)
+
   return (
     <div className="divide-y divide-border">
       {onStatusChange && onVerdictChange && (
@@ -53,16 +51,14 @@ export function ProfileScore({
         />
       )}
 
-      {onMyScoreChange && (
-        <Scorecard
-          myName={myName}
-          coName={coName}
-          myScores={myScores}
-          coScores={coScores}
-          scoreCategories={scoreCategories}
-          onMyScoreChange={onMyScoreChange}
-        />
-      )}
+      <Scorecard
+        myName={myName}
+        coName="Co-scorer"
+        myScores={myScoresFor(candidateId)}
+        coScores={coScoresFor(candidateId)}
+        scoreCategories={scoreCategories}
+        onMyScoreChange={(scores) => setMyScores(candidateId, scores)}
+      />
 
       <Checklist
         candidateId={candidateId}
@@ -71,16 +67,14 @@ export function ProfileScore({
         onChange={onChecklistChange ?? (() => {})}
       />
 
-      {onMyCommentSave && (
-        <Comments
-          candidateId={candidateId}
-          myComment={myComment}
-          coComment={coComment}
-          myLabel={myName}
-          coLabel={coName}
-          onMySave={onMyCommentSave}
-        />
-      )}
+      <Comments
+        candidateId={candidateId}
+        myComment={myCommentFor(candidateId)}
+        coComment={coComments[0] ?? ''}
+        myLabel={myName}
+        coLabel="Co-scorer"
+        onMySave={(body) => setMyComment(candidateId, body)}
+      />
     </div>
   )
 }
