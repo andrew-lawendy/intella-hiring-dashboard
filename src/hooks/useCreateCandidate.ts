@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { fitLabelFromScore } from '@/lib/scoring'
 
 export interface CreateCandidateInput {
   name: string
@@ -31,20 +32,6 @@ export interface CreateCandidateInput {
   hasB2C: boolean
   hasFintech: boolean
   notable: string
-}
-
-function fitLabel(score: number): string {
-  if (score >= 80) return 'Strong Yes'
-  if (score >= 65) return 'Yes'
-  if (score >= 50) return 'Maybe'
-  return 'No'
-}
-
-function fitColor(score: number): string {
-  if (score >= 80) return 'var(--green)'
-  if (score >= 65) return 'var(--color-green-500)'
-  if (score >= 50) return 'var(--amber)'
-  return 'var(--red)'
 }
 
 function getDayName(dateStr: string): string {
@@ -83,8 +70,7 @@ export function useCreateCandidate() {
         strengths: data.strengths.length ? data.strengths : null,
         weaknesses: null,
         fit_score: data.fitScore,
-        fit_label: fitLabel(data.fitScore),
-        fit_color: fitColor(data.fitScore),
+        fit_label: fitLabelFromScore(data.fitScore),
         ai_score: data.aiScore,
         fintech_score: data.fintechScore,
         b2b_score: data.b2bScore,
@@ -101,8 +87,8 @@ export function useCreateCandidate() {
         degree: data.degree.trim() || null,
         grad_year: data.gradYear ? parseInt(data.gradYear) : null,
         masters: data.masters ? 'true' : null,
-        total_exp: data.totalExp ? parseFloat(data.totalExp) : null,
-        pm_exp: data.pmExp ? parseFloat(data.pmExp) : null,
+        total_exp: data.totalExp ? Math.round(parseFloat(data.totalExp)) : null,
+        pm_exp: data.pmExp ? Math.round(parseFloat(data.pmExp)) : null,
         current_role: data.title.trim() || null,
         current_company: data.company.trim() || null,
         domains: data.domains.length ? data.domains : null,

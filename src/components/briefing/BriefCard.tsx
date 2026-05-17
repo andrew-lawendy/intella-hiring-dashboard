@@ -2,6 +2,7 @@ import { InterviewTimer } from './InterviewTimer'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
 import { Button } from '@/components/ui/button'
+import { fitColorFromScore } from '@/lib/scoring'
 
 type State = Database['public']['Tables']['interview_state']['Row']
 
@@ -65,9 +66,9 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
             <span
               className="text-[10.5px] font-medium px-2 py-0.5 rounded-full border"
               style={{
-                background: `color-mix(in srgb, ${profile.fit_color ?? 'var(--brand)'} 15%, transparent)`,
-                borderColor: `color-mix(in srgb, ${profile.fit_color ?? 'var(--brand)'} 30%, transparent)`,
-                color: profile.fit_color ?? 'var(--text2)',
+                background: `color-mix(in srgb, ${fitColorFromScore(profile.fit_score)} 15%, transparent)`,
+                borderColor: `color-mix(in srgb, ${fitColorFromScore(profile.fit_score)} 30%, transparent)`,
+                color: fitColorFromScore(profile.fit_score),
               }}
             >
               {profile.fit_label} · {profile.fit_score}%

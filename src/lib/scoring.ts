@@ -35,3 +35,19 @@ export function totalScore(peter: Scores, ossama: Scores): number {
 export function isScoreSubmitted(scores: Scores): boolean {
   return SCORE_CATEGORIES.every((cat) => scores[cat] > 0)
 }
+
+export function fitColorFromScore(score: number | null): string {
+  if (score === null) return 'var(--brand)'
+  if (score >= 65) return 'var(--green)'
+  if (score >= 45) return 'var(--amber)'
+  return 'var(--red)'
+}
+
+export function fitLabelFromScore(score: number | null): string {
+  if (score === null) return '—'
+  if (score >= 85) return 'Exceptional fit'
+  if (score >= 65) return 'Strong fit'
+  if (score >= 55) return 'Moderate fit'
+  if (score >= 45) return 'Partial fit'
+  return 'Weak fit'
+}
