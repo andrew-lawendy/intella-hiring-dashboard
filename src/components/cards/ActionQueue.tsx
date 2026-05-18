@@ -15,9 +15,10 @@ interface CandidateSlot {
 interface ActionQueueProps {
   candidates: CandidateSlot[]
   stateMap: StateMap
+  onItemClick?: (candidateId: string) => void
 }
 
-export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
+export function ActionQueue({ candidates, stateMap, onItemClick }: ActionQueueProps) {
   const [open, setOpen] = useState(true)
   const { user } = useAuth()
   const { byCandidate } = useAllScores(user?.id)
@@ -72,9 +73,13 @@ export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
       {open && (
         <div className="border-t border-border divide-y divide-border">
           {items.map((item) => (
-            <div
+            <button
               key={`${item.candidateId}:${item.type}`}
-              className="flex items-center gap-3 px-4 py-2.5 text-[12px] font-sans"
+              type="button"
+              onClick={() => onItemClick?.(item.candidateId)}
+              disabled={!onItemClick}
+              aria-label={`${item.candidateName}: ${item.message}`}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-[12px] font-sans text-left transition-colors enabled:hover:bg-muted/50 enabled:cursor-pointer disabled:cursor-default"
             >
               <span
                 className="w-1.5 h-1.5 rounded-full flex-shrink-0"
@@ -83,7 +88,7 @@ export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
               <span className="font-semibold text-text">{item.candidateName}</span>
               <span className="text-text3">—</span>
               <span className="text-text2">{item.message}</span>
-            </div>
+            </button>
           ))}
         </div>
       )}

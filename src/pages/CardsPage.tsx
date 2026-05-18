@@ -124,7 +124,7 @@ export function CardsPage() {
 
       <InterviewTimeline candidates={allMeta} stateMap={stateMap} />
       <SummaryBar total={allMeta.length} stateMap={stateMap} />
-      <ActionQueue candidates={allMeta} stateMap={stateMap} />
+      <ActionQueue candidates={allMeta} stateMap={stateMap} onItemClick={setProfileId} />
       <FilterBar
         filter={filter as FilterType}
         search={search}
