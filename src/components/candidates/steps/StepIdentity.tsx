@@ -3,8 +3,7 @@ import { TriangleAlertIcon, PaperclipIcon, XIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { FieldWrapper, SegmentedToggle } from '../form-helpers'
 import type { CreateCandidateInput } from '@/hooks/useCreateCandidate'
-import { useJobOpenings } from '@/hooks/useJobOpenings'
-import { formatRoundDateRange } from '@/hooks/useHiringRound'
+import { useJobs } from '@/hooks/useJobs'
 
 interface StepIdentityProps {
   values: CreateCandidateInput
@@ -23,7 +22,7 @@ export function StepIdentity({
   cvFile,
   onCvChange,
 }: StepIdentityProps) {
-  const { data: jobs = [] } = useJobOpenings()
+  const { data: jobs = [] } = useJobs()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -46,8 +45,8 @@ export function StepIdentity({
           <option value="">Select a role…</option>
           {jobs.map((job) => (
             <option key={job.id} value={job.id.toString()}>
-              {job.role} · {formatRoundDateRange(job.start_date, job.end_date)}
-              {job.is_active ? ' (active)' : ''}
+              {job.name}
+              {job.department ? ` · ${job.department}` : ''}
             </option>
           ))}
         </select>
@@ -95,16 +94,31 @@ export function StepIdentity({
         </div>
       )}
 
-      <FieldWrapper label="Interview type" htmlFor="field-type">
-        <SegmentedToggle
-          value={values.interviewType}
-          onChange={(v) => setField('interviewType', v as 'Remote' | 'In-person')}
-          options={[
-            { value: 'Remote', label: 'Remote' },
-            { value: 'In-person', label: 'In-person' },
-          ]}
-        />
-      </FieldWrapper>
+      <div className="grid grid-cols-2 gap-4">
+        <FieldWrapper label="Interview type" htmlFor="field-type">
+          <SegmentedToggle
+            value={values.interviewType}
+            onChange={(v) => setField('interviewType', v as 'Remote' | 'In-person')}
+            options={[
+              { value: 'Remote', label: 'Remote' },
+              { value: 'In-person', label: 'In-person' },
+            ]}
+          />
+        </FieldWrapper>
+
+        <FieldWrapper label="Seniority" optional htmlFor="field-seniority">
+          <SegmentedToggle
+            value={values.seniority}
+            onChange={(v) => setField('seniority', v)}
+            options={[
+              { value: 'Intern', label: 'Intern' },
+              { value: 'Junior', label: 'Junior' },
+              { value: 'Mid', label: 'Mid' },
+              { value: 'Senior', label: 'Senior' },
+            ]}
+          />
+        </FieldWrapper>
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <FieldWrapper

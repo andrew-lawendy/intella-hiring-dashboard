@@ -10,6 +10,7 @@ export interface CreateCandidateInput {
   notice: string
   slotDate: string
   slotTime: string
+  seniority: string
   jobId: number | null
   title: string
   company: string
@@ -57,6 +58,7 @@ export function useCreateCandidate() {
           type: data.interviewType,
           salary: data.salary.trim() || null,
           notice: data.notice.trim() || null,
+          seniority: data.seniority || null,
           slot,
           day: data.slotDate ? getDayName(data.slotDate) : null,
           time: data.slotTime || null,

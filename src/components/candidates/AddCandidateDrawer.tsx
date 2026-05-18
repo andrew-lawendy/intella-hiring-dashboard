@@ -29,6 +29,7 @@ const DEFAULT_VALUES: Omit<CreateCandidateInput, 'jobId'> = {
   name: '',
   email: '',
   interviewType: 'Remote',
+  seniority: '',
   salary: '',
   notice: '',
   slotDate: '',

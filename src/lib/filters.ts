@@ -4,27 +4,19 @@ export type FilterType =
   | 'pending'
   | 'shortlisted'
   | 'rejected'
-  | 'sun'
-  | 'mon'
-  | 'tue'
-  | 'wed'
-  | 'thu'
+  | 'intern'
+  | 'junior'
+  | 'mid'
+  | 'senior'
 
-const FALLBACK_DAY_MAP: Record<string, string> = {
-  sun: 'Sunday',
-  mon: 'Monday',
-  tue: 'Tuesday',
-  wed: 'Wednesday',
-  thu: 'Thursday',
-  fri: 'Friday',
-  sat: 'Saturday',
-}
+const SENIORITY_FILTERS = new Set<FilterType>(['intern', 'junior', 'mid', 'senior'])
 
 interface CandidateMin {
   id: string
   name: string
   email: string
   day?: string | null
+  seniority?: string | null
 }
 
 interface StateSnapshot {
@@ -39,7 +31,6 @@ export function filterCandidates<T extends CandidateMin>(
   stateMap: Record<string, StateSnapshot>,
   filter: FilterType,
   search: string,
-  dayMap: Record<string, string> = FALLBACK_DAY_MAP,
 ): T[] {
   let result = candidates
 
@@ -53,8 +44,8 @@ export function filterCandidates<T extends CandidateMin>(
     )
   } else if (filter === 'rejected') {
     result = result.filter((c) => stateMap[c.id]?.shortlisted === false)
-  } else if (dayMap[filter]) {
-    result = result.filter((c) => c.day === dayMap[filter])
+  } else if (SENIORITY_FILTERS.has(filter)) {
+    result = result.filter((c) => c.seniority?.toLowerCase() === filter)
   }
 
   if (search.trim()) {
