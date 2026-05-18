@@ -1,8 +1,16 @@
 import { useState, useMemo } from 'react'
 import { useQueryState, parseAsInteger } from 'nuqs'
-import { ArrowLeftIcon, ArrowRightIcon, CheckCircle2Icon, PlusIcon, XIcon } from 'lucide-react'
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CheckCircle2Icon,
+  PlusIcon,
+  TriangleAlertIcon,
+  XIcon,
+} from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/lib/utils'
+import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Sheet } from '@/components/ui/sheet'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
@@ -60,6 +68,8 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
   const [createdName, setCreatedName] = useState('')
+  const [cvFile, setCvFile] = useState<File | null>(null)
+  const [cvUploadError, setCvUploadError] = useState<string | null>(null)
 
   const { candidates: allMeta } = useCandidateMeta()
   const { mutateAsync: createCandidate, isPending } = useCreateCandidate()
@@ -130,6 +140,12 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
     }
     try {
       const result = await createCandidate(values)
+      if (cvFile) {
+        const { error: uploadErr } = await supabase.storage
+          .from('candidate-cvs')
+          .upload(`${result.id}.pdf`, cvFile, { upsert: true, contentType: 'application/pdf' })
+        if (uploadErr) setCvUploadError(uploadErr.message)
+      }
       setCreatedName(result.name)
       setSubmitted(true)
     } catch (err) {
@@ -143,6 +159,8 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
     setErrors({})
     setSubmitted(false)
     setCreatedName('')
+    setCvFile(null)
+    setCvUploadError(null)
   }
 
   function handleClose() {
@@ -243,6 +261,8 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
                 setField={setField}
                 errors={errors}
                 duplicateEmail={duplicateEmail}
+                cvFile={cvFile}
+                onCvChange={setCvFile}
               />
             )}
             {step === 1 && <StepProfile values={values} setField={setField} />}
@@ -276,7 +296,12 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
           </div>
         </>
       ) : (
-        <SuccessPane name={createdName} onClose={handleClose} onAddAnother={reset} />
+        <SuccessPane
+          name={createdName}
+          cvUploadError={cvUploadError}
+          onClose={handleClose}
+          onAddAnother={reset}
+        />
       )}
     </Sheet>
   )
@@ -284,10 +309,12 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
 
 function SuccessPane({
   name,
+  cvUploadError,
   onClose,
   onAddAnother,
 }: {
   name: string
+  cvUploadError: string | null
   onClose: () => void
   onAddAnother: () => void
 }) {
@@ -313,6 +340,19 @@ function SuccessPane({
         You'll find them on the Cards tab. Open their profile to fill in scores and assign an
         interview slot.
       </p>
+
+      {cvUploadError && (
+        <div
+          role="alert"
+          className="flex gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-[12.5px] text-amber-800 dark:text-amber-300 mb-4 w-full max-w-[340px] text-left"
+        >
+          <TriangleAlertIcon className="size-4 flex-shrink-0 mt-0.5 text-amber-500" />
+          <span>
+            Candidate added, but CV upload failed: {cvUploadError}. You can retry from their
+            profile.
+          </span>
+        </div>
+      )}
 
       <div className="flex items-center gap-3 p-4 rounded-xl border border-border bg-muted/40 mb-8 w-full max-w-[280px]">
         <div

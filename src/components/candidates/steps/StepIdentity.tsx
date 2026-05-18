@@ -1,4 +1,5 @@
-import { TriangleAlertIcon } from 'lucide-react'
+import { useRef } from 'react'
+import { TriangleAlertIcon, PaperclipIcon, XIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { FieldWrapper, SegmentedToggle } from '../form-helpers'
 import type { CreateCandidateInput } from '@/hooks/useCreateCandidate'
@@ -10,10 +11,20 @@ interface StepIdentityProps {
   setField: <K extends keyof CreateCandidateInput>(k: K, v: CreateCandidateInput[K]) => void
   errors: Record<string, string>
   duplicateEmail: string | null
+  cvFile: File | null
+  onCvChange: (file: File | null) => void
 }
 
-export function StepIdentity({ values, setField, errors, duplicateEmail }: StepIdentityProps) {
+export function StepIdentity({
+  values,
+  setField,
+  errors,
+  duplicateEmail,
+  cvFile,
+  onCvChange,
+}: StepIdentityProps) {
   const { data: jobs = [] } = useJobOpenings()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   return (
     <div className="flex flex-col gap-5">
@@ -148,6 +159,48 @@ export function StepIdentity({ values, setField, errors, duplicateEmail }: StepI
           />
         </FieldWrapper>
       </div>
+
+      <FieldWrapper
+        label="CV / Résumé"
+        optional
+        htmlFor="field-cv"
+        hint="PDF only. You can also upload it later from the candidate profile."
+      >
+        <input
+          ref={fileInputRef}
+          id="field-cv"
+          type="file"
+          accept="application/pdf"
+          className="hidden"
+          onChange={(e) => onCvChange(e.target.files?.[0] ?? null)}
+        />
+        {cvFile ? (
+          <div className="flex items-center gap-2 h-8 px-3 rounded-md border border-input bg-transparent text-sm">
+            <PaperclipIcon className="size-3.5 text-muted-foreground flex-shrink-0" />
+            <span className="flex-1 truncate text-foreground">{cvFile.name}</span>
+            <button
+              type="button"
+              onClick={() => {
+                onCvChange(null)
+                if (fileInputRef.current) fileInputRef.current.value = ''
+              }}
+              className="text-muted-foreground hover:text-foreground flex-shrink-0"
+              aria-label="Remove CV"
+            >
+              <XIcon className="size-3.5" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 h-8 px-3 rounded-md border border-dashed border-input bg-transparent text-sm text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors w-full"
+          >
+            <PaperclipIcon className="size-3.5 flex-shrink-0" />
+            Choose PDF…
+          </button>
+        )}
+      </FieldWrapper>
     </div>
   )
 }
