@@ -37,12 +37,14 @@ export function useNotifications(): ActionItem[] {
   return useMemo(
     () =>
       deriveActionItems(
-        candidates.map((c) => ({
-          id: c.id,
-          name: c.name,
-          slot: c.slot,
-          jobId: c.job_id,
-        })),
+        candidates
+          .filter((c) => c.job_id != null)
+          .map((c) => ({
+            id: c.id,
+            name: c.name,
+            slot: c.slot,
+            jobId: c.job_id as number,
+          })),
         stateMin,
         myScoresMap,
       ),

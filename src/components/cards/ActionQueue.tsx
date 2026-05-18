@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { deriveActionItems, type ActionItem } from '@/lib/actionQueue'
+import { deriveActionItems, TYPE_COLORS } from '@/lib/actionQueue'
 import type { StateMap } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
 import { useAllScores } from '@/hooks/useAllScores'
@@ -9,17 +9,12 @@ interface CandidateSlot {
   id: string
   name: string
   slot: string | null
+  job_id: number | null
 }
 
 interface ActionQueueProps {
   candidates: CandidateSlot[]
   stateMap: StateMap
-}
-
-const TYPE_COLORS: Record<ActionItem['type'], string> = {
-  unconfirmed: 'var(--amber)',
-  'no-verdict': 'var(--blue)',
-  'overdue-scorecard': 'var(--red)',
 }
 
 export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
@@ -40,7 +35,9 @@ export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
   )
 
   const items = deriveActionItems(
-    candidates.map((c) => ({ id: c.id, name: c.name, slot: c.slot })),
+    candidates
+      .filter((c) => c.job_id != null)
+      .map((c) => ({ id: c.id, name: c.name, slot: c.slot, jobId: c.job_id as number })),
     stateMin,
     myScoresMap,
   )
