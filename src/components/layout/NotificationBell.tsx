@@ -8,11 +8,18 @@ import { useNotifications } from '@/hooks/useNotifications'
 import { useJobs } from '@/hooks/useJobs'
 import { TYPE_COLORS, type ActionItemType } from '@/lib/actionQueue'
 
-function useSessionSet(storageKey: string) {
+function getEndOfDay(): Date {
+  const d = new Date()
+  d.setHours(23, 59, 59, 999)
+  return d
+}
+
+function useCookieSet(cookieName: string) {
   const [state, setState] = useState<Set<string>>(() => {
     try {
-      const raw = sessionStorage.getItem(storageKey)
-      return raw ? new Set<string>(JSON.parse(raw) as string[]) : new Set<string>()
+      const match = document.cookie.split('; ').find((r) => r.startsWith(cookieName + '='))
+      if (!match) return new Set<string>()
+      return new Set<string>(JSON.parse(decodeURIComponent(match.split('=')[1])) as string[])
     } catch {
       return new Set<string>()
     }
@@ -22,9 +29,9 @@ function useSessionSet(storageKey: string) {
     setState((prev) => {
       const next = updater(prev)
       try {
-        sessionStorage.setItem(storageKey, JSON.stringify([...next]))
+        document.cookie = `${cookieName}=${encodeURIComponent(JSON.stringify([...next]))}; expires=${getEndOfDay().toUTCString()}; path=/; SameSite=Lax`
       } catch {
-        // sessionStorage unavailable (private browsing, quota exceeded)
+        // cookie write failed
       }
       return next
     })
@@ -40,7 +47,7 @@ export function NotificationBell() {
   const items = useNotifications(selectedJobId)
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [read, setRead] = useSessionSet('notifications:read')
+  const [read, setRead] = useCookieSet('notif_read')
 
   const unreadCount = items.filter((item) => !read.has(`${item.candidateId}:${item.type}`)).length
 
