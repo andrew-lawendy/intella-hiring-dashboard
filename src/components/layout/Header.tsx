@@ -1,6 +1,7 @@
 import { useQueryState, parseAsString } from 'nuqs'
 import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
+import { NotificationBell } from './NotificationBell'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
 import { useJobs } from '@/hooks/useJobs'
@@ -99,6 +100,7 @@ export function Header({
               ))}
             </SelectContent>
           </Select>
+          <NotificationBell />
           <Button size="sm" variant="default" onClick={onAddCandidate}>
             + Add candidate
           </Button>
