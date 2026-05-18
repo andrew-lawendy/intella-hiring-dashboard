@@ -81,7 +81,7 @@ function TablePagination({ page, pageSize, total, onChange, className }: TablePa
         className,
       )}
     >
-      <span className="text-[11px] text-muted-foreground font-mono">
+      <span className="text-[12px] text-muted-foreground font-mono">
         {from}–{to} of {total}
       </span>
 

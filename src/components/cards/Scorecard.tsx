@@ -71,7 +71,7 @@ export function Scorecard({
 
         {/* Per-category averages */}
         <div className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-3">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-3">
             Category averages
           </p>
           {scoreCategories.map((cat) => {
@@ -81,7 +81,7 @@ export function Scorecard({
               <div key={cat} className="flex items-center gap-3 mb-2 text-[12px]">
                 <span className="w-28 flex-shrink-0 text-muted-foreground">{cat}</span>
                 <Stars value={avg} />
-                <span className="text-[11px] text-muted-foreground tabular-nums">{avg}/5</span>
+                <span className="text-[12px] text-muted-foreground tabular-nums">{avg}/5</span>
               </div>
             )
           })}
@@ -90,7 +90,7 @@ export function Scorecard({
         {/* Per-user totals */}
         {allColumns.some((s) => s.total > 0) && (
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-3">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-3">
               By reviewer
             </p>
             {allColumns.map((scorer) => (
@@ -136,7 +136,7 @@ export function Scorecard({
               >
                 {scorer.name}
                 {scorer.isMe && (
-                  <span className="block text-[11px] font-normal text-muted-foreground">you</span>
+                  <span className="block text-[12px] font-normal text-muted-foreground">you</span>
                 )}
               </th>
             ))}

@@ -64,7 +64,7 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
         {profile && (
           <div className="flex gap-2 flex-wrap">
             <span
-              className="text-[11px] font-medium px-2 py-0.5 rounded-full border"
+              className="text-[12px] font-medium px-2 py-0.5 rounded-full border"
               style={{
                 background: `color-mix(in srgb, ${fitColorFromScore(profile.fit_score)} 15%, transparent)`,
                 borderColor: `color-mix(in srgb, ${fitColorFromScore(profile.fit_score)} 30%, transparent)`,
@@ -74,7 +74,7 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
               {profile.fit_label} · {profile.fit_score}%
             </span>
             {state.confirmed && (
-              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full border bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]">
+              <span className="text-[12px] font-medium px-2 py-0.5 rounded-full border bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]">
                 Confirmed
               </span>
             )}

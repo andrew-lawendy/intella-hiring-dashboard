@@ -30,7 +30,7 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
         header: '#',
         size: 52,
         cell: ({ row }) => (
-          <span className="font-mono text-muted-foreground text-[11px]">{row.original.rank}</span>
+          <span className="font-mono text-muted-foreground text-[12px]">{row.original.rank}</span>
         ),
       },
       {
@@ -58,7 +58,7 @@ export function RankingTable({ entries, nameMap }: RankingTableProps) {
         cell: ({ row }) =>
           row.original.verdict ? (
             <span
-              className="text-[11px] font-semibold"
+              className="text-[12px] font-semibold"
               style={{
                 color:
                   VERDICT_MAP[row.original.verdict as keyof typeof VERDICT_MAP]?.color ??

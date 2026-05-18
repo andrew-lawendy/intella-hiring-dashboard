@@ -73,11 +73,11 @@ export function ComparePage() {
             </div>
             <div className="px-5 py-4 bg-gradient-to-b from-surface2 to-surface">
               <p className="font-semibold text-[14px] text-text">{dataA!.candidate.name}</p>
-              <p className="text-[11px] text-text2 mt-0.5">{dataA!.profile?.title}</p>
+              <p className="text-[12px] text-text2 mt-0.5">{dataA!.profile?.title}</p>
             </div>
             <div className="px-5 py-4 bg-gradient-to-b from-surface2 to-surface">
               <p className="font-semibold text-[14px] text-text">{dataB!.candidate.name}</p>
-              <p className="text-[11px] text-text2 mt-0.5">{dataB!.profile?.title}</p>
+              <p className="text-[12px] text-text2 mt-0.5">{dataB!.profile?.title}</p>
             </div>
           </div>
           {rows.map((row, i) => (
@@ -85,7 +85,7 @@ export function ComparePage() {
               key={row.label}
               className={`grid grid-cols-3 divide-x divide-border border-t border-border ${i % 2 === 1 ? 'bg-[color-mix(in_srgb,var(--surface2)_35%,var(--surface))]' : ''}`}
             >
-              <div className="px-5 py-3 text-text2 font-medium text-[11px] uppercase tracking-[0.04em]">
+              <div className="px-5 py-3 text-text2 font-medium text-[12px] uppercase tracking-[0.04em]">
                 {row.label}
               </div>
               <div className="px-5 py-3 text-[12.5px] text-text">{row.a}</div>

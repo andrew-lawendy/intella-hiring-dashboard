@@ -226,7 +226,7 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
                   <MailIcon className="size-3.5 flex-shrink-0" aria-hidden="true" />
                   <span className="truncate">{user?.email}</span>
                 </span>
-                <span className="flex items-center gap-1 text-[11px] text-muted-foreground/60 flex-shrink-0 ml-2">
+                <span className="flex items-center gap-1 text-[12px] text-muted-foreground/60 flex-shrink-0 ml-2">
                   <LockIcon className="size-3" aria-hidden="true" /> Read-only
                 </span>
               </div>
@@ -339,10 +339,10 @@ function Section({
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           {title}
         </p>
-        {note && <p className="text-[11px] text-muted-foreground/60">{note}</p>}
+        {note && <p className="text-[12px] text-muted-foreground/60">{note}</p>}
       </div>
       <div className="flex flex-col gap-3">{children}</div>
     </div>

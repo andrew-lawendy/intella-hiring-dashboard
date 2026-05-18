@@ -191,7 +191,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
                 <h2 className="text-[17px] font-semibold tracking-[-0.02em] text-foreground">
                   Add candidate
                 </h2>
-                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground tabular-nums">
+                <span className="text-[12px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground tabular-nums">
                   {step + 1} / {STEPS.length}
                 </span>
               </div>

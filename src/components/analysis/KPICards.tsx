@@ -37,10 +37,10 @@ export function KPICards({ kpis }: KPICardsProps) {
           >
             {c.value}
           </div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-text3 mt-1.5">
+          <div className="text-[12px] font-medium uppercase tracking-[0.08em] text-text3 mt-1.5">
             {c.label}
           </div>
-          <div className="text-[11px] text-text2 mt-1">{c.sub}</div>
+          <div className="text-[12px] text-text2 mt-1">{c.sub}</div>
         </div>
       ))}
     </div>

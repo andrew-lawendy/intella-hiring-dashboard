@@ -50,18 +50,18 @@ export function SalaryPage() {
                       className="h-full rounded-[5px] transition-[width] duration-500"
                       style={{ width: `${pct}%`, background: color }}
                     />
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-semibold font-mono text-text2">
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[12px] font-semibold font-mono text-text2">
                       {candidate.salary}
                     </span>
                   </>
                 ) : (
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-text3">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px] text-text3">
                     {candidate.salary}
                   </span>
                 )}
               </div>
               {parsed && (
-                <span className="text-[11px] font-mono text-text3 w-24 text-right flex-shrink-0">
+                <span className="text-[12px] font-mono text-text3 w-24 text-right flex-shrink-0">
                   ~{Math.round(parsed / 1000)}K EGP
                 </span>
               )}

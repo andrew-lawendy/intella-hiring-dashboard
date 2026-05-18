@@ -77,14 +77,14 @@ export function NotificationBell() {
       </PopoverTrigger>
       <PopoverContent align="end" sideOffset={8} className="w-[360px] p-0">
         <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             Notifications
           </p>
           {unreadCount > 0 && (
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+              className="text-[12px] text-muted-foreground hover:text-foreground transition-colors"
             >
               Mark all read
             </button>

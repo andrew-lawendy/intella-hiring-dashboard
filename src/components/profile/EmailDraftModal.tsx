@@ -53,7 +53,7 @@ export function EmailDraftModal({ candidate, state, domains, onClose }: EmailDra
             { label: 'Subject', value: subject, onChange: setSubject },
           ].map((field) => (
             <div key={field.label}>
-              <Label className="block text-[11px] font-semibold uppercase text-muted-foreground mb-1">
+              <Label className="block text-[12px] font-semibold uppercase text-muted-foreground mb-1">
                 {field.label}
               </Label>
               <Input
@@ -64,7 +64,7 @@ export function EmailDraftModal({ candidate, state, domains, onClose }: EmailDra
             </div>
           ))}
           <div>
-            <Label className="block text-[11px] font-semibold uppercase text-muted-foreground mb-1">
+            <Label className="block text-[12px] font-semibold uppercase text-muted-foreground mb-1">
               Body
             </Label>
             <Textarea

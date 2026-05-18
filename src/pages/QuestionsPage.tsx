@@ -50,9 +50,9 @@ export function QuestionsPage() {
                   </p>
                   <div className="flex items-center gap-3 mt-1">
                     {section.duration && (
-                      <span className="text-[11px] text-text3">⏱ {section.duration}</span>
+                      <span className="text-[12px] text-text3">⏱ {section.duration}</span>
                     )}
-                    {section.goal && <span className="text-[11px] text-text3">{section.goal}</span>}
+                    {section.goal && <span className="text-[12px] text-text3">{section.goal}</span>}
                   </div>
                 </div>
                 <span className="text-text3 text-xs ml-4">{isOpen ? '▲' : '▼'}</span>
@@ -62,7 +62,7 @@ export function QuestionsPage() {
                 <div className="border-t border-border divide-y divide-border">
                   {(section.questions as string[]).map((q, i) => (
                     <div key={i} className="px-5 py-3 flex items-start gap-3 text-[13px]">
-                      <span className="font-mono text-[11px] text-text3 mt-0.5 flex-shrink-0">
+                      <span className="font-mono text-[12px] text-text3 mt-0.5 flex-shrink-0">
                         Q{i + 1}
                       </span>
                       <span className="text-text leading-relaxed">{q}</span>

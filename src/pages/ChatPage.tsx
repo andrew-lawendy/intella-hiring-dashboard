@@ -61,7 +61,7 @@ export function ChatPage() {
           commentsMap={commentsMap}
         />
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
             Ask Anything
           </p>
           <ChatInterface systemPrompt={systemPrompt} apiKey={apiKey} provider={provider} />

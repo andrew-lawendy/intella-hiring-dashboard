@@ -28,12 +28,12 @@ export function CardHeader({ candidate, state, onConfirmToggle, onOpenProfile }:
         <p className="text-[11.5px] text-text2 mt-0.5 truncate">{candidate.email}</p>
         <div className="flex gap-1 flex-wrap mt-1.5">
           <span
-            className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${state.confirmed ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]' : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)]'}`}
+            className={`text-[12px] font-medium px-2 py-0.5 rounded-full border ${state.confirmed ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]' : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)]'}`}
           >
             {state.confirmed ? 'Confirmed' : 'Pending'}
           </span>
           {candidate.type === 'Remote' && (
-            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full border bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]">
+            <span className="text-[12px] font-medium px-2 py-0.5 rounded-full border bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]">
               Remote
             </span>
           )}
@@ -42,7 +42,7 @@ export function CardHeader({ candidate, state, onConfirmToggle, onOpenProfile }:
 
       <button
         onClick={onConfirmToggle}
-        className={`text-[11px] font-medium px-2.5 py-1 rounded-full border cursor-pointer transition-all duration-150 flex-shrink-0 ${
+        className={`text-[12px] font-medium px-2.5 py-1 rounded-full border cursor-pointer transition-all duration-150 flex-shrink-0 ${
           state.confirmed
             ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)] hover:bg-[var(--red-bg)] hover:text-[var(--red)] hover:border-[var(--red-line)]'
             : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)] hover:bg-[var(--amber)] hover:text-white hover:border-[var(--amber)]'

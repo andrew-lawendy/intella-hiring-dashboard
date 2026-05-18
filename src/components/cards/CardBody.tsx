@@ -20,7 +20,7 @@ export function CardBody({ candidate }: CardBodyProps) {
           key={row.label}
           className="flex justify-between items-start py-[5px] border-b border-dashed border-border last:border-b-0 text-xs gap-3"
         >
-          <span className="text-text2 font-medium text-[11px] uppercase tracking-[0.04em] flex-shrink-0">
+          <span className="text-text2 font-medium text-[12px] uppercase tracking-[0.04em] flex-shrink-0">
             {row.label}
           </span>
           <span

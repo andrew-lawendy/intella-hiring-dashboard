@@ -63,7 +63,7 @@ export function ApiKeyBanner({ onKeyChange }: ApiKeyBannerProps) {
         borderColor: active ? 'var(--green-line)' : 'var(--amber-line)',
       }}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-text3 mb-3">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-text3 mb-3">
         AI Provider {active && <span className="text-[var(--green)] ml-1">● Active</span>}
       </p>
 
@@ -82,7 +82,7 @@ export function ApiKeyBanner({ onKeyChange }: ApiKeyBannerProps) {
 
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex-1">
-          <p className="text-[11px] text-text3 mb-1.5">{PROVIDER_LABELS[provider]}</p>
+          <p className="text-[12px] text-text3 mb-1.5">{PROVIDER_LABELS[provider]}</p>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}

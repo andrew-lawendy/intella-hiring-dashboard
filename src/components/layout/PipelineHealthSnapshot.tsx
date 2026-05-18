@@ -9,7 +9,7 @@ export function PipelineHealthSnapshot({ stats }: { stats: PipelineStats | null 
     stats.totalCount > 0 ? Math.round((stats.withVerdictCount / stats.totalCount) * 100) : 0
 
   return (
-    <div className="hidden md:flex items-center gap-4 text-[11px] font-sans text-text3">
+    <div className="hidden md:flex items-center gap-4 text-[12px] font-sans text-text3">
       <span>
         <span className="font-semibold text-text">{scorecardPct}%</span> scored
       </span>

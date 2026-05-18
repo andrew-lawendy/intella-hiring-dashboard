@@ -181,7 +181,7 @@ export function LoginPage({ error }: LoginPageProps) {
 
         {/* Headline + card preview */}
         <div className="z-10">
-          <p className="text-white/40 text-[11px] font-semibold uppercase tracking-[0.1em] mb-5">
+          <p className="text-white/40 text-[12px] font-semibold uppercase tracking-[0.1em] mb-5">
             Internal · Hiring
           </p>
           <h1 className="text-white text-[34px] font-semibold tracking-[-0.03em] leading-[1.15] mb-10">
@@ -203,12 +203,12 @@ export function LoginPage({ error }: LoginPageProps) {
                 >
                   <div>
                     <p className="text-white text-[13px] font-medium">{card.name}</p>
-                    <p className="text-white/50 text-[11px] mt-0.5">{card.role}</p>
+                    <p className="text-white/50 text-[12px] mt-0.5">{card.role}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-white/60 font-mono text-[11px]">{card.score}</span>
+                    <span className="text-white/60 font-mono text-[12px]">{card.score}</span>
                     <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${VERDICT_STYLES[card.verdict] ?? ''}`}
+                      className={`text-[12px] font-medium px-2 py-0.5 rounded-full ${VERDICT_STYLES[card.verdict] ?? ''}`}
                     >
                       {card.verdict}
                     </span>

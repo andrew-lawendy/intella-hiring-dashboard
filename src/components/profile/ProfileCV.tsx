@@ -46,17 +46,17 @@ export function ProfileCV({ candidateId }: ProfileCVProps) {
   return (
     <div className="p-6 flex flex-col gap-6">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
           Download
         </p>
         <Button variant="outline" size="sm" onClick={openCV} disabled={loadingDownload}>
           {loadingDownload ? 'Loading...' : 'Open CV (PDF)'}
         </Button>
-        <p className="text-[11px] text-text3 mt-2">Opens in a new tab. Link expires in 1 hour.</p>
+        <p className="text-[12px] text-text3 mt-2">Opens in a new tab. Link expires in 1 hour.</p>
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
           Upload / Replace
         </p>
         <input
@@ -75,11 +75,11 @@ export function ProfileCV({ candidateId }: ProfileCVProps) {
           {uploading ? 'Uploading...' : 'Choose PDF'}
         </Button>
         {uploadedAt && (
-          <p className="text-[11px] text-[var(--green)] mt-2">
+          <p className="text-[12px] text-[var(--green)] mt-2">
             Uploaded at {uploadedAt.toLocaleTimeString()}
           </p>
         )}
-        {uploadError && <p className="text-[11px] text-[var(--red)] mt-2">{uploadError}</p>}
+        {uploadError && <p className="text-[12px] text-[var(--red)] mt-2">{uploadError}</p>}
       </div>
     </div>
   )

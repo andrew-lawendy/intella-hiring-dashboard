@@ -64,7 +64,7 @@ export function InterviewTimeline({ candidates, stateMap }: InterviewTimelinePro
                 TODAY
               </span>
             )}
-            <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-text3">
               {DAY_LABELS[i]}
             </span>
             <span
@@ -73,7 +73,7 @@ export function InterviewTimeline({ candidates, stateMap }: InterviewTimelinePro
             >
               {count}
             </span>
-            <span className="text-[11px] text-text3">
+            <span className="text-[12px] text-text3">
               {confirmedCounts[i]}/{count} confirmed
             </span>
             <div className="h-[3px] rounded-full bg-surface3 overflow-hidden mt-1">

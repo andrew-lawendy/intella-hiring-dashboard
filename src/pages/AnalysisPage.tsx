@@ -11,7 +11,7 @@ import { Spinner } from '@/components/ui/spinner'
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2.5 mb-4">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-text3">
+      <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-text3">
         {children}
       </span>
       <div className="flex-1 h-px bg-border" />

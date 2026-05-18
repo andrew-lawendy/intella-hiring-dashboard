@@ -63,7 +63,7 @@ export function ActionQueue({ candidates, stateMap, onItemClick }: ActionQueuePr
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-surface2 transition-colors cursor-pointer"
       >
-        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 flex items-center gap-2">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-text3 flex items-center gap-2">
           <Badge variant="secondary">{items.length}</Badge>
           Needs Attention
         </span>

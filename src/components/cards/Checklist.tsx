@@ -27,7 +27,7 @@ export function Checklist({
 
   return (
     <div className="px-4 py-3.5 border-t border-border">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2.5">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2.5">
         Pre-Interview Checklist
       </p>
       {items.map((item) => (

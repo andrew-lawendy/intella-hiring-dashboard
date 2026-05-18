@@ -30,7 +30,7 @@ export function FieldWrapper({
             </span>
           )}
         </Label>
-        {optional && <span className="text-[11px] text-muted-foreground">optional</span>}
+        {optional && <span className="text-[12px] text-muted-foreground">optional</span>}
       </div>
       {children}
       {error ? (
@@ -121,7 +121,7 @@ export function ScoreSlider({
 
 export function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+    <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
       {children}
     </p>
   )

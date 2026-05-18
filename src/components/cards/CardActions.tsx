@@ -41,7 +41,7 @@ export function CardActions({
       <Button size="xs" variant={isConfirmed ? 'success' : 'outline'} onClick={onConfirmToggle}>
         {isConfirmed ? '✓ Confirmed' : 'Confirm'}
       </Button>
-      {auditLine && <span className="ml-auto text-[11px] text-text3 truncate">{auditLine}</span>}
+      {auditLine && <span className="ml-auto text-[12px] text-text3 truncate">{auditLine}</span>}
     </div>
   )
 }
