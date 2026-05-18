@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import { useQueryState, parseAsString } from 'nuqs'
 import { Header } from './Header'
 import { TabNav } from './TabNav'
-import { AlertBanners } from './AlertBanners'
 import { AddCandidateDrawer } from '@/components/candidates/AddCandidateDrawer'
 import { ProfileDrawer } from '@/components/profile/ProfileDrawer'
 import { useCandidates } from '@/hooks/useCandidates'
@@ -40,7 +39,6 @@ export function Layout() {
       <AddCandidateDrawer open={addOpen} onClose={() => setAddOpen(false)} />
       <ProfileDrawer open={profileOpen} onClose={() => setProfileOpen(false)} />
       <TabNav />
-      <AlertBanners />
       <main className="max-w-[1480px] mx-auto px-6 py-7">
         <Outlet />
       </main>
