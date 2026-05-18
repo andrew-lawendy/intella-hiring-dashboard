@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 
@@ -23,12 +23,20 @@ export function computePipelineStats(
   }
 }
 
-export function usePipelineStats() {
+export function usePipelineStats(jobId?: number | null) {
   const { data: stats = null } = useQuery({
-    queryKey: ['pipeline-stats'],
+    queryKey: ['pipeline-stats', jobId ?? null],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
+      const statesQuery = jobId
+        ? supabase
+            .from('interview_state')
+            .select('*, candidates!inner(job_id)')
+            .eq('candidates.job_id', jobId)
+        : supabase.from('interview_state').select('*')
+
       const [{ data: states }, { data: scores }] = await Promise.all([
-        supabase.from('interview_state').select('*'),
+        statesQuery,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (supabase as any).from('scores').select('candidate_id'),
       ])
@@ -37,7 +45,7 @@ export function usePipelineStats() {
         (scores ?? []).map((r: { candidate_id: string }) => r.candidate_id),
       )
 
-      return states ? computePipelineStats(states, scoredIds) : null
+      return states ? computePipelineStats(states as State[], scoredIds) : null
     },
   })
 

@@ -33,11 +33,11 @@ export function Header({
 }: HeaderProps) {
   const [jobSlug, setJobSlug] = useQueryState('job', parseAsString)
   const { user } = useAuth()
-  const stats = usePipelineStats()
   const { data: profile } = useProfile(user?.id)
   const { data: jobs = [] } = useJobs()
 
   const selectedJob = jobs.find((j) => j.slug === jobSlug)
+  const stats = usePipelineStats(selectedJob?.id ?? null)
 
   function handleJobChange(value: string) {
     void setJobSlug(value === 'all' ? null : value)
@@ -74,7 +74,7 @@ export function Header({
         </div>
         <div className="flex items-center gap-3 ml-2">
           <ProgressRing done={stats?.completedCount ?? 0} total={stats?.totalCount ?? 0} />
-          <PipelineHealthSnapshot />
+          <PipelineHealthSnapshot stats={stats} />
         </div>
       </div>
 

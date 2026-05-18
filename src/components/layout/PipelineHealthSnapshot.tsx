@@ -1,7 +1,6 @@
-import { usePipelineStats } from '@/hooks/usePipelineStats'
+import type { PipelineStats } from '@/hooks/usePipelineStats'
 
-export function PipelineHealthSnapshot() {
-  const stats = usePipelineStats()
+export function PipelineHealthSnapshot({ stats }: { stats: PipelineStats | null }) {
   if (!stats) return null
 
   const scorecardPct =
