@@ -10,6 +10,7 @@ export interface CreateCandidateInput {
   notice: string
   slotDate: string
   slotTime: string
+  jobId: number | null
   title: string
   company: string
   summary: string
@@ -59,6 +60,7 @@ export function useCreateCandidate() {
           slot,
           day: data.slotDate ? getDayName(data.slotDate) : null,
           time: data.slotTime || null,
+          job_id: data.jobId ?? null,
         })
         .select('id')
       if (e1 || !inserted?.[0]?.id) throw new Error(e1?.message ?? 'Failed to create candidate')

@@ -2,6 +2,8 @@ import { TriangleAlertIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { FieldWrapper, SegmentedToggle } from '../form-helpers'
 import type { CreateCandidateInput } from '@/hooks/useCreateCandidate'
+import { useJobOpenings } from '@/hooks/useJobOpenings'
+import { formatRoundDateRange } from '@/hooks/useHiringRound'
 
 interface StepIdentityProps {
   values: CreateCandidateInput
@@ -11,6 +13,8 @@ interface StepIdentityProps {
 }
 
 export function StepIdentity({ values, setField, errors, duplicateEmail }: StepIdentityProps) {
+  const { data: jobs = [] } = useJobOpenings()
+
   return (
     <div className="flex flex-col gap-5">
       <div>
@@ -19,6 +23,24 @@ export function StepIdentity({ values, setField, errors, duplicateEmail }: StepI
           Who's joining the pipeline. Name and email are required; everything else can be set later.
         </p>
       </div>
+
+      <FieldWrapper label="Role / Opening" required htmlFor="field-job" error={errors.jobId}>
+        <select
+          id="field-job"
+          value={values.jobId?.toString() ?? ''}
+          onChange={(e) => setField('jobId', e.target.value ? parseInt(e.target.value) : null)}
+          className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+          aria-invalid={!!errors.jobId}
+        >
+          <option value="">Select a role…</option>
+          {jobs.map((job) => (
+            <option key={job.id} value={job.id.toString()}>
+              {job.role} · {formatRoundDateRange(job.start_date, job.end_date)}
+              {job.is_active ? ' (active)' : ''}
+            </option>
+          ))}
+        </select>
+      </FieldWrapper>
 
       <div className="grid grid-cols-2 gap-4">
         <FieldWrapper label="Full name" required htmlFor="field-name" error={errors.name}>

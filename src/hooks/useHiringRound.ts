@@ -4,15 +4,13 @@ import type { Database } from '@/lib/database.types'
 
 export type HiringRound = Database['public']['Tables']['hiring_rounds']['Row']
 
-export function useHiringRound() {
+export function useHiringRound(id?: number | null) {
   return useQuery({
-    queryKey: ['hiring-round'],
+    queryKey: ['hiring-round', id ?? 'active'],
     queryFn: async () => {
-      const { data } = await supabase
-        .from('hiring_rounds')
-        .select('*')
-        .eq('is_active', true)
-        .maybeSingle()
+      const { data } = id
+        ? await supabase.from('hiring_rounds').select('*').eq('id', id).maybeSingle()
+        : await supabase.from('hiring_rounds').select('*').eq('is_active', true).maybeSingle()
       return (data ?? null) as HiringRound | null
     },
     staleTime: Infinity,

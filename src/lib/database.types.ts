@@ -14,6 +14,7 @@ export interface Database {
           type: 'In-person' | 'Remote' | null
           salary: string | null
           notice: string | null
+          job_id: number | null
           created_at: string
         }
         Insert: Omit<Database['public']['Tables']['candidates']['Row'], 'created_at'>

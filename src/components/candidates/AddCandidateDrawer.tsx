@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useQueryState, parseAsInteger } from 'nuqs'
 import { ArrowLeftIcon, ArrowRightIcon, CheckCircle2Icon, PlusIcon, XIcon } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
 import { cn } from '@/lib/utils'
@@ -16,7 +17,7 @@ const STEPS = [
   { key: 'background', label: 'Background' },
 ]
 
-const DEFAULT_VALUES: CreateCandidateInput = {
+const DEFAULT_VALUES: Omit<CreateCandidateInput, 'jobId'> = {
   name: '',
   email: '',
   interviewType: 'Remote',
@@ -54,6 +55,7 @@ interface AddCandidateDrawerProps {
 }
 
 export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
+  const [urlJobId] = useQueryState('job', parseAsInteger)
   const [step, setStep] = useState(0)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
@@ -62,7 +64,8 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   const { candidates: allMeta } = useCandidateMeta()
   const { mutateAsync: createCandidate, isPending } = useCreateCandidate()
 
-  const [values, setValues] = useState<CreateCandidateInput>(DEFAULT_VALUES)
+  const getInitialValues = (): CreateCandidateInput => ({ ...DEFAULT_VALUES, jobId: urlJobId })
+  const [values, setValues] = useState<CreateCandidateInput>(getInitialValues)
 
   const debouncedEmail = useDebounce(values.email, 400)
 
@@ -74,6 +77,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
 
   function validateStep1() {
     const errs: Record<string, string> = {}
+    if (values.jobId == null) errs.jobId = 'Please select a role'
     if (!values.name.trim()) errs.name = 'Name is required'
     if (!values.email.trim()) errs.email = 'Email is required'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim()))
@@ -134,7 +138,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   }
 
   function reset() {
-    setValues(DEFAULT_VALUES)
+    setValues(getInitialValues())
     setStep(0)
     setErrors({})
     setSubmitted(false)
@@ -147,7 +151,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
   }
 
   const isLast = step === STEPS.length - 1
-  const canSubmit = !!values.name.trim() && !!values.email.trim()
+  const canSubmit = !!values.name.trim() && !!values.email.trim() && values.jobId != null
 
   return (
     <Sheet
@@ -246,11 +250,7 @@ export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-t border-border">
-            <div className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" aria-hidden="true" />
-              Draft saved
-            </div>
+          <div className="flex-shrink-0 flex items-center justify-end px-6 py-4 border-t border-border">
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={handleClose}>
                 Cancel

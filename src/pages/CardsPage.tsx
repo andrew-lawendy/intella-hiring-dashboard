@@ -30,12 +30,13 @@ import type { FilterType } from '@/lib/filters'
 const PAGE_SIZE = 24
 
 export function CardsPage() {
-  const { candidates: allMeta, loading: metaLoading } = useCandidateMeta()
+  const [jobId] = useQueryState('job', parseAsInteger)
+  const { candidates: allMeta, loading: metaLoading } = useCandidateMeta(jobId)
   const { stateMap, setShortlisted, setConfirmed, setChecklist, setVerdict, setInterviewStatus } =
     useCandidateState()
   const { user } = useAuth()
   const { myScoresFor, coScoresFor } = useAllScores(user?.id)
-  const { data: round } = useHiringRound()
+  const { data: round } = useHiringRound(jobId)
 
   const dayMap = useMemo(
     () => (round ? generateDayMap(round.start_date, round.end_date) : {}),

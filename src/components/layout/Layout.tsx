@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useQueryState, parseAsInteger } from 'nuqs'
 import { Header } from './Header'
 import { TabNav } from './TabNav'
 import { AlertBanners } from './AlertBanners'
@@ -11,9 +12,10 @@ import { useHiringRound } from '@/hooks/useHiringRound'
 import { exportToExcel, exportDecisionReport } from '@/lib/exports'
 
 export function Layout() {
+  const [jobId] = useQueryState('job', parseAsInteger)
   const { data } = useCandidates()
   const { stateMap } = useCandidateState()
-  const { data: round } = useHiringRound()
+  const { data: round } = useHiringRound(jobId)
   const [addOpen, setAddOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
 

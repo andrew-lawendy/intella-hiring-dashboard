@@ -5,14 +5,16 @@ import type { Database } from '@/lib/database.types'
 type Candidate = Database['public']['Tables']['candidates']['Row']
 export type CandidateMeta = Pick<Candidate, 'id' | 'day' | 'name' | 'email' | 'slot'>
 
-export function useCandidateMeta() {
+export function useCandidateMeta(jobId?: number | null) {
   const { data: candidates = [], isLoading: loading } = useQuery({
-    queryKey: ['candidate-meta'],
+    queryKey: ['candidate-meta', jobId ?? 'all'],
     queryFn: async () => {
-      const { data } = await supabase
+      let query = supabase
         .from('candidates')
         .select('id, day, name, email, slot')
         .order('created_at')
+      if (jobId != null) query = query.eq('job_id', jobId)
+      const { data } = await query
       return (data ?? []) as CandidateMeta[]
     },
   })

@@ -1,10 +1,19 @@
+import { useQueryState, parseAsInteger } from 'nuqs'
 import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
-import { useHiringRound, formatRoundDateRange } from '@/hooks/useHiringRound'
+import { formatRoundDateRange } from '@/hooks/useHiringRound'
+import { useJobOpenings } from '@/hooks/useJobOpenings'
 import { usePipelineStats } from '@/hooks/usePipelineStats'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface HeaderProps {
   onAddCandidate?: () => void
@@ -23,10 +32,21 @@ export function Header({
   onExportExcel,
   onPrint,
 }: HeaderProps) {
+  const [jobId, setJobId] = useQueryState('job', parseAsInteger)
   const { user } = useAuth()
   const stats = usePipelineStats()
   const { data: profile } = useProfile(user?.id)
-  const { data: round } = useHiringRound()
+  const { data: jobs = [] } = useJobOpenings()
+
+  const activeRoundId = jobs.find((j) => j.is_active)?.id
+  const selectedId = jobId ?? activeRoundId
+  const selectedRound = jobs.find((j) => j.id === selectedId)
+
+  function handleJobChange(value: string) {
+    const id = parseInt(value)
+    const isActive = jobs.find((j) => j.id === id)?.is_active
+    void setJobId(isActive ? null : id)
+  }
 
   const displayName = profile?.first_name
     ? `${profile.first_name}${profile.last_name ? ' ' + profile.last_name[0] + '.' : ''}`
@@ -64,15 +84,32 @@ export function Header({
       </div>
 
       <div className="flex items-center gap-1.5 flex-wrap">
-        <div
-          className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-[11.5px] font-medium text-text2 mr-1"
-          style={{ background: 'var(--surface)' }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)]" />
-          {round
-            ? `${round.role_short} · ${formatRoundDateRange(round.start_date, round.end_date)}`
-            : 'Hiring Round'}
-        </div>
+        <Select value={selectedId?.toString() ?? ''} onValueChange={handleJobChange}>
+          <SelectTrigger className="hidden lg:flex h-auto px-3 py-1.5 rounded-full border border-border text-[11.5px] font-medium text-text2 bg-[var(--surface)] gap-1.5 shadow-none mr-1 focus-visible:ring-0 focus-visible:border-border [&>svg]:size-3 [&>svg]:opacity-60">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)] flex-shrink-0" />
+            <SelectValue>
+              {selectedRound
+                ? `${selectedRound.role_short} · ${formatRoundDateRange(selectedRound.start_date, selectedRound.end_date)}`
+                : 'Select round'}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="start">
+            {jobs.map((job) => (
+              <SelectItem key={job.id} value={job.id.toString()} className="text-[12.5px]">
+                <span className="font-medium">{job.role_short}</span>
+                <span className="text-muted-foreground ml-1.5">
+                  · {formatRoundDateRange(job.start_date, job.end_date)},{' '}
+                  {new Date(job.start_date).getFullYear()}
+                </span>
+                {job.is_active && (
+                  <span className="ml-1.5 text-[10px] font-medium text-[var(--green)] uppercase tracking-wide">
+                    active
+                  </span>
+                )}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button size="sm" variant="default" onClick={onAddCandidate}>
           + Add candidate
         </Button>
