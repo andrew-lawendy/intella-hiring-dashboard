@@ -5,8 +5,8 @@ import { useAllScores } from './useAllScores'
 import { useAuth } from './useAuth'
 import { deriveActionItems, type ActionItem } from '@/lib/actionQueue'
 
-export function useNotifications(): ActionItem[] {
-  const { candidates } = useCandidateMeta()
+export function useNotifications(jobId?: number | null): ActionItem[] {
+  const { candidates } = useCandidateMeta(jobId)
   const { stateMap } = useCandidateState()
   const { user } = useAuth()
   const { byCandidate } = useAllScores(user?.id)

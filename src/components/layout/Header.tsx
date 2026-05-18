@@ -100,7 +100,6 @@ export function Header({
               ))}
             </SelectContent>
           </Select>
-          <NotificationBell />
           <Button size="sm" variant="default" onClick={onAddCandidate}>
             + Add candidate
           </Button>
@@ -121,6 +120,7 @@ export function Header({
           <Button size="sm" variant="outline" onClick={onPrint}>
             Print
           </Button>
+          <NotificationBell />
           <button
             type="button"
             onClick={onOpenProfile}
