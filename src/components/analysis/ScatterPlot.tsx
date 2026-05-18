@@ -40,10 +40,10 @@ export function ScatterPlot({ points, xLabel, yLabel }: ScatterPlotProps) {
             </div>
           )
         })}
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-text3">
+        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[11px] text-text3">
           {xLabel}
         </div>
-        <div className="absolute top-1/2 left-1 -translate-y-1/2 -rotate-90 text-[10px] text-text3">
+        <div className="absolute top-1/2 left-1 -translate-y-1/2 -rotate-90 text-[11px] text-text3">
           {yLabel}
         </div>
       </div>
