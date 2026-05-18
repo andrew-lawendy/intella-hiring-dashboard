@@ -144,13 +144,21 @@ export function StepIdentity({
         </FieldWrapper>
 
         <FieldWrapper label="Notice period" optional htmlFor="field-notice">
-          <Input
+          <select
             id="field-notice"
-            type="text"
-            placeholder="e.g. 2 months"
             value={values.notice}
             onChange={(e) => setField('notice', e.target.value)}
-          />
+            className="flex h-8 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring"
+          >
+            <option value="">Select…</option>
+            <option value="Immediate">Immediate</option>
+            <option value="1 week">1 week</option>
+            <option value="2 weeks">2 weeks</option>
+            <option value="1 month">1 month</option>
+            <option value="2 months">2 months</option>
+            <option value="3 months">3 months</option>
+            <option value="6 months">6 months</option>
+          </select>
         </FieldWrapper>
       </div>
 
