@@ -32,24 +32,26 @@ export function AlertBanners() {
   if (!visible.length) return null
 
   return (
-    <div className="px-6 pt-3 flex flex-col gap-1.5">
-      {visible.map((item) => (
-        <Alert key={item.id} variant={item.variant} className="py-2 text-[12.5px]">
-          {item.icon}
-          <div className="flex items-center justify-between col-start-2">
-            <span>{item.message}</span>
-            <Button
-              size="icon-xs"
-              variant="ghost"
-              onClick={() => setDismissed((prev) => new Set([...prev, item.id]))}
-              aria-label="Dismiss"
-              className="ml-3 opacity-60 hover:opacity-100"
-            >
-              <XIcon className="size-3.5" />
-            </Button>
-          </div>
-        </Alert>
-      ))}
+    <div className="pt-3">
+      <div className="max-w-[1480px] mx-auto px-6 flex flex-col gap-1.5">
+        {visible.map((item) => (
+          <Alert key={item.id} variant={item.variant} className="py-2 text-[12.5px]">
+            {item.icon}
+            <div className="flex items-center justify-between col-start-2">
+              <span>{item.message}</span>
+              <Button
+                size="icon-xs"
+                variant="ghost"
+                onClick={() => setDismissed((prev) => new Set([...prev, item.id]))}
+                aria-label="Dismiss"
+                className="ml-3 opacity-60 hover:opacity-100"
+              >
+                <XIcon className="size-3.5" />
+              </Button>
+            </div>
+          </Alert>
+        ))}
+      </div>
     </div>
   )
 }
