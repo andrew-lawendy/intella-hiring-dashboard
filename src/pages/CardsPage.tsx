@@ -90,9 +90,15 @@ export function CardsPage() {
 
   const { data: pageData, loading: cardsLoading } = useCandidates({ ids: pageIds })
 
+  // Fallback fetch for when profileId is set to a candidate not on the current page
+  const inPageIds = profileId ? pageIds.includes(profileId) : true
+  const { data: profileFallback } = useCandidates({
+    ids: !inPageIds && profileId ? [profileId] : [],
+  })
+
   const profileIndex = profileId ? filteredMeta.findIndex((m) => m.id === profileId) : -1
   const profileData = profileId
-    ? (pageData.find((d) => d.candidate.id === profileId) ?? null)
+    ? (pageData.find((d) => d.candidate.id === profileId) ?? profileFallback[0] ?? null)
     : null
   const emailData = emailId ? (pageData.find((d) => d.candidate.id === emailId) ?? null) : null
 

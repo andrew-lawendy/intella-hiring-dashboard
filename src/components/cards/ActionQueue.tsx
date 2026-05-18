@@ -77,9 +77,8 @@ export function ActionQueue({ candidates, stateMap, onItemClick }: ActionQueuePr
               key={`${item.candidateId}:${item.type}`}
               type="button"
               onClick={() => onItemClick?.(item.candidateId)}
-              disabled={!onItemClick}
               aria-label={`${item.candidateName}: ${item.message}`}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-[12px] font-sans text-left transition-colors enabled:hover:bg-muted/50 enabled:cursor-pointer disabled:cursor-default"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-[12px] font-sans text-left transition-colors hover:bg-muted/50 cursor-pointer"
             >
               <span
                 className="w-1.5 h-1.5 rounded-full flex-shrink-0"
