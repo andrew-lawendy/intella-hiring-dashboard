@@ -26,7 +26,7 @@ export function HorizontalBar({ data, maxVal, unit = '' }: HorizontalBarProps) {
                 background: item.color ?? `oklch(0.55 0.12 ${(i * 40) % 360})`,
               }}
             />
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] font-semibold font-mono text-text2">
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-semibold font-mono text-text2">
               {item.value}
               {unit}
             </span>

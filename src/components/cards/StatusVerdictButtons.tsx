@@ -27,7 +27,7 @@ export function StatusVerdictButtons({ status, verdict, onStatusChange, onVerdic
   return (
     <div className="px-4 py-3 border-t border-border flex flex-col gap-2">
       <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.04em] text-text3 mr-1">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-text3 mr-1">
           Status:
         </span>
         {STATUS_OPTIONS.map((s) => (
@@ -42,7 +42,7 @@ export function StatusVerdictButtons({ status, verdict, onStatusChange, onVerdic
         ))}
       </div>
       <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.04em] text-text3 mr-1">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-text3 mr-1">
           Verdict:
         </span>
         {VERDICT_OPTIONS.map((v) => (

@@ -38,7 +38,7 @@ export function ProfileOverview({ profile, analysis }: ProfileOverviewProps) {
       </div>
 
       <div className="mb-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
           Fit Breakdown
         </p>
         {fitBars.map((bar) => (
@@ -56,7 +56,7 @@ export function ProfileOverview({ profile, analysis }: ProfileOverviewProps) {
       </div>
 
       <div className="mb-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2">
           Strengths
         </p>
         {(profile.strengths ?? []).map((s, i) => (
@@ -67,7 +67,7 @@ export function ProfileOverview({ profile, analysis }: ProfileOverviewProps) {
       </div>
 
       <div className="mb-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-2">
           Weaknesses
         </p>
         {(profile.weaknesses ?? []).map((w, i) => (
@@ -79,7 +79,7 @@ export function ProfileOverview({ profile, analysis }: ProfileOverviewProps) {
 
       {profile.watch_for && (
         <div className="p-3 bg-[var(--amber-bg)] border border-[var(--amber-line)] rounded-[var(--radius-xs)]">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--amber)] mb-1">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--amber)] mb-1">
             Watch For
           </p>
           <p className="text-[12.5px] text-text2">{profile.watch_for}</p>

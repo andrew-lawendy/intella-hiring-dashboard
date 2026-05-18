@@ -40,7 +40,7 @@ export function ProgressRing({ done, total }: ProgressRingProps) {
           {pct}%
         </text>
       </svg>
-      <div className="text-[10px] text-text2 leading-tight">
+      <div className="text-[11px] text-text2 leading-tight">
         <div className="font-semibold text-text">
           {done}/{total}
         </div>

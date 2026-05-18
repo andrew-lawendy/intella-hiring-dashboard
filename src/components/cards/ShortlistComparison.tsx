@@ -102,7 +102,7 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                         <p className="font-semibold text-[13px] text-foreground">
                           {candidate.name}
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
                           {analysis?.current_role ?? ''}
                         </p>
                       </TableCell>
@@ -125,7 +125,7 @@ export function ShortlistComparison({ candidateIds, stateMap, onClose }: Shortli
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell className="px-3 py-2.5 text-[10px] text-muted-foreground max-w-[180px]">
+                      <TableCell className="px-3 py-2.5 text-[11px] text-muted-foreground max-w-[180px]">
                         {coComments.map((c, i) => (
                           <span key={i}>{c.slice(0, 80)}</span>
                         ))}

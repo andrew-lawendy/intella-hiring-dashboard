@@ -46,7 +46,7 @@ export function ProfileCV({ candidateId }: ProfileCVProps) {
   return (
     <div className="p-6 flex flex-col gap-6">
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
           Download
         </p>
         <Button variant="outline" size="sm" onClick={openCV} disabled={loadingDownload}>
@@ -56,7 +56,7 @@ export function ProfileCV({ candidateId }: ProfileCVProps) {
       </div>
 
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-3">
           Upload / Replace
         </p>
         <input

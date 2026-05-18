@@ -136,7 +136,7 @@ export function Scorecard({
               >
                 {scorer.name}
                 {scorer.isMe && (
-                  <span className="block text-[10px] font-normal text-muted-foreground">you</span>
+                  <span className="block text-[11px] font-normal text-muted-foreground">you</span>
                 )}
               </th>
             ))}

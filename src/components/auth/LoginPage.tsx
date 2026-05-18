@@ -208,7 +208,7 @@ export function LoginPage({ error }: LoginPageProps) {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-white/60 font-mono text-[11px]">{card.score}</span>
                     <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${VERDICT_STYLES[card.verdict] ?? ''}`}
+                      className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${VERDICT_STYLES[card.verdict] ?? ''}`}
                     >
                       {card.verdict}
                     </span>

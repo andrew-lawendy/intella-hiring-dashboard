@@ -82,7 +82,7 @@ export function ApiKeyBanner({ onKeyChange }: ApiKeyBannerProps) {
 
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex-1">
-          <p className="text-[10px] text-text3 mb-1.5">{PROVIDER_LABELS[provider]}</p>
+          <p className="text-[11px] text-text3 mb-1.5">{PROVIDER_LABELS[provider]}</p>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}

@@ -95,7 +95,7 @@ export function CandidateCard({
     >
       {banner && (
         <div
-          className={`px-4 py-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] flex items-center gap-1.5 ${banner.cls}`}
+          className={`px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] flex items-center gap-1.5 ${banner.cls}`}
         >
           {banner.label}
         </div>
@@ -142,7 +142,7 @@ export function CandidateCard({
             <>
               <span className="w-1 h-1 rounded-full bg-border flex-shrink-0" aria-hidden="true" />
               <span
-                className="text-[10.5px] font-semibold uppercase tracking-[0.05em] px-2 py-0.5 rounded-full"
+                className="text-[11px] font-semibold uppercase tracking-[0.05em] px-2 py-0.5 rounded-full"
                 style={{
                   background: `color-mix(in srgb, ${verdictInfo.color} 12%, transparent)`,
                   color: verdictInfo.color,

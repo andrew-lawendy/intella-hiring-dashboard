@@ -14,7 +14,7 @@ export function ProfileCareer({ career }: ProfileCareerProps) {
   }
   return (
     <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-text3 mb-4">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-text3 mb-4">
         Career Timeline
       </p>
       <div className="relative pl-5 border-l border-border">

@@ -28,12 +28,12 @@ export function CardHeader({ candidate, state, onConfirmToggle, onOpenProfile }:
         <p className="text-[11.5px] text-text2 mt-0.5 truncate">{candidate.email}</p>
         <div className="flex gap-1 flex-wrap mt-1.5">
           <span
-            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${state.confirmed ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]' : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)]'}`}
+            className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${state.confirmed ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]' : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)]'}`}
           >
             {state.confirmed ? 'Confirmed' : 'Pending'}
           </span>
           {candidate.type === 'Remote' && (
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]">
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full border bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]">
               Remote
             </span>
           )}

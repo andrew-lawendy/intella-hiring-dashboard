@@ -100,7 +100,7 @@ export function SchedulePage() {
         size: 100,
         cell: ({ row }) => (
           <span
-            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${row.original.candidate.type === 'Remote' ? 'bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]' : 'bg-muted text-muted-foreground border-border'}`}
+            className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${row.original.candidate.type === 'Remote' ? 'bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]' : 'bg-muted text-muted-foreground border-border'}`}
           >
             {row.original.candidate.type}
           </span>
@@ -135,7 +135,7 @@ export function SchedulePage() {
           return (
             <button
               onClick={() => setConfirmed(candidate.id, !state.confirmed)}
-              className={`text-[10.5px] font-medium px-2.5 py-1 rounded-full border cursor-pointer transition-all whitespace-nowrap ${
+              className={`text-[11px] font-medium px-2.5 py-1 rounded-full border cursor-pointer transition-all whitespace-nowrap ${
                 state.confirmed
                   ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)] hover:bg-[var(--red-bg)] hover:text-[var(--red)] hover:border-[var(--red-line)]'
                   : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)] hover:bg-[var(--amber)] hover:text-white hover:border-[var(--amber)]'
