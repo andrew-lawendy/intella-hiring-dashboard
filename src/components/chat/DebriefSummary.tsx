@@ -4,7 +4,7 @@ import { buildDebriefPrompt } from '@/lib/systemPrompt'
 import type { Provider } from '@/lib/chat'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { HiringRound } from '@/hooks/useHiringRound'
+import type { Job } from '@/hooks/useJob'
 import { Button } from '@/components/ui/button'
 
 interface DebriefSummaryProps {
@@ -12,7 +12,7 @@ interface DebriefSummaryProps {
   stateMap: StateMap
   apiKey: string | null
   provider: Provider
-  round?: HiringRound | null
+  round?: Job | null
   combinedScoreMap?: Record<string, number>
   commentsMap?: Record<string, string[]>
 }

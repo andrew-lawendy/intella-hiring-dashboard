@@ -11,7 +11,6 @@ const makeState = (overrides: Partial<State>): State => ({
   interview_status: 'pending',
   verdict: null,
   checklist: {},
-  photo_url: null,
   updated_at: new Date().toISOString(),
   ...overrides,
 })
@@ -23,7 +22,7 @@ describe('computePipelineStats', () => {
       makeState({ interview_status: 'completed' }),
       makeState({ interview_status: 'pending' }),
     ]
-    const stats = computePipelineStats(states, new Date('2026-05-17'))
+    const stats = computePipelineStats(states)
     expect(stats.completedCount).toBe(2)
     expect(stats.totalCount).toBe(3)
   })
@@ -34,21 +33,14 @@ describe('computePipelineStats', () => {
       makeState({ verdict: null }),
       makeState({ verdict: 'no' }),
     ]
-    const stats = computePipelineStats(states, new Date('2026-05-17'))
+    const stats = computePipelineStats(states)
     expect(stats.withVerdictCount).toBe(2)
   })
 
   it('counts filled scorecards from scores map', () => {
     const states = [makeState({ candidate_id: 'a' }), makeState({ candidate_id: 'b' })]
-    // Only candidate 'a' has scores
     const scoredIds = new Set(['a'])
-    const stats = computePipelineStats(states, new Date('2026-05-17'), undefined, scoredIds)
+    const stats = computePipelineStats(states, scoredIds)
     expect(stats.scorecardFilledCount).toBe(1)
-  })
-
-  it('calculates days since round opened from May 17 2026', () => {
-    const states = [makeState({})]
-    const stats = computePipelineStats(states, new Date('2026-05-19T12:00:00'), '2026-05-17')
-    expect(stats.daysSinceStart).toBe(2)
   })
 })

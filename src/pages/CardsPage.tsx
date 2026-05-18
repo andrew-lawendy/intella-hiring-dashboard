@@ -2,12 +2,7 @@ import { useMemo } from 'react'
 import { useQueryState, parseAsInteger, parseAsString } from 'nuqs'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
-import {
-  useHiringRound,
-  generateDayMap,
-  formatRoundDateRange,
-  formatRoundYear,
-} from '@/hooks/useHiringRound'
+import { useJob } from '@/hooks/useJob'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
@@ -36,12 +31,7 @@ export function CardsPage() {
     useCandidateState()
   const { user } = useAuth()
   const { myScoresFor, coScoresFor } = useAllScores(user?.id)
-  const { data: round } = useHiringRound(jobId)
-
-  const dayMap = useMemo(
-    () => (round ? generateDayMap(round.start_date, round.end_date) : {}),
-    [round],
-  )
+  const { data: round } = useJob(jobId)
 
   const [filter, setFilter] = useQueryState('filter', parseAsString.withDefault('all'))
   const [search, setSearch] = useQueryState('q', parseAsString.withDefault(''))
@@ -81,8 +71,8 @@ export function CardsPage() {
 
   const debouncedSearch = useDebounce(search, 300)
   const filteredMeta = useMemo(
-    () => filterCandidates(allMeta, stateMin, filter as FilterType, debouncedSearch, dayMap),
-    [allMeta, stateMin, filter, debouncedSearch, dayMap],
+    () => filterCandidates(allMeta, stateMin, filter as FilterType, debouncedSearch),
+    [allMeta, stateMin, filter, debouncedSearch],
   )
   const pageIds = useMemo(
     () => filteredMeta.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((m) => m.id),
@@ -120,7 +110,7 @@ export function CardsPage() {
   }
 
   const roundSubtitle = round
-    ? `${round.role_short} · ${formatRoundDateRange(round.start_date, round.end_date)}, ${formatRoundYear(round.start_date)}`
+    ? `${round.name}${round.department ? ` · ${round.department}` : ''}`
     : ''
 
   return (
@@ -134,7 +124,7 @@ export function CardsPage() {
       <SummaryBar total={allMeta.length} stateMap={stateMap} />
       <ActionQueue candidates={allMeta} stateMap={stateMap} />
       <FilterBar
-        filter={filter}
+        filter={filter as FilterType}
         search={search}
         total={allMeta.length}
         onFilterChange={handleFilterChange}

@@ -1,29 +1,19 @@
 import * as XLSX from 'xlsx'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { HiringRound } from '@/hooks/useHiringRound'
+import type { Job } from '@/hooks/useJob'
 import { VERDICT_MAP } from './verdicts'
-import { formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
 import { maxScore } from './scoring'
 
-function roundLabel(round: HiringRound | null): string {
-  if (!round) return 'Hiring Round'
-  return `${round.role_short} · ${formatRoundDateRange(round.start_date, round.end_date)}, ${formatRoundYear(round.start_date)}`
-}
-
-function roundFilename(round: HiringRound | null): string {
-  if (!round) return 'intella-hiring.xlsx'
-  const year = formatRoundYear(round.start_date)
-  const month = new Date(round.start_date)
-    .toLocaleDateString('en-US', { month: 'long' })
-    .toLowerCase()
-  return `intella-hiring-${month}-${year}.xlsx`
+function jobFilename(job: Job | null): string {
+  if (!job) return 'intella-hiring.xlsx'
+  return `intella-${job.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.xlsx`
 }
 
 export function exportToExcel(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
-  round: HiringRound | null = null,
+  round: Job | null = null,
   combinedScoreMap: Record<string, number> = {},
   commentsMap: Record<string, string[]> = {},
 ): void {
@@ -58,13 +48,13 @@ export function exportToExcel(
   const ws = XLSX.utils.json_to_sheet(rows)
   const wb = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(wb, ws, 'Candidates')
-  XLSX.writeFile(wb, roundFilename(round))
+  XLSX.writeFile(wb, jobFilename(round))
 }
 
 export function exportDecisionReport(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
-  round: HiringRound | null = null,
+  round: Job | null = null,
   combinedScoreMap: Record<string, number> = {},
   commentsMap: Record<string, string[]> = {},
 ): void {
@@ -108,8 +98,8 @@ export function exportDecisionReport(
     tr:hover td{background:#f9f9f9}
     @media print{body{margin:10px}}
   </style></head><body>
-  <h1>Intella Hiring Round — Decision Report</h1>
-  <p>${roundLabel(round)} · Generated ${new Date().toLocaleDateString()}</p>
+  <h1>Intella — Decision Report</h1>
+  <p>${round?.name ?? 'All Roles'} · Generated ${new Date().toLocaleDateString()}</p>
   <table><thead><tr><th>#</th><th>Candidate</th><th>Salary</th><th>Notice</th><th>Fit</th><th>Score</th><th>Verdict</th><th>Notes</th></tr></thead>
   <tbody>${rows}</tbody></table></body></html>`
 

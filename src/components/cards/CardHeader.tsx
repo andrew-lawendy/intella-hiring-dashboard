@@ -1,5 +1,5 @@
 import type { Database } from '@/lib/database.types'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -15,7 +15,6 @@ export function CardHeader({ candidate, state, onConfirmToggle, onOpenProfile }:
   return (
     <div className="px-4 pb-3 pt-3.5 border-b border-border flex items-start gap-3 bg-gradient-to-b from-surface to-[color-mix(in_srgb,var(--surface2)_30%,var(--surface))]">
       <Avatar size="sm" className="flex-shrink-0 cursor-pointer" onClick={onOpenProfile}>
-        {state.photo_url && <AvatarImage src={state.photo_url} alt={candidate.name} />}
         <AvatarFallback name={candidate.name} />
       </Avatar>
 

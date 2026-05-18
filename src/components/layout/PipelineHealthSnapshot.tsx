@@ -17,9 +17,6 @@ export function PipelineHealthSnapshot() {
       <span>
         <span className="font-semibold text-text">{verdictPct}%</span> verdicted
       </span>
-      <span>
-        Day <span className="font-semibold text-text">{stats.daysSinceStart + 1}</span>
-      </span>
     </div>
   )
 }

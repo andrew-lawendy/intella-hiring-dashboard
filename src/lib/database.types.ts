@@ -14,6 +14,7 @@ export interface Database {
           type: 'In-person' | 'Remote' | null
           salary: string | null
           notice: string | null
+          seniority: string | null
           job_id: number | null
           created_at: string
         }
@@ -71,7 +72,6 @@ export interface Database {
           interview_status: 'pending' | 'in-progress' | 'completed'
           verdict: 'strong-yes' | 'yes' | 'maybe' | 'no' | null
           checklist: Json
-          photo_url: string | null
           updated_at: string
         }
         Insert: Omit<Database['public']['Tables']['interview_state']['Row'], 'updated_at'>
@@ -127,21 +127,17 @@ export interface Database {
         >
         Update: Partial<Pick<Database['public']['Tables']['candidate_comments']['Row'], 'body'>>
       }
-      hiring_rounds: {
+      jobs: {
         Row: {
           id: number
           name: string
-          role: string
-          role_short: string
-          start_date: string
-          end_date: string
+          department: string | null
           score_categories: string[]
           checklist_items: string[]
-          is_active: boolean
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['hiring_rounds']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['hiring_rounds']['Insert']>
+        Insert: Omit<Database['public']['Tables']['jobs']['Row'], 'id' | 'created_at'>
+        Update: Partial<Database['public']['Tables']['jobs']['Insert']>
       }
       profiles: {
         Row: {

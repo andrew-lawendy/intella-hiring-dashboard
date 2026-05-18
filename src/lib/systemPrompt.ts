@@ -1,20 +1,16 @@
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { HiringRound } from '@/hooks/useHiringRound'
-import { formatRoundDateRange, formatRoundYear } from '@/hooks/useHiringRound'
+import type { Job } from '@/hooks/useJob'
 import { maxScore } from './scoring'
 
 export function buildSystemPrompt(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
-  round: HiringRound | null = null,
+  job: Job | null = null,
   combinedScoreMap: Record<string, number> = {},
   commentsMap: Record<string, string[]> = {},
 ): string {
-  const role = round?.role ?? 'Senior Product Manager'
-  const dateRange = round
-    ? `${formatRoundDateRange(round.start_date, round.end_date)} ${formatRoundYear(round.start_date)}`
-    : 'this period'
+  const role = job?.name ?? 'this role'
   const max = maxScore()
   const candidateSummaries = candidates
     .map(({ candidate, profile, analysis }) => {
@@ -45,25 +41,19 @@ export function buildSystemPrompt(
 
   return `You are an AI assistant helping the Intella team evaluate candidates for the ${role} role.
 The company is Intella, building Ziila — an AI agent platform for bank call centers.
-The hiring round covers ${candidates.length} candidates interviewing ${dateRange}.
-
-Key requirements for the role:
-- B2B enterprise experience (banking clients preferred)
-- AI/LLM product experience
-- 5+ years PM experience
-- Strong stakeholder management
+There are ${candidates.length} candidates in this pipeline.
 
 Here is the current state of all candidates:
 
 ${candidateSummaries}
 
-Answer questions about the candidates, help compare them, suggest talking points for the debrief, or generate insights about the hiring round. Be direct and specific.`
+Answer questions about the candidates, help compare them, suggest talking points for the debrief, or generate insights. Be direct and specific.`
 }
 
 export function buildDebriefPrompt(
   candidates: CandidateWithDetails[],
   stateMap: StateMap,
-  round: HiringRound | null = null,
+  job: Job | null = null,
   combinedScoreMap: Record<string, number> = {},
   commentsMap: Record<string, string[]> = {},
 ): string {
@@ -74,7 +64,7 @@ export function buildDebriefPrompt(
   const summaries = buildSystemPrompt(
     completedCandidates,
     stateMap,
-    round,
+    job,
     combinedScoreMap,
     commentsMap,
   )

@@ -3,8 +3,7 @@ import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { useAuth } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile'
-import { formatRoundDateRange } from '@/hooks/useHiringRound'
-import { useJobOpenings } from '@/hooks/useJobOpenings'
+import { useJobs } from '@/hooks/useJobs'
 import { usePipelineStats } from '@/hooks/usePipelineStats'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,16 +35,12 @@ export function Header({
   const { user } = useAuth()
   const stats = usePipelineStats()
   const { data: profile } = useProfile(user?.id)
-  const { data: jobs = [] } = useJobOpenings()
+  const { data: jobs = [] } = useJobs()
 
-  const activeRoundId = jobs.find((j) => j.is_active)?.id
-  const selectedId = jobId ?? activeRoundId
-  const selectedRound = jobs.find((j) => j.id === selectedId)
+  const selectedJob = jobs.find((j) => j.id === jobId)
 
   function handleJobChange(value: string) {
-    const id = parseInt(value)
-    const isActive = jobs.find((j) => j.id === id)?.is_active
-    void setJobId(isActive ? null : id)
+    void setJobId(value === 'all' ? null : parseInt(value))
   }
 
   const displayName = profile?.first_name
@@ -84,27 +79,20 @@ export function Header({
       </div>
 
       <div className="flex items-center gap-1.5 flex-wrap">
-        <Select value={selectedId?.toString() ?? ''} onValueChange={handleJobChange}>
+        <Select value={jobId?.toString() ?? 'all'} onValueChange={handleJobChange}>
           <SelectTrigger className="hidden lg:flex h-auto px-3 py-1.5 rounded-full border border-border text-[11.5px] font-medium text-text2 bg-[var(--surface)] gap-1.5 shadow-none mr-1 focus-visible:ring-0 focus-visible:border-border [&>svg]:size-3 [&>svg]:opacity-60">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)] flex-shrink-0" />
-            <SelectValue>
-              {selectedRound
-                ? `${selectedRound.role_short} · ${formatRoundDateRange(selectedRound.start_date, selectedRound.end_date)}`
-                : 'Select round'}
-            </SelectValue>
+            <SelectValue>{selectedJob ? selectedJob.name : 'All roles'}</SelectValue>
           </SelectTrigger>
           <SelectContent align="start">
+            <SelectItem value="all" className="text-[12.5px]">
+              <span className="text-muted-foreground">All roles</span>
+            </SelectItem>
             {jobs.map((job) => (
               <SelectItem key={job.id} value={job.id.toString()} className="text-[12.5px]">
-                <span className="font-medium">{job.role_short}</span>
-                <span className="text-muted-foreground ml-1.5">
-                  · {formatRoundDateRange(job.start_date, job.end_date)},{' '}
-                  {new Date(job.start_date).getFullYear()}
-                </span>
-                {job.is_active && (
-                  <span className="ml-1.5 text-[10px] font-medium text-[var(--green)] uppercase tracking-wide">
-                    active
-                  </span>
+                <span className="font-medium">{job.name}</span>
+                {job.department && (
+                  <span className="text-muted-foreground ml-1.5">· {job.department}</span>
                 )}
               </SelectItem>
             ))}

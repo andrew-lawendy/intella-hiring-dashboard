@@ -8,14 +8,14 @@ import { AddCandidateDrawer } from '@/components/candidates/AddCandidateDrawer'
 import { ProfileDrawer } from '@/components/profile/ProfileDrawer'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
-import { useHiringRound } from '@/hooks/useHiringRound'
+import { useJob } from '@/hooks/useJob'
 import { exportToExcel, exportDecisionReport } from '@/lib/exports'
 
 export function Layout() {
   const [jobId] = useQueryState('job', parseAsInteger)
   const { data } = useCandidates()
   const { stateMap } = useCandidateState()
-  const { data: round } = useHiringRound(jobId)
+  const { data: round } = useJob(jobId)
   const [addOpen, setAddOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
 
