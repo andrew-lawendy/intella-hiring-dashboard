@@ -32,7 +32,7 @@ function CheckItem({
     <label
       htmlFor={id}
       className={cn(
-        'flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-all text-[13px] font-medium select-none',
+        'flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-all text-sm font-medium select-none',
         checked
           ? 'bg-primary/8 border-primary/25 text-primary'
           : 'border-input text-muted-foreground hover:border-border hover:text-foreground',

@@ -29,7 +29,7 @@ export function TabNav() {
             role="tab"
             className={({ isActive }) =>
               [
-                'font-sans text-[13px] font-medium px-3.5 py-2.5 border-b-2 -mb-px transition-all duration-200 whitespace-nowrap cursor-pointer select-none outline-none',
+                'font-sans text-sm font-medium px-3.5 py-2.5 border-b-2 -mb-px transition-all duration-200 whitespace-nowrap cursor-pointer select-none outline-none',
                 'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                 isActive
                   ? 'text-foreground border-b-primary'

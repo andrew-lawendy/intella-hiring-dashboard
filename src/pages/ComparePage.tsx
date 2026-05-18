@@ -40,7 +40,7 @@ export function ComparePage() {
       <p className="text-text2 text-[13.5px] mb-6">Side-by-side candidate comparison</p>
 
       <div className="bg-surface border border-border rounded-[var(--radius)] p-4 mb-5 flex items-center gap-3 flex-wrap shadow-[var(--shadow-sm)]">
-        <p className="text-[13px] text-text2 font-medium">Compare:</p>
+        <p className="text-sm text-text2 font-medium">Compare:</p>
         {(
           [
             { id: idA, setId: setIdA },

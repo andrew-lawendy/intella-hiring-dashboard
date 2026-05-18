@@ -22,7 +22,7 @@ export function FieldWrapper({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
-        <Label htmlFor={htmlFor} className="text-[13px]">
+        <Label htmlFor={htmlFor} className="text-sm">
           {label}
           {required && (
             <span className="text-destructive ml-0.5" aria-label="required">
@@ -68,7 +68,7 @@ export function SegmentedToggle({
           aria-checked={value === opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            'flex-1 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all cursor-pointer',
+            'flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all cursor-pointer',
             value === opt.value
               ? 'bg-background text-foreground shadow-xs border border-border'
               : 'text-muted-foreground hover:text-foreground',
@@ -112,7 +112,7 @@ export function ScoreSlider({
           }}
         />
       </div>
-      <span className="text-[13px] font-mono font-medium text-foreground w-8 text-right shrink-0">
+      <span className="text-sm font-mono font-medium text-foreground w-8 text-right shrink-0">
         {max === 5 ? `${value}/5` : value}
       </span>
     </div>

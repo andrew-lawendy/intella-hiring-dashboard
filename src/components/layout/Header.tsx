@@ -70,7 +70,7 @@ export function Header({
               className="h-[22px] w-auto block flex-shrink-0 dark:brightness-0 dark:invert"
             />
             <span className="w-px h-[18px] bg-border opacity-70 flex-shrink-0" />
-            <span className="text-[13px] font-normal tracking-[-0.005em] text-text2">
+            <span className="text-sm font-normal tracking-[-0.005em] text-text2">
               Interview Dashboard
             </span>
           </div>

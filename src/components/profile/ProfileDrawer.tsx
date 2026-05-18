@@ -221,7 +221,7 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
           {/* Account (read-only) */}
           <Section title="Account" note="Managed by Intella">
             <FieldWrapper label="Email">
-              <div className="flex items-center justify-between h-9 px-3 rounded-md border border-input bg-muted/40 text-[13px]">
+              <div className="flex items-center justify-between h-9 px-3 rounded-md border border-input bg-muted/40 text-sm">
                 <span className="flex items-center gap-2 text-muted-foreground min-w-0">
                   <MailIcon className="size-3.5 flex-shrink-0" aria-hidden="true" />
                   <span className="truncate">{user?.email}</span>
@@ -253,7 +253,7 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
                     aria-checked={theme === value}
                     onClick={() => setTheme(value)}
                     className={cn(
-                      'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all cursor-pointer',
+                      'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all cursor-pointer',
                       theme === value
                         ? 'bg-background text-foreground shadow-xs border border-border'
                         : 'text-muted-foreground hover:text-foreground',
@@ -362,7 +362,7 @@ function FieldWrapper({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={htmlFor} className="text-[13px]">
+      <Label htmlFor={htmlFor} className="text-sm">
         {label}
       </Label>
       {children}
