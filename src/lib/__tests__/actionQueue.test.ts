@@ -122,6 +122,15 @@ describe('deriveActionItems', () => {
     }
   })
 
+  it('emits no-slot for a non-null unparseable slot string', () => {
+    const items = deriveActionItems(
+      [{ id: 'c1', name: 'Alice', slot: 'bad-format', jobId: 2 }],
+      { c1: baseState },
+      {},
+    )
+    expect(items.some((i) => i.type === 'no-slot')).toBe(true)
+  })
+
   it('carries jobId through to each ActionItem', () => {
     const items = deriveActionItems(
       [{ id: 'c1', name: 'Alice', slot: null, jobId: 7 }],

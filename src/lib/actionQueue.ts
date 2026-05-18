@@ -54,6 +54,8 @@ export function parseSlotDate(slot: string | null): Date | null {
   const [, day, month, hour, minute] = match
   const monthIndex = MONTHS[month]
   if (monthIndex === undefined) return null
+  // Known limitation: always uses the current year, so a slot of "Mon 31 Dec 14:00-15:00"
+  // checked in early January of the next year will parse with the wrong year.
   return new Date(
     new Date().getFullYear(),
     monthIndex,
@@ -101,7 +103,7 @@ export function deriveActionItems(
 
     const slotDate = parseSlotDate(c.slot)
 
-    if (!c.slot || c.slot === 'TBD') {
+    if (!c.slot || c.slot === 'TBD' || slotDate === null) {
       items.push({
         type: 'no-slot',
         candidateId: c.id,
@@ -135,6 +137,7 @@ export function deriveActionItems(
       })
     }
 
+    // Completed interviews can emit both no-verdict and overdue-scorecard — intentionally separate action items
     if (s.interview_status === 'completed' && s.verdict === null) {
       items.push({
         type: 'no-verdict',
