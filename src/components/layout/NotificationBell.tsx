@@ -4,7 +4,7 @@ import { BellIcon, XIcon } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useJobs } from '@/hooks/useJobs'
-import { TYPE_COLORS } from '@/lib/actionQueue'
+import { TYPE_COLORS, type ActionItemType } from '@/lib/actionQueue'
 
 export function NotificationBell() {
   const items = useNotifications()
@@ -24,7 +24,7 @@ export function NotificationBell() {
     setOpen(false)
   }
 
-  function handleDismiss(e: React.MouseEvent, candidateId: string, type: string) {
+  function handleDismiss(e: React.MouseEvent, candidateId: string, type: ActionItemType) {
     e.stopPropagation()
     setDismissed((prev) => new Set([...prev, `${candidateId}:${type}`]))
   }
@@ -61,26 +61,27 @@ export function NotificationBell() {
               {visible.map((item) => (
                 <div
                   key={`${item.candidateId}:${item.type}`}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => handleRowClick(item.candidateId, item.jobId)}
-                  onKeyDown={(e) =>
-                    e.key === 'Enter' && handleRowClick(item.candidateId, item.jobId)
-                  }
-                  className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/50 cursor-pointer transition-colors group"
+                  className="flex items-center gap-3 px-4 py-2.5 hover:bg-muted/50 transition-colors group relative"
                 >
-                  <span
-                    className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: TYPE_COLORS[item.type] }}
-                  />
-                  <div className="flex-1 min-w-0 text-[12.5px]">
-                    <span className="font-semibold text-foreground">{item.candidateName}</span>
-                    <span className="text-muted-foreground ml-1.5">{item.message}</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRowClick(item.candidateId, item.jobId)}
+                    className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer"
+                    aria-label={`Go to ${item.candidateName}: ${item.message}`}
+                  >
+                    <span
+                      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ background: TYPE_COLORS[item.type] }}
+                    />
+                    <div className="flex-1 min-w-0 text-[12.5px]">
+                      <span className="font-semibold text-foreground">{item.candidateName}</span>
+                      <span className="text-muted-foreground ml-1.5">{item.message}</span>
+                    </div>
+                  </button>
                   <button
                     type="button"
                     onClick={(e) => handleDismiss(e, item.candidateId, item.type)}
-                    aria-label="Dismiss"
+                    aria-label={`Dismiss notification for ${item.candidateName}`}
                     className="opacity-0 group-hover:opacity-50 hover:!opacity-100 p-0.5 rounded transition-opacity flex-shrink-0 text-muted-foreground"
                   >
                     <XIcon className="size-3" />

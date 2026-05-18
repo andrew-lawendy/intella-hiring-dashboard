@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { deriveActionItems, TYPE_COLORS } from '@/lib/actionQueue'
 import type { StateMap } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
@@ -23,23 +23,35 @@ export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
   const { byCandidate } = useAllScores(user?.id)
 
   // My scores per candidate (for overdue-scorecard check)
-  const myScoresMap = Object.fromEntries(
-    Object.entries(byCandidate).map(([cid, byUser]) => [cid, byUser[user?.id ?? ''] ?? {}]),
+  const myScoresMap = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(byCandidate).map(([cid, byUser]) => [cid, byUser[user?.id ?? ''] ?? {}]),
+      ),
+    [byCandidate, user?.id],
   )
 
-  const stateMin = Object.fromEntries(
-    Object.entries(stateMap).map(([id, s]) => [
-      id,
-      { confirmed: s.confirmed, interview_status: s.interview_status, verdict: s.verdict },
-    ]),
+  const stateMin = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(stateMap).map(([id, s]) => [
+          id,
+          { confirmed: s.confirmed, interview_status: s.interview_status, verdict: s.verdict },
+        ]),
+      ),
+    [stateMap],
   )
 
-  const items = deriveActionItems(
-    candidates
-      .filter((c) => c.job_id != null)
-      .map((c) => ({ id: c.id, name: c.name, slot: c.slot, jobId: c.job_id as number })),
-    stateMin,
-    myScoresMap,
+  const items = useMemo(
+    () =>
+      deriveActionItems(
+        candidates
+          .filter((c) => c.job_id != null)
+          .map((c) => ({ id: c.id, name: c.name, slot: c.slot, jobId: c.job_id as number })),
+        stateMin,
+        myScoresMap,
+      ),
+    [candidates, stateMin, myScoresMap],
   )
 
   if (!items.length) return null
@@ -59,8 +71,11 @@ export function ActionQueue({ candidates, stateMap }: ActionQueueProps) {
 
       {open && (
         <div className="border-t border-border divide-y divide-border">
-          {items.map((item, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-2.5 text-[12px] font-sans">
+          {items.map((item) => (
+            <div
+              key={`${item.candidateId}:${item.type}`}
+              className="flex items-center gap-3 px-4 py-2.5 text-[12px] font-sans"
+            >
               <span
                 className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                 style={{ background: TYPE_COLORS[item.type] }}
