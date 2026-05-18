@@ -4,7 +4,8 @@ import { ChatInterface } from '@/components/chat/ChatInterface'
 import { DebriefSummary } from '@/components/chat/DebriefSummary'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
-import { useJob } from '@/hooks/useJob'
+import { useJobs } from '@/hooks/useJobs'
+import { useQueryState, parseAsString } from 'nuqs'
 import { useAuth } from '@/hooks/useAuth'
 import { useAllScores } from '@/hooks/useAllScores'
 import { useAllComments } from '@/hooks/useAllComments'
@@ -16,7 +17,9 @@ export function ChatPage() {
   const [provider, setProvider] = useState<Provider>('anthropic')
   const { data } = useCandidates()
   const { stateMap } = useCandidateState()
-  const { data: round } = useJob()
+  const [jobSlug] = useQueryState('job', parseAsString)
+  const { data: jobs = [] } = useJobs()
+  const round = jobs.find((j) => j.slug === jobSlug) ?? null
   const { user } = useAuth()
   const { combinedScoreMap } = useAllScores(user?.id)
   const { byCandidate: commentsByCandidate } = useAllComments(user?.id)

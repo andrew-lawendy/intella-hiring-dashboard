@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react'
-import { useQueryState, parseAsInteger } from 'nuqs'
+import { useQueryState, parseAsString } from 'nuqs'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
-import { useJob } from '@/hooks/useJob'
+import { useJobs } from '@/hooks/useJobs'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { DataTable } from '@/components/ui/data-table'
@@ -28,8 +28,9 @@ const PAGE_SIZE = 20
 
 export function SchedulePage() {
   const { candidates: allMeta } = useCandidateMeta()
-  const [jobId] = useQueryState('job', parseAsInteger)
-  const { data: round } = useJob(jobId)
+  const [jobSlug] = useQueryState('job', parseAsString)
+  const { data: jobs = [] } = useJobs()
+  const round = jobs.find((j) => j.slug === jobSlug) ?? null
   const { stateMap, setConfirmed, setInterviewStatus } = useCandidateState()
   const [page, setPage] = useState(1)
 

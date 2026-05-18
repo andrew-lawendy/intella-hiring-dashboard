@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useQueryState, parseAsInteger } from 'nuqs'
+import { useQueryState, parseAsString } from 'nuqs'
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet } from '@/components/ui/sheet'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useCreateCandidate, type CreateCandidateInput } from '@/hooks/useCreateCandidate'
+import { useJobs } from '@/hooks/useJobs'
 import { StepIdentity } from './steps/StepIdentity'
 import { StepProfile } from './steps/StepProfile'
 import { StepBackground } from './steps/StepBackground'
@@ -64,7 +65,9 @@ interface AddCandidateDrawerProps {
 }
 
 export function AddCandidateDrawer({ open, onClose }: AddCandidateDrawerProps) {
-  const [urlJobId] = useQueryState('job', parseAsInteger)
+  const [jobSlug] = useQueryState('job', parseAsString)
+  const { data: jobs = [] } = useJobs()
+  const urlJobId = jobs.find((j) => j.slug === jobSlug)?.id ?? null
   const [step, setStep] = useState(0)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)

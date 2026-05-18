@@ -1,4 +1,4 @@
-import { useQueryState, parseAsInteger } from 'nuqs'
+import { useQueryState, parseAsString } from 'nuqs'
 import { ProgressRing } from './ProgressRing'
 import { PipelineHealthSnapshot } from './PipelineHealthSnapshot'
 import { useAuth } from '@/hooks/useAuth'
@@ -31,16 +31,16 @@ export function Header({
   onExportExcel,
   onPrint,
 }: HeaderProps) {
-  const [jobId, setJobId] = useQueryState('job', parseAsInteger)
+  const [jobSlug, setJobSlug] = useQueryState('job', parseAsString)
   const { user } = useAuth()
   const stats = usePipelineStats()
   const { data: profile } = useProfile(user?.id)
   const { data: jobs = [] } = useJobs()
 
-  const selectedJob = jobs.find((j) => j.id === jobId)
+  const selectedJob = jobs.find((j) => j.slug === jobSlug)
 
   function handleJobChange(value: string) {
-    void setJobId(value === 'all' ? null : parseInt(value))
+    void setJobSlug(value === 'all' ? null : value)
   }
 
   const displayName = profile?.first_name
@@ -79,17 +79,17 @@ export function Header({
       </div>
 
       <div className="flex items-center gap-1.5 flex-wrap">
-        <Select value={jobId?.toString() ?? 'all'} onValueChange={handleJobChange}>
+        <Select value={jobSlug ?? 'all'} onValueChange={handleJobChange}>
           <SelectTrigger className="hidden lg:flex h-auto px-3 py-1.5 rounded-full border border-border text-[11.5px] font-medium text-text2 bg-[var(--surface)] gap-1.5 shadow-none mr-1 focus-visible:ring-0 focus-visible:border-border [&>svg]:size-3 [&>svg]:opacity-60">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--green)] flex-shrink-0" />
             <SelectValue>{selectedJob ? selectedJob.name : 'All roles'}</SelectValue>
           </SelectTrigger>
-          <SelectContent align="start">
+          <SelectContent align="start" position="popper" sideOffset={6}>
             <SelectItem value="all" className="text-[12.5px]">
               <span className="text-muted-foreground">All roles</span>
             </SelectItem>
             {jobs.map((job) => (
-              <SelectItem key={job.id} value={job.id.toString()} className="text-[12.5px]">
+              <SelectItem key={job.id} value={job.slug} className="text-[12.5px]">
                 <span className="font-medium">{job.name}</span>
                 {job.department && (
                   <span className="text-muted-foreground ml-1.5">· {job.department}</span>

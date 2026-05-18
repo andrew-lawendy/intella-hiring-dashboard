@@ -1,6 +1,6 @@
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { Job } from '@/hooks/useJob'
+import type { Job } from '@/hooks/useJobs'
 import { maxScore } from './scoring'
 
 export function buildSystemPrompt(

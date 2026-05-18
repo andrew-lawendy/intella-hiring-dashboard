@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useQueryState, parseAsInteger, parseAsString } from 'nuqs'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
 import { useDebounce } from '@/hooks/useDebounce'
-import { useJob } from '@/hooks/useJob'
+import { useJobs } from '@/hooks/useJobs'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { useAuth } from '@/hooks/useAuth'
@@ -25,13 +25,15 @@ import type { FilterType } from '@/lib/filters'
 const PAGE_SIZE = 24
 
 export function CardsPage() {
-  const [jobId] = useQueryState('job', parseAsInteger)
+  const [jobSlug] = useQueryState('job', parseAsString)
+  const { data: jobs = [] } = useJobs()
+  const round = jobs.find((j) => j.slug === jobSlug) ?? null
+  const jobId = round?.id ?? null
   const { candidates: allMeta, loading: metaLoading } = useCandidateMeta(jobId)
   const { stateMap, setShortlisted, setConfirmed, setChecklist, setVerdict, setInterviewStatus } =
     useCandidateState()
   const { user } = useAuth()
   const { myScoresFor, coScoresFor } = useAllScores(user?.id)
-  const { data: round } = useJob(jobId)
 
   const [filter, setFilter] = useQueryState('filter', parseAsString.withDefault('all'))
   const [search, setSearch] = useQueryState('q', parseAsString.withDefault(''))

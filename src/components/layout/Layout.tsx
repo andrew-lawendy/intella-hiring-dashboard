@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { useQueryState, parseAsInteger } from 'nuqs'
+import { useQueryState, parseAsString } from 'nuqs'
 import { Header } from './Header'
 import { TabNav } from './TabNav'
 import { AlertBanners } from './AlertBanners'
@@ -8,14 +8,15 @@ import { AddCandidateDrawer } from '@/components/candidates/AddCandidateDrawer'
 import { ProfileDrawer } from '@/components/profile/ProfileDrawer'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
-import { useJob } from '@/hooks/useJob'
+import { useJobs } from '@/hooks/useJobs'
 import { exportToExcel, exportDecisionReport } from '@/lib/exports'
 
 export function Layout() {
-  const [jobId] = useQueryState('job', parseAsInteger)
+  const [jobSlug] = useQueryState('job', parseAsString)
   const { data } = useCandidates()
   const { stateMap } = useCandidateState()
-  const { data: round } = useJob(jobId)
+  const { data: jobs = [] } = useJobs()
+  const round = jobs.find((j) => j.slug === jobSlug) ?? null
   const [addOpen, setAddOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
 

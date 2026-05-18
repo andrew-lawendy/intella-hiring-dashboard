@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
-import type { Job } from '@/hooks/useJob'
+import type { Job } from '@/hooks/useJobs'
 import { VERDICT_MAP } from './verdicts'
 import { maxScore } from './scoring'
 

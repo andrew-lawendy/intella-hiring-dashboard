@@ -130,6 +130,7 @@ export interface Database {
       jobs: {
         Row: {
           id: number
+          slug: string
           name: string
           department: string | null
           score_categories: string[]

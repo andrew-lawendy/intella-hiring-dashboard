@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import type { Job } from './useJob'
+import type { Database } from '@/lib/database.types'
+
+export type Job = Database['public']['Tables']['jobs']['Row']
 
 export function useJobs() {
   return useQuery({

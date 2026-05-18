@@ -1,4 +1,4 @@
-import type { Job } from '@/hooks/useJob'
+import type { Job } from '@/hooks/useJobs'
 
 type Verdict = 'strong-yes' | 'yes' | 'maybe' | 'no' | null
 
