@@ -1,6 +1,6 @@
 export const analysisData = [
   {
-    id: 'eman',
+    id: '52a66cfb-3676-4b1e-8211-783073eda7f4',
     university: 'Ain Shams University',
     degree: 'B.Sc. Pharmaceutical Science',
     grad_year: 2013,
@@ -18,7 +18,7 @@ export const analysisData = [
       'Most experienced — 11 yrs PM. Vezeeta, WUZZUF, Nana, MacQueen. MBA IE Business School.',
   },
   {
-    id: 'hadeer',
+    id: '15108b7b-92a1-473c-9523-f254aba0d601',
     university: 'New Cairo Academy',
     degree: 'B.Sc. Electronics & Communications Engineering',
     grad_year: 2014,
@@ -35,7 +35,7 @@ export const analysisData = [
     notable: '10+ yrs exp. Nusuk Platform (Hajj & Umrah KSA). Leads BA team.',
   },
   {
-    id: 'mina',
+    id: '33a8df59-fad2-46ba-9dd4-1159d37633ce',
     university: 'Cairo University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2020,
@@ -52,7 +52,7 @@ export const analysisData = [
     notable: "Fawry — Egypt's largest fintech. Yellow Card for Retailers, Sehetak insurance.",
   },
   {
-    id: 'lamia',
+    id: '52b2ffb0-bbe8-48a2-b948-fa6915aefc3e',
     university: 'Ain Shams University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2020,
@@ -69,7 +69,7 @@ export const analysisData = [
     notable: 'Arabic reading platform. 24% user engagement uplift.',
   },
   {
-    id: 'malak',
+    id: '80df0280-6067-4af7-8374-623b897269ac',
     university: 'NYU Abu Dhabi',
     degree: 'B.A. Interactive Media & Business',
     grad_year: 2021,
@@ -87,7 +87,7 @@ export const analysisData = [
       'AI-native prototyper (Claude Code, Lovable, Cursor). Lovable Ambassador. Oxford speaker.',
   },
   {
-    id: 'marwan',
+    id: 'c5f0649b-ae7d-4189-9ac2-451da7a27640',
     university: 'German University in Cairo',
     degree: 'B.Sc. Computer Science & Engineering',
     grad_year: 2019,
@@ -105,7 +105,7 @@ export const analysisData = [
       'Siemens EU/NA markets. LLM doc automation at Mazeed (94% accuracy). 4Sale 123% YoY search growth.',
   },
   {
-    id: 'kareem',
+    id: 'f0bad8e6-b9c9-401e-962b-3c7b510c7eba',
     university: 'Politecnico di Milano',
     degree: 'B.Sc. Management Engineering',
     grad_year: 2020,
@@ -122,7 +122,7 @@ export const analysisData = [
     notable: 'Geidea (UAE/KSA/Egypt) — SAMA, CBE, CBUAE compliance. 27% churn reduction.',
   },
   {
-    id: 'mohamedeltabakh',
+    id: '11c92454-b196-4403-8977-fd1f3ef58fc7',
     university: 'Ain Shams University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2016,
@@ -139,7 +139,7 @@ export const analysisData = [
     notable: 'Built AI pipeline: pain → PRD → prototype. Manages 15-person QA team.',
   },
   {
-    id: 'moaaz',
+    id: 'c45614dc-cf9c-441d-bdd8-492c056ec7a4',
     university: 'Ain Shams University',
     degree: 'B.A. English Language & Literature',
     grad_year: 2018,
@@ -156,7 +156,7 @@ export const analysisData = [
     notable: '7 yrs TTS/ASR/NLU/VoiceBot at IST Networks + Xina AI. Directly mirrors Ziila.',
   },
   {
-    id: 'aliaa',
+    id: '99202fe6-df86-4180-b311-ec318c7b4af9',
     university: 'San Jose State University',
     degree: 'B.A. French / Linguistics',
     grad_year: 2017,
@@ -174,7 +174,7 @@ export const analysisData = [
       '5 yrs at SoundHound AI (SF). Arabic ASR/NLP. 50% error rate reduction. 25% throughput increase.',
   },
   {
-    id: 'loay',
+    id: '5682b4c5-5088-48a2-8df2-479105a0d0ed',
     university: 'Alexandria University',
     degree: 'B.Sc. Computer & Systems Engineering',
     grad_year: 2021,
@@ -192,7 +192,7 @@ export const analysisData = [
       'Designed AI voice hotline (Vapi.ai + Claude). AI-native: Claude Code, Cursor, Replit.',
   },
   {
-    id: 'amr',
+    id: 'cdab4ae9-70d8-44ab-b2e3-593bdec838ba',
     university: 'American University in Cairo',
     degree: 'B.Sc. Electronics Engineering',
     grad_year: 2020,
@@ -209,7 +209,7 @@ export const analysisData = [
     notable: 'AUC Electronics + MSc FinTech. SWIFT, ISO 20022, ACH, Docker, Kubernetes.',
   },
   {
-    id: 'abdulrahman',
+    id: '508616a2-3a8f-441c-8791-5bbe18cfac15',
     university: 'King Saud University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2018,
@@ -227,7 +227,7 @@ export const analysisData = [
       'Built Jisri (AI HR assistant). +130% organic growth. Mentored 3 PMs. Available immediately.',
   },
   {
-    id: 'mostafaeltoukhy',
+    id: '323d10e2-e78c-4efc-9441-c5dbd087c70b',
     university: 'Cairo University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2020,
@@ -244,7 +244,7 @@ export const analysisData = [
     notable: 'Bosta, Breadfast, Money Fellows. High-velocity A/B testing, funnel optimization.',
   },
   {
-    id: 'nada',
+    id: '8107e372-9ab9-467b-b6dc-55e4c25d0bae',
     university: 'German University in Cairo',
     degree: 'B.Sc. Engineering',
     grad_year: 2018,
@@ -262,7 +262,7 @@ export const analysisData = [
       'MNT-Halan + Noon + Emirates NBD Dubai. Engineering + MBA. Trilingual (Arabic/English/German).',
   },
   {
-    id: 'mostafamahmoud',
+    id: 'e8dd37a4-588f-494a-8939-0dd91f29809b',
     university: 'Ain Shams University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2019,
@@ -279,7 +279,7 @@ export const analysisData = [
     notable: 'AI-driven routing at Homzmart — 27% cost reduction, 19% fewer failed deliveries.',
   },
   {
-    id: 'omar',
+    id: '6e639434-7637-4b78-b44a-eb056a26260d',
     university: 'Cairo University',
     degree: 'B.Sc. Computer Science',
     grad_year: 2017,
@@ -296,7 +296,7 @@ export const analysisData = [
     notable: '8 yrs PM. Khazna BNPL, Brite HRMS, Vodafone. SQL, BI, Mixpanel, PowerBI.',
   },
   {
-    id: 'george',
+    id: 'ccba2e81-1cdd-4a2e-97d5-40757e529792',
     university: 'German University in Cairo',
     degree: 'B.Sc. Computer Engineering',
     grad_year: 2022,
@@ -314,7 +314,7 @@ export const analysisData = [
       'LLM/RAG features at Rabbit. Duke AI PM diploma. GUC Engineering. Co-founded Seaats. Flat6Labs mentor.',
   },
   {
-    id: 'zainab',
+    id: 'ebba70a1-0b61-4168-b224-3e25f3bb7896',
     university: 'Cairo University',
     degree: 'B.Sc. Commerce',
     grad_year: 2021,
@@ -331,7 +331,7 @@ export const analysisData = [
     notable: 'AI scoring, risk assessment at Nafes AI. Ex-Convertedin, ex-Tactful.',
   },
   {
-    id: 'bavly',
+    id: 'c45b75f0-5314-4612-8946-6ae6288bd81b',
     university: 'Alexandria University',
     degree: 'B.Sc. Computer & Systems Engineering',
     grad_year: 2021,

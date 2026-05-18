@@ -53,7 +53,6 @@ async function seed() {
       'Salary discussed': false,
       'Notice period confirmed': false,
     },
-    photo_url: null,
   }))
   const { error: stateError } = await supabase
     .from('interview_state')

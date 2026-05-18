@@ -1,6 +1,6 @@
 export const candidatesData = [
   {
-    id: 'mina',
+    id: '33a8df59-fad2-46ba-9dd4-1159d37633ce',
     name: 'Mina Taallap Shawkei',
     email: 'minataallap@gmail.com',
     slot: 'Sun 17 May 11:00-12:00',
@@ -11,7 +11,7 @@ export const candidatesData = [
     notice: '30 days',
   },
   {
-    id: 'lamia',
+    id: '52b2ffb0-bbe8-48a2-b948-fa6915aefc3e',
     name: 'Lamia Mostafa',
     email: 'lamiamostafa2@gmail.com',
     slot: 'Sun 17 May 12:00-13:00',
@@ -22,7 +22,7 @@ export const candidatesData = [
     notice: '30 days',
   },
   {
-    id: 'malak',
+    id: '80df0280-6067-4af7-8374-623b897269ac',
     name: 'Malak Abdelghaffar',
     email: 'malak.yabdelghaffar@gmail.com',
     slot: 'Sun 17 May 13:00-14:00',
@@ -33,7 +33,7 @@ export const candidatesData = [
     notice: 'End of June',
   },
   {
-    id: 'marwan',
+    id: 'c5f0649b-ae7d-4189-9ac2-451da7a27640',
     name: 'Marwan Elwan',
     email: '40marwan@gmail.com',
     slot: 'Sun 17 May 16:00-17:00',
@@ -44,7 +44,7 @@ export const candidatesData = [
     notice: '30 days',
   },
   {
-    id: 'kareem',
+    id: 'f0bad8e6-b9c9-401e-962b-3c7b510c7eba',
     name: 'Kareem Ragab',
     email: 'Kareem.khaled@hotmail.com',
     slot: 'Mon 18 May 11:00-12:00',
@@ -55,7 +55,7 @@ export const candidatesData = [
     notice: 'Immediate',
   },
   {
-    id: 'mohamedeltabakh',
+    id: '11c92454-b196-4403-8977-fd1f3ef58fc7',
     name: 'Mohamed Adel Eltabakh',
     email: 'M.eltabakh@outlook.com',
     slot: 'Mon 18 May 16:00-17:00',
@@ -66,7 +66,7 @@ export const candidatesData = [
     notice: 'Immediate',
   },
   {
-    id: 'moaaz',
+    id: 'c45614dc-cf9c-441d-bdd8-492c056ec7a4',
     name: 'Moaaz Tarek',
     email: 'moaaztarek4@gmail.com',
     slot: 'Mon 18 May 17:00-18:00',
@@ -77,7 +77,7 @@ export const candidatesData = [
     notice: 'Immediate',
   },
   {
-    id: 'hadeer',
+    id: '15108b7b-92a1-473c-9523-f254aba0d601',
     name: 'Hadeer Mohamed Saeed',
     email: 'Hadeer_m7md@hotmail.com',
     slot: 'Tue 19 May 12:00-13:00',
@@ -88,7 +88,7 @@ export const candidatesData = [
     notice: '1 month',
   },
   {
-    id: 'eman',
+    id: '52a66cfb-3676-4b1e-8211-783073eda7f4',
     name: 'Eman Wed Abdullah',
     email: 'emanwed@gmail.com',
     slot: 'Tue 19 May 15:00-16:00',
@@ -99,7 +99,7 @@ export const candidatesData = [
     notice: '2 weeks',
   },
   {
-    id: 'aliaa',
+    id: '99202fe6-df86-4180-b311-ec318c7b4af9',
     name: 'Aliaa Magdy Elfeky',
     email: 'aliaaelfeki@gmail.com',
     slot: 'Tue 19 May 16:00-17:00',
@@ -110,7 +110,7 @@ export const candidatesData = [
     notice: 'TBD',
   },
   {
-    id: 'loay',
+    id: '5682b4c5-5088-48a2-8df2-479105a0d0ed',
     name: 'Loay Hamdy Omar',
     email: 'loayhamdy96@gmail.com',
     slot: 'Tue 19 May 17:00-18:00',
@@ -121,7 +121,7 @@ export const candidatesData = [
     notice: '3-4 weeks',
   },
   {
-    id: 'zainab',
+    id: 'ebba70a1-0b61-4168-b224-3e25f3bb7896',
     name: 'Zainab Gehad Talaat',
     email: 'zainabgehad@gmail.com',
     slot: 'Tue 19 May 18:00-19:00',
@@ -132,7 +132,7 @@ export const candidatesData = [
     notice: '1 month',
   },
   {
-    id: 'amr',
+    id: 'cdab4ae9-70d8-44ab-b2e3-593bdec838ba',
     name: 'Amr Mekawy',
     email: 'amekawy@aucegypt.edu',
     slot: 'Wed 20 May 11:00-12:00',
@@ -143,7 +143,7 @@ export const candidatesData = [
     notice: '1 month max',
   },
   {
-    id: 'abdulrahman',
+    id: '508616a2-3a8f-441c-8791-5bbe18cfac15',
     name: 'Abdulrahman Nasser',
     email: 'abdelrahmannasserr@gmail.com',
     slot: 'Wed 20 May 12:00-13:00',
@@ -154,7 +154,7 @@ export const candidatesData = [
     notice: 'Immediate',
   },
   {
-    id: 'mostafaeltoukhy',
+    id: '323d10e2-e78c-4efc-9441-c5dbd087c70b',
     name: 'Mostafa El Toukhy',
     email: 'Toukhy.mostafa@gmail.com',
     slot: 'Wed 20 May 16:00-17:00',
@@ -165,7 +165,7 @@ export const candidatesData = [
     notice: '2 months',
   },
   {
-    id: 'bavly',
+    id: 'c45b75f0-5314-4612-8946-6ae6288bd81b',
     name: 'Bavly Ossam',
     email: 'bavlyossam@gmail.com',
     slot: 'Wed 20 May 17:00-18:00',
@@ -176,7 +176,7 @@ export const candidatesData = [
     notice: 'TBD',
   },
   {
-    id: 'nada',
+    id: '8107e372-9ab9-467b-b6dc-55e4c25d0bae',
     name: 'Nada Ahmed Abdel Kader',
     email: 'nadaahmeda8@gmail.com',
     slot: 'Thu 21 May 14:00-15:00',
@@ -187,7 +187,7 @@ export const candidatesData = [
     notice: '30 days',
   },
   {
-    id: 'mostafamahmoud',
+    id: 'e8dd37a4-588f-494a-8939-0dd91f29809b',
     name: 'Mostafa Mahmoud',
     email: 'Mostafa.atallah1998@gmail.com',
     slot: 'Thu 21 May 15:00-16:00',
@@ -198,7 +198,7 @@ export const candidatesData = [
     notice: '1 month',
   },
   {
-    id: 'omar',
+    id: '6e639434-7637-4b78-b44a-eb056a26260d',
     name: 'Omar Maged Youssef',
     email: 'omarxyoussef@gmail.com',
     slot: 'Thu 21 May 16:00-17:00',
@@ -209,7 +209,7 @@ export const candidatesData = [
     notice: '1 month',
   },
   {
-    id: 'george',
+    id: 'ccba2e81-1cdd-4a2e-97d5-40757e529792',
     name: 'George Fekry',
     email: 'georgefekry07@gmail.com',
     slot: 'TBD',
@@ -222,24 +222,24 @@ export const candidatesData = [
 ]
 
 export const initialConfirmed: Record<string, boolean> = {
-  mina: true,
-  lamia: true,
-  malak: true,
-  marwan: true,
-  kareem: true,
-  mohamedeltabakh: true,
-  moaaz: true,
-  hadeer: true,
-  eman: true,
-  aliaa: false,
-  loay: true,
-  amr: true,
-  abdulrahman: true,
-  mostafaeltoukhy: true,
-  nada: true,
-  mostafamahmoud: true,
-  omar: true,
-  george: false,
-  zainab: true,
-  bavly: true,
+  '33a8df59-fad2-46ba-9dd4-1159d37633ce': true,
+  '52b2ffb0-bbe8-48a2-b948-fa6915aefc3e': true,
+  '80df0280-6067-4af7-8374-623b897269ac': true,
+  'c5f0649b-ae7d-4189-9ac2-451da7a27640': true,
+  'f0bad8e6-b9c9-401e-962b-3c7b510c7eba': true,
+  '11c92454-b196-4403-8977-fd1f3ef58fc7': true,
+  'c45614dc-cf9c-441d-bdd8-492c056ec7a4': true,
+  '15108b7b-92a1-473c-9523-f254aba0d601': true,
+  '52a66cfb-3676-4b1e-8211-783073eda7f4': true,
+  '99202fe6-df86-4180-b311-ec318c7b4af9': false,
+  '5682b4c5-5088-48a2-8df2-479105a0d0ed': true,
+  'cdab4ae9-70d8-44ab-b2e3-593bdec838ba': true,
+  '508616a2-3a8f-441c-8791-5bbe18cfac15': true,
+  '323d10e2-e78c-4efc-9441-c5dbd087c70b': true,
+  '8107e372-9ab9-467b-b6dc-55e4c25d0bae': true,
+  'e8dd37a4-588f-494a-8939-0dd91f29809b': true,
+  '6e639434-7637-4b78-b44a-eb056a26260d': true,
+  'ccba2e81-1cdd-4a2e-97d5-40757e529792': false,
+  'ebba70a1-0b61-4168-b224-3e25f3bb7896': true,
+  'c45b75f0-5314-4612-8946-6ae6288bd81b': true,
 }

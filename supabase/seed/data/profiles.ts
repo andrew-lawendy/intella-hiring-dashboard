@@ -1,6 +1,6 @@
 export const profilesData = [
   {
-    candidate_id: 'mina',
+    candidate_id: '33a8df59-fad2-46ba-9dd4-1159d37633ce',
     title: 'Senior Product Manager',
     company: 'Fawry',
     summary:
@@ -56,7 +56,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'lamia',
+    candidate_id: '52b2ffb0-bbe8-48a2-b948-fa6915aefc3e',
     title: 'Product Manager',
     company: 'Abjjad',
     summary:
@@ -113,7 +113,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'malak',
+    candidate_id: '80df0280-6067-4af7-8374-623b897269ac',
     title: 'Product Growth Manager',
     company: 'Nookly (San Francisco)',
     summary:
@@ -170,7 +170,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'marwan',
+    candidate_id: 'c5f0649b-ae7d-4189-9ac2-451da7a27640',
     title: 'Product Owner/Manager',
     company: 'Siemens',
     summary:
@@ -233,7 +233,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'kareem',
+    candidate_id: 'f0bad8e6-b9c9-401e-962b-3c7b510c7eba',
     title: 'Sr. Product Manager',
     company: 'Clync (Remote from Milan)',
     summary:
@@ -290,7 +290,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'mohamedeltabakh',
+    candidate_id: '11c92454-b196-4403-8977-fd1f3ef58fc7',
     title: 'Product Manager & QA Lead',
     company: 'Lucidya',
     summary:
@@ -347,7 +347,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'moaaz',
+    candidate_id: 'c45614dc-cf9c-441d-bdd8-492c056ec7a4',
     title: 'Product Manager – Growth',
     company: 'Cartona',
     summary:
@@ -410,7 +410,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'hadeer',
+    candidate_id: '15108b7b-92a1-473c-9523-f254aba0d601',
     title: 'Senior BA / Product Owner',
     company: 'FlairsTech',
     summary:
@@ -467,7 +467,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'eman',
+    candidate_id: '52a66cfb-3676-4b1e-8211-783073eda7f4',
     title: 'Head of Products',
     company: 'MacQueen Corporate',
     summary:
@@ -530,7 +530,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'aliaa',
+    candidate_id: '99202fe6-df86-4180-b311-ec318c7b4af9',
     title: 'AI Product & Program Lead',
     company: 'SoundHound AI (prev.)',
     summary:
@@ -581,7 +581,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'loay',
+    candidate_id: '5682b4c5-5088-48a2-8df2-479105a0d0ed',
     title: 'Product Manager',
     company: 'Trufla Technology',
     summary:
@@ -638,7 +638,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'amr',
+    candidate_id: 'cdab4ae9-70d8-44ab-b2e3-593bdec838ba',
     title: 'Technical Product Manager',
     company: 'eVision',
     summary:
@@ -695,7 +695,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'abdulrahman',
+    candidate_id: '508616a2-3a8f-441c-8791-5bbe18cfac15',
     title: 'Product Manager II (Senior)',
     company: 'Jisr',
     summary:
@@ -746,7 +746,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'mostafaeltoukhy',
+    candidate_id: '323d10e2-e78c-4efc-9441-c5dbd087c70b',
     title: 'Growth Sr. Product Manager',
     company: 'Bosta',
     summary:
@@ -803,7 +803,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'nada',
+    candidate_id: '8107e372-9ab9-467b-b6dc-55e4c25d0bae',
     title: 'Senior Product Manager',
     company: 'MNT-Halan',
     summary:
@@ -860,7 +860,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'mostafamahmoud',
+    candidate_id: 'e8dd37a4-588f-494a-8939-0dd91f29809b',
     title: 'Senior Product Manager',
     company: 'Homzmart',
     summary:
@@ -917,7 +917,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'omar',
+    candidate_id: '6e639434-7637-4b78-b44a-eb056a26260d',
     title: 'Product Consultant',
     company: 'Paxium GmbH',
     summary:
@@ -980,7 +980,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'george',
+    candidate_id: 'ccba2e81-1cdd-4a2e-97d5-40757e529792',
     title: 'Product Manager – Growth',
     company: 'Rabbit',
     summary:
@@ -1037,7 +1037,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'zainab',
+    candidate_id: 'ebba70a1-0b61-4168-b224-3e25f3bb7896',
     title: 'Senior Product Manager',
     company: 'Nafes AI',
     summary:
@@ -1094,7 +1094,7 @@ export const profilesData = [
     ],
   },
   {
-    candidate_id: 'bavly',
+    candidate_id: 'c45b75f0-5314-4612-8946-6ae6288bd81b',
     title: 'Senior Product Manager',
     company: 'Loynova & Trevi',
     summary:
