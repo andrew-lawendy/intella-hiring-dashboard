@@ -63,6 +63,7 @@ function InlineTextField({
         <input
           ref={inputRef}
           type={inputType}
+          aria-label={label}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={commit}
@@ -128,6 +129,7 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
       {editing ? (
         <select
           ref={selectRef}
+          aria-label={label}
           defaultValue={value ?? ''}
           onChange={handleChange}
           onBlur={() => setEditing(false)}
@@ -171,7 +173,8 @@ const NOTICE_OPTIONS = [
 
 function getDayName(dateStr: string): string {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  return days[new Date(dateStr).getDay()] ?? ''
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return days[new Date(y, m - 1, d).getDay()] ?? ''
 }
 
 // ─── ProfileLogistics ────────────────────────────────────────────────────────
