@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 interface CandidateSlot {
   id: string
   name: string
-  slot: string | null
+  interview_at: string | null
   job_id: number | null
 }
 
@@ -48,7 +48,12 @@ export function ActionQueue({ candidates, stateMap, onItemClick }: ActionQueuePr
       deriveActionItems(
         candidates
           .filter((c) => c.job_id != null)
-          .map((c) => ({ id: c.id, name: c.name, slot: c.slot, jobId: c.job_id as number })),
+          .map((c) => ({
+            id: c.id,
+            name: c.name,
+            interview_at: c.interview_at,
+            jobId: c.job_id as number,
+          })),
         stateMin,
         myScoresMap,
       ),

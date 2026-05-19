@@ -1,3 +1,4 @@
+import { formatInterviewTime, formatInterviewSlot } from '@/lib/interview'
 import { InterviewTimer } from './InterviewTimer'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
@@ -20,7 +21,7 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
       <div className="bg-gradient-to-b from-surface2 to-surface px-5 py-3.5 border-b border-border flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-4">
           <span className="font-mono text-[18px] font-semibold text-text tracking-tight">
-            {candidate.time}
+            {formatInterviewTime(candidate.interview_at)}
           </span>
           <div>
             <p className="text-[17px] font-semibold tracking-tight text-text">{candidate.name}</p>
@@ -38,7 +39,7 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
       <div className="px-5 py-4">
         <div className="flex gap-5 flex-wrap text-[12.5px] mb-3">
           {[
-            { label: 'Slot', value: candidate.slot },
+            { label: 'Slot', value: formatInterviewSlot(candidate.interview_at) },
             { label: 'Type', value: candidate.type },
             { label: 'Salary', value: candidate.salary },
             { label: 'Notice', value: candidate.notice },

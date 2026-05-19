@@ -4,6 +4,7 @@ import type { StateMap } from '@/hooks/useCandidateState'
 import type { Job } from '@/hooks/useJobs'
 import { VERDICT_MAP } from './verdicts'
 import { maxScore } from './scoring'
+import { formatInterviewSlot } from '@/lib/interview'
 
 function jobFilename(job: Job | null): string {
   if (!job) return 'intella-hiring.xlsx'
@@ -25,7 +26,7 @@ export function exportToExcel(
     return {
       Name: candidate.name,
       Email: candidate.email,
-      Slot: candidate.slot,
+      Slot: formatInterviewSlot(candidate.interview_at),
       Type: candidate.type,
       Salary: candidate.salary,
       Notice: candidate.notice,
@@ -137,7 +138,7 @@ export function printBriefCard(data: CandidateWithDetails, state: StateMap[strin
   </style></head><body>
   <h1 style="font-size:18px;margin:0 0 4px">${candidate.name}</h1>
   <div class="meta">
-    <span>📅 ${candidate.slot ?? 'TBD'}</span>
+    <span>📅 ${formatInterviewSlot(candidate.interview_at)}</span>
     <span>💰 ${candidate.salary ?? '—'}</span>
     <span>⏱ Notice: ${candidate.notice ?? '—'}</span>
     ${analysis ? `<span>🏢 ${analysis.current_role} @ ${analysis.current_company}</span>` : ''}

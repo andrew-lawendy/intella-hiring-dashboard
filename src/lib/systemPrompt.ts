@@ -2,6 +2,7 @@ import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { StateMap } from '@/hooks/useCandidateState'
 import type { Job } from '@/hooks/useJobs'
 import { maxScore } from './scoring'
+import { formatInterviewSlot } from '@/lib/interview'
 
 export function buildSystemPrompt(
   candidates: CandidateWithDetails[],
@@ -19,7 +20,7 @@ export function buildSystemPrompt(
       const comments = commentsMap[candidate.id] ?? []
       return [
         `**${candidate.name}** (${candidate.id})`,
-        `- Slot: ${candidate.slot} | Type: ${candidate.type} | Salary: ${candidate.salary} | Notice: ${candidate.notice}`,
+        `- Slot: ${formatInterviewSlot(candidate.interview_at)} | Type: ${candidate.type} | Salary: ${candidate.salary} | Notice: ${candidate.notice}`,
         profile
           ? `- Title: ${profile.title} at ${profile.company} | Fit: ${profile.fit_score}% (${profile.fit_label})`
           : '',

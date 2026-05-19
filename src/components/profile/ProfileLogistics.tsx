@@ -5,6 +5,14 @@ import { cn } from '@/lib/utils'
 import { SegmentedToggle } from '@/components/candidates/form-helpers'
 import { useUpdateCandidate } from '@/hooks/useUpdateCandidate'
 import type { Database } from '@/lib/database.types'
+import {
+  formatInterviewDate,
+  formatInterviewTime,
+  interviewAtToDateInput,
+  interviewAtToTimeInput,
+  updateInterviewDate,
+  updateInterviewTime,
+} from '@/lib/interview'
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
 
@@ -13,6 +21,7 @@ type Candidate = Database['public']['Tables']['candidates']['Row']
 interface InlineTextFieldProps {
   label: string
   value: string | null | undefined
+  displayValue?: string | null
   onSave: (v: string) => Promise<void>
   inputType?: 'text' | 'date' | 'time'
   inputClassName?: string
@@ -21,6 +30,7 @@ interface InlineTextFieldProps {
 function InlineTextField({
   label,
   value,
+  displayValue,
   onSave,
   inputType = 'text',
   inputClassName,
@@ -31,11 +41,8 @@ function InlineTextField({
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (editing) {
-      setDraft(value ?? '')
-      setTimeout(() => inputRef.current?.focus(), 0)
-    }
-  }, [editing, value])
+    if (editing) setTimeout(() => inputRef.current?.focus(), 0)
+  }, [editing])
 
   async function commit() {
     const trimmed = draft.trim()
@@ -80,11 +87,16 @@ function InlineTextField({
       ) : (
         <button
           type="button"
-          onClick={() => setEditing(true)}
+          onClick={() => {
+            setDraft(value ?? '')
+            setEditing(true)
+          }}
           className="group flex items-center gap-1.5 text-[13px] text-left min-h-[24px]"
         >
-          <span className={cn(value ? 'text-foreground' : 'text-muted-foreground')}>
-            {value || '—'}
+          <span
+            className={cn((displayValue ?? value) ? 'text-foreground' : 'text-muted-foreground')}
+          >
+            {displayValue ?? value ?? '—'}
           </span>
           <PencilIcon className="size-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
           {saved && <span className="text-[11px] text-[var(--green)] font-medium">Saved ✓</span>}
@@ -105,6 +117,7 @@ interface InlineSelectFieldProps {
 
 function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldProps) {
   const [editing, setEditing] = useState(false)
+  const [selected, setSelected] = useState(value ?? '')
   const [saved, setSaved] = useState(false)
   const selectRef = useRef<HTMLSelectElement>(null)
 
@@ -113,6 +126,7 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
   }, [editing])
 
   async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setSelected(e.target.value)
     await onSave(e.target.value)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
@@ -120,6 +134,7 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
   }
 
   const displayLabel = options.find((o) => o.value === value)?.label ?? value ?? '—'
+  const valueInOptions = options.some((o) => o.value === value)
 
   return (
     <div className="flex flex-col gap-1">
@@ -130,12 +145,13 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
         <select
           ref={selectRef}
           aria-label={label}
-          defaultValue={value ?? ''}
+          value={selected}
           onChange={handleChange}
           onBlur={() => setEditing(false)}
           className="h-7 rounded-md border border-ring bg-background px-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
         >
           <option value="">Select…</option>
+          {!valueInOptions && value && <option value={value}>{value}</option>}
           {options.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
@@ -145,7 +161,10 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
       ) : (
         <button
           type="button"
-          onClick={() => setEditing(true)}
+          onClick={() => {
+            setSelected(value ?? '')
+            setEditing(true)
+          }}
           className="group flex items-center gap-1.5 text-[13px] text-left min-h-[24px]"
         >
           <span className={cn(value ? 'text-foreground' : 'text-muted-foreground')}>
@@ -171,12 +190,6 @@ const NOTICE_OPTIONS = [
   { value: '6 months', label: '6 months' },
 ]
 
-function getDayName(dateStr: string): string {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return days[new Date(y, m - 1, d).getDay()] ?? ''
-}
-
 // ─── ProfileLogistics ────────────────────────────────────────────────────────
 
 interface ProfileLogisticsProps {
@@ -186,24 +199,20 @@ interface ProfileLogisticsProps {
 export function ProfileLogistics({ candidate }: ProfileLogisticsProps) {
   const { mutateAsync: updateCandidate } = useUpdateCandidate(candidate.id)
 
-  // ISO slots: "2026-05-17T11:00" → split on T. Human slots: "Sun 17 May 11:00-12:00" → strip trailing time.
-  const slotDate = candidate.slot
-    ? /^\d{4}-/.test(candidate.slot)
-      ? candidate.slot.split('T')[0]
-      : candidate.slot.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim()
-    : ''
-  const slotTime = candidate.time ?? ''
+  const slotDate = interviewAtToDateInput(candidate.interview_at)
+  const slotTime = interviewAtToTimeInput(candidate.interview_at)
+  const currentDate = candidate.interview_at ? new Date(candidate.interview_at) : null
 
   async function saveDate(newDate: string) {
-    const time = slotTime
-    const slot = newDate && time ? `${newDate}T${time}` : null
-    await updateCandidate({ slot, day: newDate ? getDayName(newDate) : null })
+    await updateCandidate({
+      interview_at: updateInterviewDate(currentDate, newDate).toISOString(),
+    })
   }
 
   async function saveTime(newTime: string) {
-    const date = slotDate
-    const slot = date && newTime ? `${date}T${newTime}` : null
-    await updateCandidate({ slot, time: newTime || null })
+    await updateCandidate({
+      interview_at: updateInterviewTime(currentDate, newTime).toISOString(),
+    })
   }
 
   return (
@@ -254,12 +263,14 @@ export function ProfileLogistics({ candidate }: ProfileLogisticsProps) {
         <InlineTextField
           label="Interview date"
           value={slotDate || null}
+          displayValue={formatInterviewDate(candidate.interview_at)}
           onSave={saveDate}
           inputType="date"
         />
         <InlineTextField
           label="Interview time"
           value={slotTime || null}
+          displayValue={formatInterviewTime(candidate.interview_at)}
           onSave={saveTime}
           inputType="time"
         />

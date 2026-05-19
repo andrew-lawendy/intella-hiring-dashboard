@@ -1,4 +1,5 @@
 import { maxScore } from './scoring'
+import { formatInterviewSlot } from '@/lib/interview'
 
 interface CompareRow {
   label: string
@@ -12,14 +13,14 @@ export function buildCompareRows(
     salary: string | null
     notice: string | null
     type: string | null
-    slot: string | null
+    interview_at: string | null
   },
   candidateB: {
     name: string
     salary: string | null
     notice: string | null
     type: string | null
-    slot: string | null
+    interview_at: string | null
   },
   profileA: {
     fit_score: number | null
@@ -45,7 +46,11 @@ export function buildCompareRows(
   const scoreB = stateB.combinedScore ?? 0
 
   return [
-    { label: 'Slot', a: candidateA.slot ?? '—', b: candidateB.slot ?? '—' },
+    {
+      label: 'Slot',
+      a: formatInterviewSlot(candidateA.interview_at),
+      b: formatInterviewSlot(candidateB.interview_at),
+    },
     { label: 'Type', a: candidateA.type ?? '—', b: candidateB.type ?? '—' },
     { label: 'Salary', a: candidateA.salary ?? '—', b: candidateB.salary ?? '—' },
     { label: 'Notice', a: candidateA.notice ?? '—', b: candidateB.notice ?? '—' },

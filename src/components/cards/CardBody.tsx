@@ -1,3 +1,4 @@
+import { formatInterviewSlot } from '@/lib/interview'
 import type { Database } from '@/lib/database.types'
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
@@ -8,7 +9,7 @@ interface CardBodyProps {
 
 export function CardBody({ candidate }: CardBodyProps) {
   const rows = [
-    { label: 'Interview Slot', value: candidate.slot },
+    { label: 'Interview Slot', value: formatInterviewSlot(candidate.interview_at) },
     { label: 'Salary Expectation', value: candidate.salary },
     { label: 'Notice Period', value: candidate.notice },
   ]

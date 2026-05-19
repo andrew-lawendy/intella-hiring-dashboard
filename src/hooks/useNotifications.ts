@@ -42,7 +42,7 @@ export function useNotifications(jobId?: number | null): ActionItem[] {
           .map((c) => ({
             id: c.id,
             name: c.name,
-            slot: c.slot,
+            interview_at: c.interview_at,
             jobId: c.job_id as number,
           })),
         stateMin,

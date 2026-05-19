@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { FieldWrapper, SegmentedToggle } from '../form-helpers'
 import type { CreateCandidateInput } from '@/hooks/useCreateCandidate'
 import { useJobs } from '@/hooks/useJobs'
+import { updateInterviewDate, updateInterviewTime } from '@/lib/interview'
 
 interface StepIdentityProps {
   values: CreateCandidateInput
@@ -167,8 +168,10 @@ export function StepIdentity({
           <Input
             id="field-slot-date"
             type="date"
-            value={values.slotDate}
-            onChange={(e) => setField('slotDate', e.target.value)}
+            value={values.interviewAt?.toLocaleDateString('en-CA') ?? ''}
+            onChange={(e) =>
+              setField('interviewAt', updateInterviewDate(values.interviewAt, e.target.value))
+            }
           />
         </FieldWrapper>
 
@@ -176,8 +179,16 @@ export function StepIdentity({
           <Input
             id="field-slot-time"
             type="time"
-            value={values.slotTime}
-            onChange={(e) => setField('slotTime', e.target.value)}
+            value={
+              values.interviewAt?.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+              }) ?? ''
+            }
+            onChange={(e) =>
+              setField('interviewAt', updateInterviewTime(values.interviewAt, e.target.value))
+            }
           />
         </FieldWrapper>
       </div>

@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Database } from '@/lib/database.types'
+import { formatInterviewSlot } from '@/lib/interview'
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -37,9 +38,9 @@ export function SchedulePage() {
   const sortedMeta = useMemo(
     () =>
       [...allMeta].sort((a, b) => {
-        if (!a.slot || a.slot === 'TBD') return 1
-        if (!b.slot || b.slot === 'TBD') return -1
-        return a.slot.localeCompare(b.slot)
+        if (!a.interview_at) return 1
+        if (!b.interview_at) return -1
+        return a.interview_at.localeCompare(b.interview_at)
       }),
     [allMeta],
   )
@@ -90,7 +91,7 @@ export function SchedulePage() {
         size: 160,
         cell: ({ row }) => (
           <span className="font-mono text-[11.5px] text-muted-foreground whitespace-nowrap">
-            {row.original.candidate.slot ?? 'TBD'}
+            {formatInterviewSlot(row.original.candidate.interview_at)}
           </span>
         ),
       },

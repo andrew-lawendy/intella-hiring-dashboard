@@ -8,9 +8,7 @@ export interface Database {
           id: string
           name: string
           email: string
-          slot: string | null
-          day: string | null
-          time: string | null
+          interview_at: string | null
           type: 'In-person' | 'Remote' | null
           salary: string | null
           notice: string | null

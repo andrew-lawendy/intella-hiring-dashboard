@@ -5,7 +5,7 @@ import type { Database } from '@/lib/database.types'
 type Candidate = Database['public']['Tables']['candidates']['Row']
 export type CandidateMeta = Pick<
   Candidate,
-  'id' | 'day' | 'name' | 'email' | 'slot' | 'seniority' | 'job_id'
+  'id' | 'interview_at' | 'name' | 'email' | 'seniority' | 'job_id'
 >
 
 export function useCandidateMeta(jobId?: number | null) {
@@ -14,7 +14,7 @@ export function useCandidateMeta(jobId?: number | null) {
     queryFn: async () => {
       let query = supabase
         .from('candidates')
-        .select('id, day, name, email, slot, seniority, job_id')
+        .select('id, interview_at, name, email, seniority, job_id')
         .order('created_at')
       if (jobId != null) query = query.eq('job_id', jobId)
       const { data } = await query

@@ -8,8 +8,7 @@ export interface CreateCandidateInput {
   interviewType: 'Remote' | 'In-person'
   salary: string
   notice: string
-  slotDate: string
-  slotTime: string
+  interviewAt: Date | null
   seniority: string
   jobId: number | null
   title: string
@@ -36,18 +35,11 @@ export interface CreateCandidateInput {
   notable: string
 }
 
-function getDayName(dateStr: string): string {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  return days[new Date(dateStr).getDay()] ?? ''
-}
-
 export function useCreateCandidate() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (data: CreateCandidateInput) => {
-      const slot = data.slotDate && data.slotTime ? `${data.slotDate}T${data.slotTime}` : null
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pg = supabase as any
       const { data: inserted, error: e1 } = await pg
@@ -59,9 +51,7 @@ export function useCreateCandidate() {
           salary: data.salary.trim() || null,
           notice: data.notice.trim() || null,
           seniority: data.seniority || null,
-          slot,
-          day: data.slotDate ? getDayName(data.slotDate) : null,
-          time: data.slotTime || null,
+          interview_at: data.interviewAt?.toISOString() ?? null,
           job_id: data.jobId ?? null,
         })
         .select('id')

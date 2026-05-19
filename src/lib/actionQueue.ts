@@ -32,37 +32,10 @@ const URGENCY: Record<ActionItemType, number> = {
   'no-verdict': 2,
 }
 
-const MONTHS: Record<string, number> = {
-  Jan: 0,
-  Feb: 1,
-  Mar: 2,
-  Apr: 3,
-  May: 4,
-  Jun: 5,
-  Jul: 6,
-  Aug: 7,
-  Sep: 8,
-  Oct: 9,
-  Nov: 10,
-  Dec: 11,
-}
-
-export function parseSlotDate(slot: string | null): Date | null {
-  if (!slot || slot === 'TBD') return null
-  const match = slot.match(/\w+ (\d+) (\w+) (\d+):(\d+)/)
-  if (!match) return null
-  const [, day, month, hour, minute] = match
-  const monthIndex = MONTHS[month]
-  if (monthIndex === undefined) return null
-  // Known limitation: always uses the current year, so a slot of "Mon 31 Dec 14:00-15:00"
-  // checked in early January of the next year will parse with the wrong year.
-  return new Date(
-    new Date().getFullYear(),
-    monthIndex,
-    parseInt(day),
-    parseInt(hour),
-    parseInt(minute),
-  )
+function getInterviewDate(interview_at: string | null): Date | null {
+  if (!interview_at) return null
+  const d = new Date(interview_at)
+  return isNaN(d.getTime()) ? null : d
 }
 
 function isSameDay(a: Date, b: Date): boolean {
@@ -76,7 +49,7 @@ function isSameDay(a: Date, b: Date): boolean {
 interface CandidateMin {
   id: string
   name: string
-  slot: string | null
+  interview_at: string | null
   jobId: number
 }
 
@@ -101,9 +74,9 @@ export function deriveActionItems(
     const s = stateMap[c.id]
     if (!s) continue
 
-    const slotDate = parseSlotDate(c.slot)
+    const interviewDate = getInterviewDate(c.interview_at)
 
-    if (!c.slot || c.slot === 'TBD' || slotDate === null) {
+    if (!c.interview_at || interviewDate === null) {
       items.push({
         type: 'no-slot',
         candidateId: c.id,
@@ -111,7 +84,7 @@ export function deriveActionItems(
         jobId: c.jobId,
         message: 'No slot assigned',
       })
-    } else if (slotDate && isSameDay(slotDate, now) && !s.confirmed) {
+    } else if (interviewDate && isSameDay(interviewDate, now) && !s.confirmed) {
       items.push({
         type: 'slot-today-unconfirmed',
         candidateId: c.id,
@@ -119,7 +92,7 @@ export function deriveActionItems(
         jobId: c.jobId,
         message: 'Interview today — not confirmed',
       })
-    } else if (slotDate && isSameDay(slotDate, tomorrow) && !s.confirmed) {
+    } else if (interviewDate && isSameDay(interviewDate, tomorrow) && !s.confirmed) {
       items.push({
         type: 'slot-tomorrow-unconfirmed',
         candidateId: c.id,
@@ -127,7 +100,7 @@ export function deriveActionItems(
         jobId: c.jobId,
         message: 'Interview tomorrow — not confirmed',
       })
-    } else if (!s.confirmed && c.slot && c.slot !== 'TBD') {
+    } else if (!s.confirmed && c.interview_at) {
       items.push({
         type: 'unconfirmed',
         candidateId: c.id,

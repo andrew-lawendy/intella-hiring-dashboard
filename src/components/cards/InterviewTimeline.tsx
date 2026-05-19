@@ -1,8 +1,9 @@
+import { formatInterviewDayLabel } from '@/lib/interview'
 import type { StateMap } from '@/hooks/useCandidateState'
 
 interface CandidateDay {
   id: string
-  day: string | null
+  interview_at: string | null
 }
 
 const DAYS = [
@@ -35,9 +36,15 @@ interface InterviewTimelineProps {
 }
 
 export function InterviewTimeline({ candidates, stateMap }: InterviewTimelineProps) {
-  const counts = DAYS.map((day) => candidates.filter((c) => c.day === day).length)
+  const counts = DAYS.map(
+    (day) => candidates.filter((c) => formatInterviewDayLabel(c.interview_at) === day).length,
+  )
   const confirmedCounts = DAYS.map(
-    (day) => candidates.filter((c) => c.day === day && stateMap[c.id]?.confirmed === true).length,
+    (day) =>
+      candidates.filter(
+        (c) =>
+          formatInterviewDayLabel(c.interview_at) === day && stateMap[c.id]?.confirmed === true,
+      ).length,
   )
   const maxCount = Math.max(...counts, 1)
   const today = getTodayLabel()

@@ -5,6 +5,7 @@ import { BriefCard } from '@/components/briefing/BriefCard'
 import { printBriefCard } from '@/lib/exports'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
+import { formatInterviewDayLabel } from '@/lib/interview'
 
 const DAYS = [
   'All',
@@ -28,8 +29,8 @@ export function BriefingPage() {
     )
 
   const filtered = data
-    .filter((d) => day === 'All' || d.candidate.day === day)
-    .sort((a, b) => (a.candidate.time ?? '').localeCompare(b.candidate.time ?? ''))
+    .filter((d) => day === 'All' || formatInterviewDayLabel(d.candidate.interview_at) === day)
+    .sort((a, b) => (a.candidate.interview_at ?? '').localeCompare(b.candidate.interview_at ?? ''))
 
   return (
     <div>
