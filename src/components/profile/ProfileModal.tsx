@@ -162,7 +162,9 @@ export function ProfileModal({
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto">
-            {activeTab === 'Overview' && <ProfileOverview profile={profile} analysis={analysis} />}
+            {activeTab === 'Overview' && (
+              <ProfileOverview candidate={candidate} profile={profile} analysis={analysis} />
+            )}
             {activeTab === 'Score' && (
               <ProfileScore
                 state={state}
