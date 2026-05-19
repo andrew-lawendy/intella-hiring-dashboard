@@ -186,7 +186,12 @@ interface ProfileLogisticsProps {
 export function ProfileLogistics({ candidate }: ProfileLogisticsProps) {
   const { mutateAsync: updateCandidate } = useUpdateCandidate(candidate.id)
 
-  const slotDate = candidate.slot ? (candidate.slot.split('T')[0] ?? '') : ''
+  // ISO slots: "2026-05-17T11:00" → split on T. Human slots: "Sun 17 May 11:00-12:00" → strip trailing time.
+  const slotDate = candidate.slot
+    ? /^\d{4}-/.test(candidate.slot)
+      ? candidate.slot.split('T')[0]
+      : candidate.slot.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim()
+    : ''
   const slotTime = candidate.time ?? ''
 
   async function saveDate(newDate: string) {
