@@ -10,7 +10,9 @@ export interface Database {
           email: string
           interview_at: string | null
           type: 'In-person' | 'Remote' | null
-          salary: string | null
+          salary_amount: number | null
+          salary_currency: string | null
+          salary_period: string | null
           notice: string | null
           seniority: string | null
           job_id: number | null

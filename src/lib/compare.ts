@@ -1,5 +1,6 @@
 import { maxScore } from './scoring'
 import { formatInterviewSlot } from '@/lib/interview'
+import { formatSalary } from '@/lib/salary'
 
 interface CompareRow {
   label: string
@@ -10,14 +11,18 @@ interface CompareRow {
 export function buildCompareRows(
   candidateA: {
     name: string
-    salary: string | null
+    salary_amount: number | null
+    salary_currency: string | null
+    salary_period: string | null
     notice: string | null
     type: string | null
     interview_at: string | null
   },
   candidateB: {
     name: string
-    salary: string | null
+    salary_amount: number | null
+    salary_currency: string | null
+    salary_period: string | null
     notice: string | null
     type: string | null
     interview_at: string | null
@@ -52,7 +57,19 @@ export function buildCompareRows(
       b: formatInterviewSlot(candidateB.interview_at),
     },
     { label: 'Type', a: candidateA.type ?? '—', b: candidateB.type ?? '—' },
-    { label: 'Salary', a: candidateA.salary ?? '—', b: candidateB.salary ?? '—' },
+    {
+      label: 'Salary',
+      a: formatSalary(
+        candidateA.salary_amount,
+        candidateA.salary_currency,
+        candidateA.salary_period,
+      ),
+      b: formatSalary(
+        candidateB.salary_amount,
+        candidateB.salary_currency,
+        candidateB.salary_period,
+      ),
+    },
     { label: 'Notice', a: candidateA.notice ?? '—', b: candidateB.notice ?? '—' },
     {
       label: 'Fit Score',

@@ -6,7 +6,9 @@ export interface CreateCandidateInput {
   name: string
   email: string
   interviewType: 'Remote' | 'In-person'
-  salary: string
+  salaryAmount: string
+  salaryCurrency: 'EGP' | 'USD'
+  salaryPeriod: 'month' | 'year'
   notice: string
   interviewAt: Date | null
   seniority: string
@@ -48,7 +50,13 @@ export function useCreateCandidate() {
           name: data.name.trim(),
           email: data.email.trim().toLowerCase(),
           type: data.interviewType,
-          salary: data.salary.trim() || null,
+          salary_amount: data.salaryAmount
+            ? parseInt(data.salaryAmount.replace(/\D/g, '')) || null
+            : null,
+          salary_currency:
+            data.salaryAmount && data.salaryAmount.replace(/\D/g, '') ? data.salaryCurrency : null,
+          salary_period:
+            data.salaryAmount && data.salaryAmount.replace(/\D/g, '') ? data.salaryPeriod : null,
           notice: data.notice.trim() || null,
           seniority: data.seniority || null,
           interview_at: data.interviewAt?.toISOString() ?? null,

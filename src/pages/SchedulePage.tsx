@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select'
 import type { Database } from '@/lib/database.types'
 import { formatInterviewSlot } from '@/lib/interview'
+import { formatSalary } from '@/lib/salary'
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -113,7 +114,11 @@ export function SchedulePage() {
         size: 140,
         cell: ({ row }) => (
           <span className="text-muted-foreground whitespace-nowrap">
-            {row.original.candidate.salary ?? '—'}
+            {formatSalary(
+              row.original.candidate.salary_amount,
+              row.original.candidate.salary_currency,
+              row.original.candidate.salary_period,
+            )}
           </span>
         ),
       },

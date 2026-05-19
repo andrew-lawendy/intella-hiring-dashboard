@@ -5,6 +5,7 @@ import type { Job } from '@/hooks/useJobs'
 import { VERDICT_MAP } from './verdicts'
 import { maxScore } from './scoring'
 import { formatInterviewSlot } from '@/lib/interview'
+import { formatSalary } from '@/lib/salary'
 
 function jobFilename(job: Job | null): string {
   if (!job) return 'intella-hiring.xlsx'
@@ -28,7 +29,11 @@ export function exportToExcel(
       Email: candidate.email,
       Slot: formatInterviewSlot(candidate.interview_at),
       Type: candidate.type,
-      Salary: candidate.salary,
+      Salary: formatSalary(
+        candidate.salary_amount,
+        candidate.salary_currency,
+        candidate.salary_period,
+      ),
       Notice: candidate.notice,
       'Current Role': analysis?.current_role ?? '',
       'Current Company': analysis?.current_company ?? '',
@@ -79,7 +84,7 @@ export function exportDecisionReport(
       return `<tr>
         <td>${i + 1}</td>
         <td><strong>${candidate.name}</strong><br/><small>${analysis?.current_role ?? ''} @ ${analysis?.current_company ?? ''}</small></td>
-        <td>${candidate.salary ?? '—'}</td>
+        <td>${formatSalary(candidate.salary_amount, candidate.salary_currency, candidate.salary_period)}</td>
         <td>${candidate.notice ?? '—'}</td>
         <td>${profile?.fit_score ?? '—'}%</td>
         <td><strong>${score}/${max}</strong></td>
@@ -139,7 +144,7 @@ export function printBriefCard(data: CandidateWithDetails, state: StateMap[strin
   <h1 style="font-size:18px;margin:0 0 4px">${candidate.name}</h1>
   <div class="meta">
     <span>📅 ${formatInterviewSlot(candidate.interview_at)}</span>
-    <span>💰 ${candidate.salary ?? '—'}</span>
+    <span>💰 ${formatSalary(candidate.salary_amount, candidate.salary_currency, candidate.salary_period)}</span>
     <span>⏱ Notice: ${candidate.notice ?? '—'}</span>
     ${analysis ? `<span>🏢 ${analysis.current_role} @ ${analysis.current_company}</span>` : ''}
   </div>

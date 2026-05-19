@@ -125,25 +125,44 @@ export function StepIdentity({
         <FieldWrapper
           label="Expected salary"
           optional
-          htmlFor="field-salary"
-          hint="Monthly net, EGP"
+          htmlFor="field-salary-amount"
+          hint="Net amount"
         >
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[12px] font-medium text-muted-foreground">
-              EGP
-            </span>
-            <Input
-              id="field-salary"
-              type="text"
-              placeholder="65,000"
-              value={values.salary}
-              onChange={(e) => setField('salary', e.target.value)}
-              inputMode="numeric"
-              className="pl-10"
-            />
-          </div>
+          <Input
+            id="field-salary-amount"
+            type="text"
+            inputMode="numeric"
+            placeholder="65,000"
+            value={values.salaryAmount}
+            onChange={(e) => setField('salaryAmount', e.target.value.replace(/[^0-9,]/g, ''))}
+          />
         </FieldWrapper>
 
+        <FieldWrapper label="Currency / period" optional>
+          <div className="flex gap-2">
+            <select
+              value={values.salaryCurrency}
+              onChange={(e) => setField('salaryCurrency', e.target.value as 'EGP' | 'USD')}
+              aria-label="Salary currency"
+              className="flex h-8 flex-1 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring"
+            >
+              <option value="EGP">EGP</option>
+              <option value="USD">USD</option>
+            </select>
+            <select
+              value={values.salaryPeriod}
+              onChange={(e) => setField('salaryPeriod', e.target.value as 'month' | 'year')}
+              aria-label="Salary period"
+              className="flex h-8 flex-1 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring"
+            >
+              <option value="month">/ month</option>
+              <option value="year">/ year</option>
+            </select>
+          </div>
+        </FieldWrapper>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
         <FieldWrapper label="Notice period" optional htmlFor="field-notice">
           <select
             id="field-notice"

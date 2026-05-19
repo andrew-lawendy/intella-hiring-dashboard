@@ -1,4 +1,5 @@
 import { formatInterviewTime, formatInterviewSlot } from '@/lib/interview'
+import { formatSalary } from '@/lib/salary'
 import { InterviewTimer } from './InterviewTimer'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
@@ -41,7 +42,14 @@ export function BriefCard({ data, state, onPrintBrief }: BriefCardProps) {
           {[
             { label: 'Slot', value: formatInterviewSlot(candidate.interview_at) },
             { label: 'Type', value: candidate.type },
-            { label: 'Salary', value: candidate.salary },
+            {
+              label: 'Salary',
+              value: formatSalary(
+                candidate.salary_amount,
+                candidate.salary_currency,
+                candidate.salary_period,
+              ),
+            },
             { label: 'Notice', value: candidate.notice },
             ...(analysis
               ? [
