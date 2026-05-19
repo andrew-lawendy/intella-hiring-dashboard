@@ -15,10 +15,10 @@ export function formatInterviewDate(interview_at: string | null): string {
 /** "11:00" — start time only */
 export function formatInterviewTime(interview_at: string | null): string {
   if (!interview_at) return '—'
-  return new Date(interview_at).toLocaleTimeString('en-GB', {
-    hour: '2-digit',
+  return new Date(interview_at).toLocaleTimeString('en-US', {
+    hour: 'numeric',
     minute: '2-digit',
-    hour12: false,
+    hour12: true,
   })
 }
 
