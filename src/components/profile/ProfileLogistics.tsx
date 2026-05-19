@@ -1,6 +1,6 @@
 // src/components/profile/ProfileLogistics.tsx
 import { useState, useRef, useEffect } from 'react'
-import { PencilIcon } from 'lucide-react'
+import { PencilIcon, CheckIcon, XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SegmentedToggle } from '@/components/candidates/form-helpers'
 import { useUpdateCandidate } from '@/hooks/useUpdateCandidate'
@@ -37,6 +37,7 @@ function InlineTextField({
 }: InlineTextFieldProps) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value ?? '')
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -50,10 +51,15 @@ function InlineTextField({
       setEditing(false)
       return
     }
-    await onSave(trimmed)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
-    setEditing(false)
+    setSaving(true)
+    try {
+      await onSave(trimmed)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } finally {
+      setSaving(false)
+      setEditing(false)
+    }
   }
 
   function cancel() {
@@ -67,23 +73,41 @@ function InlineTextField({
         {label}
       </span>
       {editing ? (
-        <input
-          ref={inputRef}
-          type={inputType}
-          aria-label={label}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') commit()
-            if (e.key === 'Escape') cancel()
-          }}
-          className={cn(
-            'h-7 rounded-md border border-ring bg-background px-2 text-[13px] text-foreground',
-            'focus:outline-none focus:ring-2 focus:ring-ring/50',
-            inputClassName,
-          )}
-        />
+        <div className="flex items-center gap-1">
+          <input
+            ref={inputRef}
+            type={inputType}
+            aria-label={label}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commit()
+              if (e.key === 'Escape') cancel()
+            }}
+            className={cn(
+              'flex-1 h-7 rounded-md border border-ring bg-background px-2 text-[13px] text-foreground',
+              'focus:outline-none focus:ring-2 focus:ring-ring/50',
+              inputClassName,
+            )}
+          />
+          <button
+            type="button"
+            onClick={commit}
+            disabled={saving}
+            aria-label="Save"
+            className="p-1 text-[var(--green)] hover:opacity-70 disabled:opacity-40 transition-opacity"
+          >
+            <CheckIcon className="size-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={cancel}
+            aria-label="Cancel"
+            className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <XIcon className="size-3.5" />
+          </button>
+        </div>
       ) : (
         <button
           type="button"
@@ -118,6 +142,7 @@ interface InlineSelectFieldProps {
 function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldProps) {
   const [editing, setEditing] = useState(false)
   const [selected, setSelected] = useState(value ?? '')
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const selectRef = useRef<HTMLSelectElement>(null)
 
@@ -125,11 +150,20 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
     if (editing) setTimeout(() => selectRef.current?.focus(), 0)
   }, [editing])
 
-  async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    setSelected(e.target.value)
-    await onSave(e.target.value)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+  async function save() {
+    setSaving(true)
+    try {
+      await onSave(selected)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } finally {
+      setSaving(false)
+      setEditing(false)
+    }
+  }
+
+  function cancel() {
+    setSelected(value ?? '')
     setEditing(false)
   }
 
@@ -142,22 +176,40 @@ function InlineSelectField({ label, value, options, onSave }: InlineSelectFieldP
         {label}
       </span>
       {editing ? (
-        <select
-          ref={selectRef}
-          aria-label={label}
-          value={selected}
-          onChange={handleChange}
-          onBlur={() => setEditing(false)}
-          className="h-7 rounded-md border border-ring bg-background px-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
-        >
-          <option value="">Select…</option>
-          {!valueInOptions && value && <option value={value}>{value}</option>}
-          {options.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-1">
+          <select
+            ref={selectRef}
+            aria-label={label}
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+            className="flex-1 h-7 rounded-md border border-ring bg-background px-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
+          >
+            <option value="">Select…</option>
+            {!valueInOptions && value && <option value={value}>{value}</option>}
+            {options.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={save}
+            disabled={saving}
+            aria-label="Save"
+            className="p-1 text-[var(--green)] hover:opacity-70 disabled:opacity-40 transition-opacity"
+          >
+            <CheckIcon className="size-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={cancel}
+            aria-label="Cancel"
+            className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <XIcon className="size-3.5" />
+          </button>
+        </div>
       ) : (
         <button
           type="button"
