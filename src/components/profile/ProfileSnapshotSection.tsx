@@ -147,7 +147,10 @@ export function ProfileSnapshotSection({ profile }: ProfileSnapshotSectionProps)
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setEditing(false)}
+              onClick={() => {
+                setDraft(draftFromProfile(profile))
+                setEditing(false)
+              }}
               disabled={isPending}
             >
               Cancel
@@ -162,7 +165,7 @@ export function ProfileSnapshotSection({ profile }: ProfileSnapshotSectionProps)
           <div>
             <div className="flex items-center gap-3 mb-3">
               <span className="text-[28px] font-medium tracking-tight text-foreground">
-                {profile.fit_score}%
+                {profile.fit_score ?? '—'}%
               </span>
               <span
                 className="text-sm font-medium px-2 py-0.5 rounded-full"
@@ -202,8 +205,8 @@ export function ProfileSnapshotSection({ profile }: ProfileSnapshotSectionProps)
               <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
                 Strengths
               </p>
-              {(profile.strengths ?? []).map((s, i) => (
-                <div key={i} className="text-[12.5px] text-[var(--green)] mb-1.5">
+              {(profile.strengths ?? []).map((s) => (
+                <div key={s} className="text-[12.5px] text-[var(--green)] mb-1.5">
                   ✓ {s}
                 </div>
               ))}
@@ -215,8 +218,8 @@ export function ProfileSnapshotSection({ profile }: ProfileSnapshotSectionProps)
               <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
                 Weaknesses
               </p>
-              {(profile.weaknesses ?? []).map((w, i) => (
-                <div key={i} className="text-[12.5px] text-[var(--red)] mb-1.5">
+              {(profile.weaknesses ?? []).map((w) => (
+                <div key={w} className="text-[12.5px] text-[var(--red)] mb-1.5">
                   ⚠ {w}
                 </div>
               ))}
