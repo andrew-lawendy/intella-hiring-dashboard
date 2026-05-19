@@ -1,28 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { parseSlotDate, deriveActionItems } from '../actionQueue'
+import { deriveActionItems } from '../actionQueue'
 
-describe('parseSlotDate', () => {
-  it('returns null for null input', () => {
-    expect(parseSlotDate(null)).toBeNull()
-  })
-
-  it('returns null for TBD', () => {
-    expect(parseSlotDate('TBD')).toBeNull()
-  })
-
-  it('returns null for unparseable string', () => {
-    expect(parseSlotDate('not a date')).toBeNull()
-  })
-
-  it('parses a valid slot string', () => {
-    const result = parseSlotDate('Sun 17 May 11:00-12:00')
-    expect(result).not.toBeNull()
-    expect(result!.getMonth()).toBe(4) // May = 4
-    expect(result!.getDate()).toBe(17)
-    expect(result!.getHours()).toBe(11)
-    expect(result!.getMinutes()).toBe(0)
-  })
-})
+// ISO strings built with local Date constructor so isSameDay comparisons
+// work correctly in any timezone the test runner uses.
+const TODAY_ISO = new Date(2026, 4, 18, 14, 0).toISOString() // Mon 18 May 14:00 local
+const TOMORROW_ISO = new Date(2026, 4, 19, 14, 0).toISOString() // Tue 19 May 14:00 local
+const FUTURE_ISO = new Date(2026, 4, 20, 14, 0).toISOString() // Wed 20 May 14:00 local
 
 describe('deriveActionItems', () => {
   const TODAY = new Date(2026, 4, 18, 10, 0) // Mon 18 May 2026 10:00
@@ -44,7 +27,7 @@ describe('deriveActionItems', () => {
 
   it('emits slot-today-unconfirmed when slot is today and not confirmed', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: 'Mon 18 May 14:00-15:00', jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: TODAY_ISO, jobId: 2 }],
       { c1: { ...baseState, confirmed: false } },
       {},
     )
@@ -53,7 +36,7 @@ describe('deriveActionItems', () => {
 
   it('does not emit slot-today-unconfirmed when already confirmed', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: 'Mon 18 May 14:00-15:00', jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: TODAY_ISO, jobId: 2 }],
       { c1: { ...baseState, confirmed: true } },
       {},
     )
@@ -62,25 +45,25 @@ describe('deriveActionItems', () => {
 
   it('emits slot-tomorrow-unconfirmed when slot is tomorrow and not confirmed', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: 'Tue 19 May 14:00-15:00', jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: TOMORROW_ISO, jobId: 2 }],
       { c1: { ...baseState, confirmed: false } },
       {},
     )
     expect(items.some((i) => i.type === 'slot-tomorrow-unconfirmed')).toBe(true)
   })
 
-  it('emits no-slot when slot is null', () => {
+  it('emits no-slot when interview_at is null', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: null, jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: null, jobId: 2 }],
       { c1: baseState },
       {},
     )
     expect(items.some((i) => i.type === 'no-slot')).toBe(true)
   })
 
-  it('emits no-slot when slot is TBD', () => {
+  it('emits no-slot when interview_at is an invalid date string', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: 'TBD', jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: 'not-a-date', jobId: 2 }],
       { c1: baseState },
       {},
     )
@@ -89,7 +72,7 @@ describe('deriveActionItems', () => {
 
   it('emits unconfirmed for future slots beyond tomorrow', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: 'Wed 20 May 14:00-15:00', jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: FUTURE_ISO, jobId: 2 }],
       { c1: { ...baseState, confirmed: false } },
       {},
     )
@@ -99,9 +82,9 @@ describe('deriveActionItems', () => {
   it('sorts red items before amber before blue', () => {
     const items = deriveActionItems(
       [
-        { id: 'c1', name: 'Alice', slot: 'Mon 18 May 14:00-15:00', jobId: 2 },
-        { id: 'c2', name: 'Bob', slot: null, jobId: 2 },
-        { id: 'c3', name: 'Carol', slot: 'TBD', jobId: 2 },
+        { id: 'c1', name: 'Alice', interview_at: TODAY_ISO, jobId: 2 },
+        { id: 'c2', name: 'Bob', interview_at: null, jobId: 2 },
+        { id: 'c3', name: 'Carol', interview_at: null, jobId: 2 },
       ],
       {
         c1: { confirmed: false, interview_status: 'completed', verdict: null },
@@ -122,9 +105,9 @@ describe('deriveActionItems', () => {
     }
   })
 
-  it('emits no-slot for a non-null unparseable slot string', () => {
+  it('emits no-slot for a non-null unparseable interview_at string', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: 'bad-format', jobId: 2 }],
+      [{ id: 'c1', name: 'Alice', interview_at: 'bad-format', jobId: 2 }],
       { c1: baseState },
       {},
     )
@@ -133,7 +116,7 @@ describe('deriveActionItems', () => {
 
   it('carries jobId through to each ActionItem', () => {
     const items = deriveActionItems(
-      [{ id: 'c1', name: 'Alice', slot: null, jobId: 7 }],
+      [{ id: 'c1', name: 'Alice', interview_at: null, jobId: 7 }],
       { c1: baseState },
       {},
     )
