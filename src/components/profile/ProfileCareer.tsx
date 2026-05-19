@@ -20,7 +20,7 @@ export function ProfileCareer({ career }: ProfileCareerProps) {
       <div className="relative pl-5 border-l border-border">
         {career.map((entry, i) => (
           <div key={i} className="mb-5 relative">
-            <div className="absolute -left-[21px] w-2.5 h-2.5 rounded-full bg-brand border-2 border-surface" />
+            <div className="absolute -left-[25px] top-[3px] w-2.5 h-2.5 rounded-full bg-brand border-2 border-surface" />
             <p className="text-[12px] font-mono text-text3 mb-1">{entry.year}</p>
             <p className="font-semibold text-sm text-text">{entry.role}</p>
             <p className="text-[12px] text-text2 mb-1">{entry.company}</p>
