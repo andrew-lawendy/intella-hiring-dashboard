@@ -9,6 +9,7 @@ export function formatInterviewDate(interview_at: string | null): string {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
+    year: 'numeric',
   })
 }
 
