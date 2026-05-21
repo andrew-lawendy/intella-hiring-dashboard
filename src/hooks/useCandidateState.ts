@@ -27,9 +27,15 @@ export function useCandidateState() {
         ...prev,
         [candidateId]: { ...prev[candidateId], ...patch },
       }))
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pg = supabase.from('interview_state') as any
-      await pg.update(patch).eq('candidate_id', candidateId)
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const pg = supabase.from('interview_state') as any
+        const { error } = await pg.update(patch).eq('candidate_id', candidateId)
+        if (error) throw error
+      } catch (err) {
+        console.error('Failed to save state:', err)
+        queryClient.invalidateQueries({ queryKey: ['interview-state'] })
+      }
     },
     [queryClient],
   )
