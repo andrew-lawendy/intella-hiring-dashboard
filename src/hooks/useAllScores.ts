@@ -108,7 +108,10 @@ export function useAllScores(userId: string | undefined) {
           { onConflict: 'candidate_id,user_id,category' },
         )
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['all-scores'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-scores'] })
+      queryClient.invalidateQueries({ queryKey: ['pipeline-stats'] })
+    },
   })
 
   async function setMyScore(candidateId: string, category: string, value: number) {

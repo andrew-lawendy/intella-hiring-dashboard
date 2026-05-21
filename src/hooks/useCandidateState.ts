@@ -32,6 +32,7 @@ export function useCandidateState() {
         const pg = supabase.from('interview_state') as any
         const { error } = await pg.update(patch).eq('candidate_id', candidateId)
         if (error) throw error
+        queryClient.invalidateQueries({ queryKey: ['pipeline-stats'] })
       } catch (err) {
         console.error('Failed to save state:', err)
         queryClient.invalidateQueries({ queryKey: ['interview-state'] })
