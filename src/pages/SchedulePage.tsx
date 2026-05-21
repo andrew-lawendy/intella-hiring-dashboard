@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react'
-import { useQueryState, parseAsString } from 'nuqs'
+import { useMemo, useState, useCallback } from 'react'
+import { useQueryState, parseAsString, parseAsInteger } from 'nuqs'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
-import { useJobs } from '@/hooks/useJobs'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useCandidateState } from '@/hooks/useCandidateState'
 import { DataTable } from '@/components/ui/data-table'
@@ -14,8 +13,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { Database } from '@/lib/database.types'
-import { formatInterviewSlot } from '@/lib/interview'
+import { formatInterviewSlot, interviewAtToDateInput } from '@/lib/interview'
 import { formatSalary } from '@/lib/salary'
+
+function currentMonthRange() {
+  const now = new Date()
+  const from = new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString('en-CA')
+  const to = new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString('en-CA')
+  return { from, to }
+}
 
 type Candidate = Database['public']['Tables']['candidates']['Row']
 type State = Database['public']['Tables']['interview_state']['Row']
@@ -30,20 +36,37 @@ const PAGE_SIZE = 20
 
 export function SchedulePage() {
   const { candidates: allMeta } = useCandidateMeta()
-  const [jobSlug] = useQueryState('job', parseAsString)
-  const { data: jobs = [] } = useJobs()
-  const round = jobs.find((j) => j.slug === jobSlug) ?? null
   const { stateMap, setConfirmed, setInterviewStatus } = useCandidateState()
-  const [page, setPage] = useState(1)
+  const [flashId, setFlashId] = useState<string | null>(null)
+
+  const handleStatusChange = useCallback(
+    (id: string, val: string) => {
+      setInterviewStatus(id, val as 'pending' | 'in-progress' | 'completed')
+      setFlashId(id)
+      setTimeout(() => setFlashId(null), 700)
+    },
+    [setInterviewStatus],
+  )
+
+  const defaults = currentMonthRange()
+  const [from, setFrom] = useQueryState('from', parseAsString.withDefault(defaults.from))
+  const [to, setTo] = useQueryState('to', parseAsString.withDefault(defaults.to))
+  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
 
   const sortedMeta = useMemo(
     () =>
-      [...allMeta].sort((a, b) => {
-        if (!a.interview_at) return 1
-        if (!b.interview_at) return -1
-        return a.interview_at.localeCompare(b.interview_at)
-      }),
-    [allMeta],
+      [...allMeta]
+        .sort((a, b) => {
+          if (!a.interview_at) return 1
+          if (!b.interview_at) return -1
+          return a.interview_at.localeCompare(b.interview_at)
+        })
+        .filter((m) => {
+          const date = interviewAtToDateInput(m.interview_at)
+          if (!date) return false
+          return date >= from && date <= to
+        }),
+    [allMeta, from, to],
   )
 
   const pageIds = useMemo(
@@ -102,7 +125,7 @@ export function SchedulePage() {
         size: 100,
         cell: ({ row }) => (
           <span
-            className={`text-[12px] font-medium px-2 py-0.5 rounded-full border ${row.original.candidate.type === 'Remote' ? 'bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]' : 'bg-muted text-muted-foreground border-border'}`}
+            className={`text-[12px] font-medium px-2 py-0.5 rounded-full border whitespace-nowrap ${row.original.candidate.type === 'Remote' ? 'bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]' : 'bg-muted text-muted-foreground border-border'}`}
           >
             {row.original.candidate.type}
           </span>
@@ -161,9 +184,7 @@ export function SchedulePage() {
           return (
             <Select
               value={state.interview_status}
-              onValueChange={(val) =>
-                setInterviewStatus(candidate.id, val as 'pending' | 'in-progress' | 'completed')
-              }
+              onValueChange={(val) => handleStatusChange(candidate.id, val)}
             >
               <SelectTrigger size="sm" className="min-w-[120px] text-[11.5px]">
                 <SelectValue />
@@ -178,15 +199,42 @@ export function SchedulePage() {
         },
       },
     ],
-    [setConfirmed, setInterviewStatus],
+    [setConfirmed, handleStatusChange],
   )
 
   return (
     <div>
       <h1 className="text-[30px] font-medium tracking-[-0.025em] mb-1 text-text">Schedule</h1>
       <p className="text-text2 text-[13.5px] mb-6">
-        {round ? round.name : '—'} · {allMeta.length} interviews
+        {allMeta.filter((m) => m.interview_at).length} interviews total
       </p>
+
+      <div className="flex items-center gap-3 mb-5">
+        <div className="flex items-center gap-2">
+          <label className="text-[12px] text-text2 font-medium">From</label>
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => {
+              setFrom(e.target.value)
+              setPage(1)
+            }}
+            className="text-[12.5px] border border-border rounded-md px-2.5 py-1.5 bg-surface text-text focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-[12px] text-text2 font-medium">To</label>
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => {
+              setTo(e.target.value)
+              setPage(1)
+            }}
+            className="text-[12.5px] border border-border rounded-md px-2.5 py-1.5 bg-surface text-text focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+      </div>
 
       <DataTable
         columns={columns}
@@ -197,6 +245,9 @@ export function SchedulePage() {
         page={page}
         total={sortedMeta.length}
         onPageChange={setPage}
+        rowClassName={(row) =>
+          row.candidate.id === flashId ? 'bg-green-50 dark:bg-green-950/20' : ''
+        }
       />
     </div>
   )
