@@ -17,6 +17,7 @@ interface CandidateMin {
   email: string
   day?: string | null
   seniority?: string | null
+  interview_at?: string | null
 }
 
 interface StateSnapshot {
@@ -56,4 +57,15 @@ export function filterCandidates<T extends CandidateMin>(
   }
 
   return result
+}
+
+export function applyDayFilter<T extends { interview_at?: string | null }>(
+  candidates: T[],
+  dayFilter: string | null,
+): T[] {
+  if (!dayFilter) return candidates
+  return candidates.filter(
+    (c) =>
+      c.interview_at != null && new Date(c.interview_at).toLocaleDateString('en-CA') === dayFilter,
+  )
 }

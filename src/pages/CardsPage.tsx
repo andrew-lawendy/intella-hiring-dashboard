@@ -19,8 +19,9 @@ import { supabase } from '@/lib/supabase'
 import { Pagination } from '@/components/ui/Pagination'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
-import { filterCandidates } from '@/lib/filters'
+import { filterCandidates, applyDayFilter } from '@/lib/filters'
 import type { FilterType } from '@/lib/filters'
+import { interviewAtToDateInput, formatInterviewDate } from '@/lib/interview'
 
 const PAGE_SIZE = 24
 
@@ -38,6 +39,7 @@ export function CardsPage() {
   const [filter, setFilter] = useQueryState('filter', parseAsString.withDefault('all'))
   const [search, setSearch] = useQueryState('q', parseAsString.withDefault(''))
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [dayFilter, setDayFilter] = useQueryState('day', parseAsString)
   const [showShortlist, setShowShortlist] = useQueryState('compare', {
     parse: (v) => v === '1',
     serialize: (v) => (v ? '1' : ''),
@@ -52,6 +54,10 @@ export function CardsPage() {
   }
   const handleSearchChange = (s: string) => {
     setSearch(s)
+    setPage(1)
+  }
+  const handleDayFilterChange = (d: string | null) => {
+    setDayFilter(d)
     setPage(1)
   }
 
@@ -76,9 +82,32 @@ export function CardsPage() {
     () => filterCandidates(allMeta, stateMin, filter as FilterType, debouncedSearch),
     [allMeta, stateMin, filter, debouncedSearch],
   )
+  const filteredWithDay = applyDayFilter(filteredMeta, dayFilter)
+
+  const dayChips = useMemo(() => {
+    const today = new Date().toLocaleDateString('en-CA')
+    const seen = new Set<string>()
+    const chips: { date: string; label: string; isToday: boolean }[] = []
+
+    for (const m of allMeta) {
+      const date = interviewAtToDateInput(m.interview_at)
+      if (!date || seen.has(date)) continue
+      seen.add(date)
+      chips.push({
+        date,
+        label: formatInterviewDate(m.interview_at)
+          .replace(/\s?\d{4}$/, '')
+          .trim(),
+        isToday: date === today,
+      })
+    }
+
+    return chips.sort((a, b) => a.date.localeCompare(b.date))
+  }, [allMeta])
+
   const pageIds = useMemo(
-    () => filteredMeta.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((m) => m.id),
-    [filteredMeta, page],
+    () => filteredWithDay.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((m) => m.id),
+    [filteredWithDay, page],
   )
   const shortlistedIds = useMemo(
     () =>
@@ -137,6 +166,9 @@ export function CardsPage() {
         total={allMeta.length}
         onFilterChange={handleFilterChange}
         onSearchChange={handleSearchChange}
+        dayChips={dayChips}
+        dayFilter={dayFilter}
+        onDayFilterChange={handleDayFilterChange}
       />
 
       <div className="flex justify-end mb-3">
@@ -150,7 +182,7 @@ export function CardsPage() {
         </Button>
       </div>
 
-      {filteredMeta.length === 0 ? (
+      {filteredWithDay.length === 0 ? (
         <div className="text-center py-20 text-text3 text-sm">No candidates match your filter.</div>
       ) : cardsLoading ? (
         <div className="flex justify-center py-20">
@@ -198,7 +230,7 @@ export function CardsPage() {
           <Pagination
             page={page}
             pageSize={PAGE_SIZE}
-            total={filteredMeta.length}
+            total={filteredWithDay.length}
             onChange={setPage}
           />
         </>
