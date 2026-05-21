@@ -1,4 +1,5 @@
 import { useMemo, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQueryState, parseAsString, parseAsInteger } from 'nuqs'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useCandidateMeta } from '@/hooks/useCandidateMeta'
@@ -38,6 +39,7 @@ export function SchedulePage() {
   const { candidates: allMeta } = useCandidateMeta()
   const { stateMap, setConfirmed, setInterviewStatus } = useCandidateState()
   const [flashId, setFlashId] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const handleStatusChange = useCallback(
     (id: string, val: string) => {
@@ -198,8 +200,21 @@ export function SchedulePage() {
           )
         },
       },
+      {
+        id: 'interview',
+        header: '',
+        size: 100,
+        cell: ({ row }) => (
+          <button
+            onClick={() => navigate(`/interview/${row.original.candidate.id}`)}
+            className="text-[12px] font-medium px-2.5 py-1 rounded-[var(--radius-xs)] border border-border bg-surface text-text hover:bg-surface2 transition-colors cursor-pointer whitespace-nowrap"
+          >
+            Interview
+          </button>
+        ),
+      },
     ],
-    [setConfirmed, handleStatusChange],
+    [setConfirmed, handleStatusChange, navigate],
   )
 
   return (

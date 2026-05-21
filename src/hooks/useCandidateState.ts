@@ -69,6 +69,11 @@ export function useCandidateState() {
     [updateState],
   )
 
+  const setNotes = useCallback(
+    (id: string, notes: Record<string, string>) => updateState(id, { notes }),
+    [updateState],
+  )
+
   return {
     stateMap,
     loading,
@@ -78,5 +83,6 @@ export function useCandidateState() {
     setShortlisted,
     setConfirmed,
     setChecklist,
+    setNotes,
   }
 }

@@ -72,6 +72,7 @@ export interface Database {
           interview_status: 'pending' | 'in-progress' | 'completed'
           verdict: 'strong-yes' | 'yes' | 'maybe' | 'no' | null
           checklist: Json
+          notes: Json
           updated_at: string
         }
         Insert: Omit<Database['public']['Tables']['interview_state']['Row'], 'updated_at'>
@@ -87,6 +88,8 @@ export interface Database {
           color: string | null
           bg: string | null
           questions: string[] | null
+          is_general: boolean
+          job_id: number | null
         }
         Insert: Omit<Database['public']['Tables']['interview_questions']['Row'], 'id'>
         Update: Partial<Database['public']['Tables']['interview_questions']['Insert']>

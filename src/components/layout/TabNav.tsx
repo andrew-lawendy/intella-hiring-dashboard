@@ -4,7 +4,6 @@ const tabs = [
   { to: '/cards', label: 'Cards' },
   { to: '/schedule', label: 'Schedule' },
   { to: '/compare', label: 'Compare' },
-  { to: '/questions', label: 'Questions' },
   { to: '/salary', label: 'Salary Chart' },
   { to: '/briefing', label: 'Day Briefing' },
   { to: '/analysis', label: '📊 Analysis' },

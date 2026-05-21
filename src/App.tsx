@@ -8,11 +8,11 @@ import { Layout } from '@/components/layout/Layout'
 import { CardsPage } from '@/pages/CardsPage'
 import { SchedulePage } from '@/pages/SchedulePage'
 import { ComparePage } from '@/pages/ComparePage'
-import { QuestionsPage } from '@/pages/QuestionsPage'
 import { SalaryPage } from '@/pages/SalaryPage'
 import { BriefingPage } from '@/pages/BriefingPage'
 import { AnalysisPage } from '@/pages/AnalysisPage'
 import { ChatPage } from '@/pages/ChatPage'
+import { InterviewPage } from '@/pages/InterviewPage'
 
 function LoginPageWithError() {
   const [params] = useSearchParams()
@@ -45,11 +45,11 @@ export default function App() {
               <Route path="cards" element={<CardsPage />} />
               <Route path="schedule" element={<SchedulePage />} />
               <Route path="compare" element={<ComparePage />} />
-              <Route path="questions" element={<QuestionsPage />} />
               <Route path="salary" element={<SalaryPage />} />
               <Route path="briefing" element={<BriefingPage />} />
               <Route path="analysis" element={<AnalysisPage />} />
               <Route path="chat" element={<ChatPage />} />
+              <Route path="interview/:candidateId" element={<InterviewPage />} />
             </Route>
           </Routes>
         </NuqsAdapter>
