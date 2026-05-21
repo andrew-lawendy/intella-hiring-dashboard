@@ -26,18 +26,13 @@ export function CardHeader({ candidate, state, onConfirmToggle, onOpenProfile }:
           {candidate.name}
         </button>
         <p className="text-[11.5px] text-text2 mt-0.5 truncate">{candidate.email}</p>
-        <div className="flex gap-1 flex-wrap mt-1.5">
-          <span
-            className={`text-[12px] font-medium px-2 py-0.5 rounded-full border ${state.confirmed ? 'bg-[var(--green-bg)] text-[var(--green)] border-[var(--green-line)]' : 'bg-[var(--amber-bg)] text-[var(--amber)] border-[var(--amber-line)]'}`}
-          >
-            {state.confirmed ? 'Confirmed' : 'Pending'}
-          </span>
-          {candidate.type === 'Remote' && (
+        {candidate.type === 'Remote' && (
+          <div className="flex gap-1 flex-wrap mt-1.5">
             <span className="text-[12px] font-medium px-2 py-0.5 rounded-full border bg-[var(--blue-bg)] text-[var(--blue)] border-[var(--blue-line)]">
               Remote
             </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <button

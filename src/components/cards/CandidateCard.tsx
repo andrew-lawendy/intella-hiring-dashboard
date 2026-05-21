@@ -32,10 +32,6 @@ const STATUS_BANNER: Record<string, { label: string; cls: string }> = {
     label: '✕ Rejected',
     cls: 'bg-[var(--red-bg)] text-[var(--red)] border-b border-[var(--red-line)]',
   },
-  pending: {
-    label: '— Decision Pending',
-    cls: 'bg-surface2 text-text3 border-b border-border',
-  },
 }
 
 export function CandidateCard({
@@ -52,12 +48,8 @@ export function CandidateCard({
   auditLine,
 }: CandidateCardProps) {
   const bannerKey =
-    state.shortlisted === true
-      ? 'shortlisted'
-      : state.shortlisted === false
-        ? 'rejected'
-        : 'pending'
-  const banner = STATUS_BANNER[bannerKey]
+    state.shortlisted === true ? 'shortlisted' : state.shortlisted === false ? 'rejected' : null
+  const banner = bannerKey ? STATUS_BANNER[bannerKey] : null
 
   // Combined score from both slots
   const allScores = { ...myScores, ...coScores }
