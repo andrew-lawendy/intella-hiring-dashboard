@@ -34,6 +34,7 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
   const { mutateAsync: upsert, isPending: saving } = useUpsertProfile()
 
   const [draft, setDraft] = useState({ first_name: '', last_name: '', title: '', avatar_url: '' })
+  const [draftTheme, setDraftTheme] = useState(theme)
   const [confirmSignout, setConfirmSignout] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -45,18 +46,19 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
         title: profile.title ?? '',
         avatar_url: profile.avatar_url ?? '',
       })
+      setDraftTheme(theme)
     }
   }, [open, profile])
 
   const dirty = useMemo(() => {
-    if (!profile) return draft.first_name !== '' || draft.last_name !== '' || draft.title !== ''
-    return (
-      draft.first_name !== (profile.first_name ?? '') ||
-      draft.last_name !== (profile.last_name ?? '') ||
-      draft.title !== (profile.title ?? '') ||
-      draft.avatar_url !== (profile.avatar_url ?? '')
-    )
-  }, [draft, profile])
+    const profileDirty = !profile
+      ? draft.first_name !== '' || draft.last_name !== '' || draft.title !== ''
+      : draft.first_name !== (profile.first_name ?? '') ||
+        draft.last_name !== (profile.last_name ?? '') ||
+        draft.title !== (profile.title ?? '') ||
+        draft.avatar_url !== (profile.avatar_url ?? '')
+    return profileDirty || draftTheme !== theme
+  }, [draft, profile, draftTheme, theme])
 
   const avatarInitials = getInitials(draft.first_name, draft.last_name)
 
@@ -77,8 +79,9 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
       last_name: draft.last_name.trim() || null,
       title: draft.title.trim() || null,
       avatar_url: draft.avatar_url.trim() || null,
-      theme,
+      theme: draftTheme,
     })
+    setTheme(draftTheme)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -250,11 +253,11 @@ export function ProfileDrawer({ open, onClose }: ProfileDrawerProps) {
                     key={value}
                     type="button"
                     role="radio"
-                    aria-checked={theme === value}
-                    onClick={() => setTheme(value)}
+                    aria-checked={draftTheme === value}
+                    onClick={() => setDraftTheme(value)}
                     className={cn(
                       'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all cursor-pointer',
-                      theme === value
+                      draftTheme === value
                         ? 'bg-background text-foreground shadow-xs border border-border'
                         : 'text-muted-foreground hover:text-foreground',
                     )}
