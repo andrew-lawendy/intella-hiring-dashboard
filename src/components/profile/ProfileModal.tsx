@@ -5,6 +5,7 @@ import { ProfileQuestions } from './ProfileQuestions'
 import { ProfileCV } from './ProfileCV'
 import { ProfileHistory } from './ProfileHistory'
 import { ProfileScore } from './ProfileScore'
+import { ProfileAIInsight } from './ProfileAIInsight'
 import type { CandidateWithDetails } from '@/hooks/useCandidates'
 import type { Database } from '@/lib/database.types'
 import { Dialog as DialogPrimitive } from 'radix-ui'
@@ -14,7 +15,7 @@ import { cn } from '@/lib/utils'
 
 type State = Database['public']['Tables']['interview_state']['Row']
 
-const TABS = ['Overview', 'Score', 'Career', 'Questions', 'CV', 'History'] as const
+const TABS = ['Overview', 'Score', 'Career', 'Questions', 'CV', 'History', 'AI Insight'] as const
 type Tab = (typeof TABS)[number]
 
 interface ProfileModalProps {
@@ -182,6 +183,9 @@ export function ProfileModal({
             )}
             {activeTab === 'CV' && <ProfileCV candidateId={candidate.id} />}
             {activeTab === 'History' && <ProfileHistory candidateId={candidate.id} />}
+            {activeTab === 'AI Insight' && (
+              <ProfileAIInsight candidate={candidate} profile={profile} analysis={analysis} />
+            )}
           </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
