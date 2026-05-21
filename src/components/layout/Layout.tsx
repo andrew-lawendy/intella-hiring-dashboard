@@ -20,15 +20,7 @@ export function Layout() {
   const [profileOpen, setProfileOpen] = useState(false)
 
   return (
-    <div
-      className="relative min-h-screen bg-bg"
-      style={{
-        backgroundImage: 'url("/assets/images/illustrations/background-image.svg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
+    <div className="layout-bg relative min-h-screen bg-bg">
       <Header
         onAddCandidate={() => setAddOpen(true)}
         onOpenProfile={() => setProfileOpen(true)}

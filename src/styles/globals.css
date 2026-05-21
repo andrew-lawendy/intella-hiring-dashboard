@@ -130,6 +130,17 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+.layout-bg {
+  background-image: url('/assets/images/illustrations/background-image.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.dark .layout-bg {
+  background-image: none;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
